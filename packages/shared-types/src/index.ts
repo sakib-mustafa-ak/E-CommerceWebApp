@@ -231,6 +231,7 @@ export interface MedicineProductSummary {
   isOfferParaLiveStock: boolean;
   offerParaStockQty: number;
   isPharmaTrackOpaque: boolean;
+  wholesaleMoq?: number;
 }
 
 export interface GenericAlternativeResult {
@@ -529,3 +530,67 @@ export interface CustomerMonthlyReturnSummary {
     totalCreditIssued: number;
   }[];
 }
+
+// -----------------------------------------------------------------------------
+// Phase 3: Wholesale Market & Pre-Orders Types
+// -----------------------------------------------------------------------------
+
+export enum PreOrderStatus {
+  PENDING = 'PENDING',
+  SOURCING = 'SOURCING',
+  CONFIRMED = 'CONFIRMED',
+  FULFILLED = 'FULFILLED',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface CreatePreOrderDto {
+  productId: string;
+  requestedQuantity: number;
+  unitType?: UnitType;
+  leadTimeDays: 2 | 3 | 4 | 5;
+  targetPrice?: number;
+  notes?: string;
+}
+
+export interface PreOrderResponse {
+  id: string;
+  preOrderNumber: string;
+  userId: string;
+  customerName: string;
+  shopName: string;
+  customerPhone: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  dosageForm: string;
+  strength: string;
+  unitType: UnitType;
+  requestedQuantity: number;
+  leadTimeDays: number;
+  targetPrice?: number | null;
+  status: PreOrderStatus;
+  notes?: string | null;
+  mpoAssignedId?: string | null;
+  reviewedByStaffId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WholesaleDashboardSummary {
+  userId: string;
+  shopName: string;
+  ownerName: string;
+  currentTierId: string;
+  currentTierCode: string;
+  currentTierName: string;
+  monthlySalesVolume: number;
+  tierUpgradeTarget: number;
+  upgradeProgressPercent: number;
+  creditLimit: number;
+  creditBalance: number;
+  allowedCategories: string[];
+  totalOrdersCount: number;
+  activePreOrdersCount: number;
+}
+

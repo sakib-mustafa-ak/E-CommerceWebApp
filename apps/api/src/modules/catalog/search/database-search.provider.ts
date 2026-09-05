@@ -101,6 +101,7 @@ export class DatabaseSearchProvider implements MedicineSearchProvider {
       isOfferParaLiveStock: p.isOfferParaLiveStock,
       offerParaStockQty: p.offerParaStockQty,
       isPharmaTrackOpaque: p.isPharmaTrackOpaque,
+      wholesaleMoq: p.wholesaleMoq,
     }));
 
     // Aggregate unique matched generics & companies for faceted filters

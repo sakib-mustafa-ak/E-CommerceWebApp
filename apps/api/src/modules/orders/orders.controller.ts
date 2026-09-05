@@ -37,6 +37,18 @@ export class OrdersController {
     return this.ordersService.createPaikariOrder(req.user.id, req.user.accountType, dto);
   }
 
+  @Post('wholesale')
+  @UseGuards(JwtAuthGuard)
+  async createWholesaleOrder(@Req() req: any, @Body() dto: CreatePaikariOrderDto) {
+    return this.ordersService.createPaikariOrder(req.user.id, req.user.accountType, dto);
+  }
+
+  @Get('wholesale/dashboard')
+  @UseGuards(JwtAuthGuard)
+  async getWholesaleDashboard(@Req() req: any) {
+    return this.ordersService.getWholesaleDashboard(req.user.id);
+  }
+
   @Get('short-list/export')
   @UseGuards(JwtAuthGuard, AccountTypeGuard)
   @RequireAccountTypes(AccountType.SUPER_ADMIN, AccountType.STAFF)

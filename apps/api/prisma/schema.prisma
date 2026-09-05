@@ -31,6 +31,7 @@ model User {
   manualOverrides      CustomerManualOverrideRate[]
   orders               Order[]
   returnRequests       ReturnRequest[]
+  preOrders            PreOrder[]
   auditLogs            AuditLog[]
 }
 
@@ -112,6 +113,9 @@ model CustomerProfile {
   creditBalance        Float        @default(0) // Running customer store credit / tab balance for next memo
   totalReturnsCount    Int          @default(0)
   totalReturnsValue    Float        @default(0)
+  
+  // Phase 3 Wholesale Category Access Control
+  allowedCategories    String?      @default("ALL") // "ALL" or JSON array of allowed category strings
   
   user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   tier                 PricingTier  @relation(fields: [tierId], references: [id])
@@ -206,6 +210,9 @@ model Product {
   isHighReturnRate        Boolean               @default(false)
   highReturnFlagReason    String?
 
+  // Phase 3 Wholesale MOQ
+  wholesaleMoq            Int                   @default(1)
+
   // Two separate inventories rule (Rule 4)
   isOfferParaLiveStock    Boolean               @default(false)
   offerParaStockQty       Int                   @default(0)
@@ -221,6 +228,7 @@ model Product {
   manualOverrides         CustomerManualOverrideRate[]
   orderItems              OrderItem[]
   returnItems             ReturnItem[]
+  preOrders               PreOrder[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -524,3 +532,29 @@ model BackupRecord {
   drillNotes      String?
   createdAt       DateTime  @default(now())
 }
+
+// Phase 3: Wholesale Pre-Orders Model (with lead-time & demand routing)
+model PreOrder {
+  id                  String    @id @default(uuid())
+  preOrderNumber      String    @unique // PRE-2026-00001
+  userId              String
+  productId           String
+  requestedQuantity   Int
+  unitType            String    @default("BOX")
+  leadTimeDays        Int       @default(3) // 2, 3, 4, 5 days
+  targetPrice         Float?
+  status              String    @default("PENDING") // PENDING, SOURCING, CONFIRMED, FULFILLED, CANCELLED
+  notes               String?
+  mpoAssignedId       String?
+  reviewedByStaffId   String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  user                User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product             Product   @relation(fields: [productId], references: [id])
+
+  @@index([status])
+  @@index([userId])
+  @@index([leadTimeDays])
+}
+

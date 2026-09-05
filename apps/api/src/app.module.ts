@@ -14,6 +14,7 @@ import { EventsModule } from './modules/events/events.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ReturnsModule } from './modules/returns/returns.module';
+import { PreOrdersModule } from './modules/pre-orders/pre-orders.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReturnsModule } from './modules/returns/returns.module';
     CatalogModule,
     OrdersModule,
     ReturnsModule,
+    PreOrdersModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

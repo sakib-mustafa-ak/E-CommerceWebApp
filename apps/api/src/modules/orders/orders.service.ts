@@ -82,6 +82,45 @@ export class OrdersService {
 
     const productMap = new Map(products.map((p) => [p.id, p]));
 
+    const isWholesaleOrder =
+      user.accountType === AccountType.WHOLESALER_SELLER ||
+      actorAccountType === AccountType.WHOLESALER_SELLER;
+
+    // Validate category permissions for wholesale accounts
+    if (isWholesaleOrder && customerProfile?.allowedCategories && customerProfile.allowedCategories !== 'ALL') {
+      let allowedList: string[] = [];
+      try {
+        allowedList = customerProfile.allowedCategories.startsWith('[')
+          ? JSON.parse(customerProfile.allowedCategories)
+          : customerProfile.allowedCategories.split(',').map((s) => s.trim());
+      } catch (e) {
+        allowedList = customerProfile.allowedCategories.split(',').map((s) => s.trim());
+      }
+
+      for (const itemInput of dto.items) {
+        const product = productMap.get(itemInput.productId);
+        if (product && !allowedList.includes(product.category)) {
+          throw new ForbiddenException(
+            `Product "${product.name}" is in category "${product.category}", which is not allowed for your wholesale account`,
+          );
+        }
+      }
+    }
+
+    // Validate MOQ for wholesale orders
+    if (isWholesaleOrder) {
+      for (const itemInput of dto.items) {
+        const product = productMap.get(itemInput.productId);
+        if (product && product.wholesaleMoq > 1) {
+          if (itemInput.requestedQuantity < product.wholesaleMoq) {
+            throw new BadRequestException(
+              `Minimum order quantity for "${product.name}" is ${product.wholesaleMoq} ${product.unit}. Requested: ${itemInput.requestedQuantity}`,
+            );
+          }
+        }
+      }
+    }
+
     // Fetch company rates for customer tier
     const companyRates = tier
       ? await this.prisma.companyRate.findMany({
@@ -197,7 +236,8 @@ export class OrdersService {
     // Generate unique order number
     const count = await this.prisma.order.count();
     const entropy = Math.floor(1000 + Math.random() * 9000);
-    const orderNumber = `PKR-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}-${entropy}`;
+    const prefix = isWholesaleOrder ? 'WHL' : 'PKR';
+    const orderNumber = `${prefix}-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}-${entropy}`;
 
     const placedByStaff =
       actorAccountType === AccountType.SUPER_ADMIN || actorAccountType === AccountType.STAFF
@@ -208,7 +248,7 @@ export class OrdersService {
       data: {
         orderNumber,
         userId: targetUserId,
-        sectorType: SectorType.PHARMACY,
+        sectorType: isWholesaleOrder ? SectorType.WHOLESALE : SectorType.PHARMACY,
         platformStatus: 'DRAFT_SALE',
         fulfillmentStatus: FulfillmentStatus.PENDING,
         memoState: MemoState.PRELIMINARY_MRP,
@@ -1051,6 +1091,7 @@ export class OrdersService {
         data: {
           tierId: wholesaleTier ? wholesaleTier.id : customer.customerProfile?.tierId!,
           creditLimit: Math.max(100000, customer.customerProfile?.creditLimit || 0),
+          allowedCategories: 'ALL',
         },
       }),
     ]);
@@ -1073,6 +1114,68 @@ export class OrdersService {
     return {
       success: true,
       message: `${customer.name} (${customer.customerProfile?.shopName}) upgraded to Wholesaler with Tier A pricing!`,
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+  // 10-A. Wholesaler Dashboard Summary (Phase 3)
+  // ---------------------------------------------------------------------------
+  async getWholesaleDashboard(userId: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        customerProfile: {
+          include: { tier: true },
+        },
+        orders: {
+          where: { platformStatus: 'COMPLETE_SALE' },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Wholesale user not found');
+    }
+
+    const profile = user.customerProfile;
+    const completedOrders = user.orders || [];
+    const monthlySales = completedOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+    const upgradeTarget = 250000; // Target for Tier VIP volume incentive
+    const progressPercent = Math.min(100, Math.round((monthlySales / upgradeTarget) * 100));
+
+    const activePreOrdersCount = await this.prisma.preOrder.count({
+      where: {
+        userId,
+        status: { in: ['PENDING', 'SOURCING'] },
+      },
+    });
+
+    let allowedCategoriesList = ['ALL'];
+    if (profile?.allowedCategories && profile.allowedCategories !== 'ALL') {
+      try {
+        allowedCategoriesList = profile.allowedCategories.startsWith('[')
+          ? JSON.parse(profile.allowedCategories)
+          : profile.allowedCategories.split(',').map((s) => s.trim());
+      } catch (e) {
+        allowedCategoriesList = profile.allowedCategories.split(',').map((s) => s.trim());
+      }
+    }
+
+    return {
+      userId: user.id,
+      shopName: profile?.shopName || user.name,
+      ownerName: profile?.ownerName || user.name,
+      currentTierId: profile?.tierId || '',
+      currentTierCode: profile?.tier?.code || 'TIER_A',
+      currentTierName: profile?.tier?.name || 'Tier A Wholesale',
+      monthlySalesVolume: PricingEngine.roundToTwoDecimals(monthlySales),
+      tierUpgradeTarget: upgradeTarget,
+      upgradeProgressPercent: progressPercent,
+      creditLimit: profile?.creditLimit || 0,
+      creditBalance: profile?.creditBalance || 0,
+      allowedCategories: allowedCategoriesList,
+      totalOrdersCount: completedOrders.length,
+      activePreOrdersCount,
     };
   }
 
