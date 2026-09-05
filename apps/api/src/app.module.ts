@@ -18,6 +18,7 @@ import { PreOrdersModule } from './modules/pre-orders/pre-orders.module';
 import { StockModule } from './modules/stock/stock.module';
 import { MpoModule } from './modules/mpo/mpo.module';
 import { PublicModule } from './modules/public/public.module';
+import { ResellerModule } from './modules/reseller/reseller.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { PublicModule } from './modules/public/public.module';
     StockModule,
     MpoModule,
     PublicModule,
+    ResellerModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

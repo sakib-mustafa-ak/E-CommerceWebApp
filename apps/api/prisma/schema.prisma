@@ -40,6 +40,9 @@ model User {
   wishlist             Wishlist[]
   digitalTokens        DigitalDownloadToken[]
   behaviorLogs         UserBehaviorLog[]
+  wholesalerPublicListings WholesalerPublicListing[]
+  resellerLedgerEntries ResellerCommissionLedgerEntry[]
+  resellerStatements   ResellerMonthlyStatement[]
   auditLogs            AuditLog[]
 }
 
@@ -128,6 +131,15 @@ model CustomerProfile {
   // Phase 4 Stock Management Access Control (Granted explicitly by Admin)
   hasStockModuleAccess Boolean      @default(false)
   
+  // Phase 7 Wholesalers Selling to the Public
+  isPublicResellerEnabled Boolean      @default(false)
+  resellerCommissionRate  Float        @default(2.0) // Commission % added on top (e.g. 2.0%)
+  resellerDefaultBranding String       @default("WHITE_LABEL") // WHITE_LABEL, WHOLESALER_BRAND
+  totalResellerSalesCount Int          @default(0)
+  totalResellerGrossVolume Float       @default(0)
+  totalResellerCommissionEarned Float  @default(0)
+  totalResellerNetOwed    Float        @default(0)
+
   user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   tier                 PricingTier  @relation(fields: [tierId], references: [id])
   createdAt            DateTime     @default(now())
@@ -261,6 +273,7 @@ model Product {
   reviews                 Review[]
   wishlistItems           Wishlist[]
   digitalTokens           DigitalDownloadToken[]
+  wholesalerPublicListings WholesalerPublicListing[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -465,8 +478,15 @@ model OrderItem {
   fulfilledByStaffName       String?
   fulfilledAt                DateTime?
 
+  // Phase 7 Wholesaler Reselling fields
+  wholesalerPublicListingId  String?
+  resellerWholesalerId       String?
+  wholesalerBasePrice        Float?
+  platformCommissionAmount   Float?
+
   order                      Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product                    Product   @relation(fields: [productId], references: [id])
+  resellerListing            WholesalerPublicListing? @relation(fields: [wholesalerPublicListingId], references: [id])
 }
 
 // Case-by-case manual return judgment request (Phase 2)
@@ -847,6 +867,98 @@ model UserBehaviorLog {
   @@index([eventType])
   @@index([productId])
   @@index([createdAt])
+}
+
+// Phase 7: Wholesaler Reselling in Public Market
+model WholesalerPublicListing {
+  id                    String      @id @default(uuid())
+  wholesalerId          String
+  productId             String
+  wholesalerBasePrice   Float       // Wholesaler net requested price (e.g. 500 BDT)
+  commissionRate        Float       @default(2.0) // Platform commission % (e.g. 2.0%)
+  commissionAmount      Float       // e.g. 10 BDT
+  calculatedPublicPrice Float       // e.g. 510 BDT
+  stockQuantity         Int         @default(0) // Available inventory listed for public sale
+  brandingMode          String      @default("WHITE_LABEL") // WHITE_LABEL, WHOLESALER_BRAND
+  status                String      @default("PENDING_REVIEW") // PENDING_REVIEW, APPROVED, REJECTED, PAUSED
+  reviewNotes           String?
+  reviewedByStaffId     String?
+  reviewedAt            DateTime?
+  totalSoldUnits        Int         @default(0)
+  totalGrossSales       Float       @default(0)
+  totalCommissionPaid   Float       @default(0)
+  isSuspended           Boolean     @default(false)
+  suspensionReason      String?
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  wholesaler            User        @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  product               Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems            OrderItem[]
+  ledgerEntries         ResellerCommissionLedgerEntry[]
+
+  @@index([wholesalerId])
+  @@index([productId])
+  @@index([status])
+}
+
+model ResellerCommissionLedgerEntry {
+  id                     String      @id @default(uuid())
+  entryNumber            String      @unique // RLED-2026-00001
+  wholesalerId           String
+  listingId              String?
+  orderId                String?
+  orderItemId            String?
+  statementId            String?
+  entryType              String      // SALE_COMMISSION, RETURN_COMMISSION_REVERSAL, MANUAL_ADJUSTMENT, SETTLEMENT_PAYOUT
+  quantity               Int         @default(1)
+  wholesalerBaseAmount   Float       // Net owed to wholesaler (e.g. 500)
+  platformCommissionRate Float       // e.g. 2.0%
+  platformCommission     Float       // e.g. +10 on sale, -10 on return
+  grossAmount            Float       // e.g. 510 on sale, -510 on return
+  note                   String?
+  createdAt              DateTime    @default(now())
+
+  wholesaler             User                     @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  listing                WholesalerPublicListing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+  statement              ResellerMonthlyStatement? @relation(fields: [statementId], references: [id], onDelete: SetNull)
+
+  @@index([wholesalerId])
+  @@index([listingId])
+  @@index([statementId])
+  @@index([entryType])
+  @@index([createdAt])
+}
+
+model ResellerMonthlyStatement {
+  id                     String      @id @default(uuid())
+  statementNumber        String      @unique // STMT-2026-09-0001
+  wholesalerId           String
+  billingPeriodMonth     Int         // 1 - 12
+  billingPeriodYear      Int         // 2026
+  totalSalesCount        Int         @default(0)
+  totalSoldUnits         Int         @default(0)
+  grossSalesVolume       Float       @default(0)
+  totalCommissionOwed    Float       @default(0)
+  netWholesalerPayout    Float       @default(0)
+  totalReturnsDeduction  Float       @default(0)
+  commissionRefundAmount Float       @default(0)
+  closingBalance         Float       @default(0)
+  status                 String      @default("PENDING_RECONCILIATION") // PENDING_RECONCILIATION, ACKNOWLEDGED_PAID, DISPUTED, SETTLED
+  wholesalerResponseAt   DateTime?
+  wholesalerNote         String?
+  adminSettlementNote    String?
+  settledAt              DateTime?
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+
+  wholesaler             User        @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  ledgerEntries          ResellerCommissionLedgerEntry[]
+
+  @@unique([wholesalerId, billingPeriodYear, billingPeriodMonth])
+  @@index([wholesalerId])
+  @@index([status])
+  @@index([billingPeriodYear, billingPeriodMonth])
 }
 
 

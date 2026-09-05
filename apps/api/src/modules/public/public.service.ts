@@ -104,6 +104,16 @@ export class PublicService {
       subtotal += originalLineTotal;
       totalDiscount += lineDiscount;
 
+      // Phase 7: Check if there is an approved active Wholesaler Public Listing
+      const resellerListing = await this.prisma.wholesalerPublicListing.findFirst({
+        where: {
+          productId: product.id,
+          status: 'APPROVED',
+          isSuspended: false,
+          stockQuantity: { gt: 0 },
+        },
+      });
+
       orderItemsData.push({
         productId: product.id,
         unitType: product.unit.startsWith('Box') ? 'BOX' : 'STRIP',
@@ -116,6 +126,19 @@ export class PublicService {
         finalUnitPrice: unitPrice,
         appliedUnitPrice: unitPrice,
         totalPrice: lineTotal,
+        wholesalerPublicListingId: resellerListing ? resellerListing.id : null,
+        resellerWholesalerId: resellerListing ? resellerListing.wholesalerId : null,
+        wholesalerBasePrice: resellerListing ? resellerListing.wholesalerBasePrice : null,
+        platformCommissionAmount: resellerListing ? resellerListing.commissionAmount : null,
+        _resellerMeta: resellerListing ? {
+          listingId: resellerListing.id,
+          wholesalerId: resellerListing.wholesalerId,
+          basePrice: resellerListing.wholesalerBasePrice,
+          commissionRate: resellerListing.commissionRate,
+          commissionAmount: resellerListing.commissionAmount,
+          calculatedPublicPrice: resellerListing.calculatedPublicPrice,
+          quantity: itemDto.quantity,
+        } : null,
       });
 
       // Digital token preparation
@@ -143,9 +166,16 @@ export class PublicService {
     const advanceDepositRequired = isAdvanceDepositRequired ? 3000 : 0;
 
     const count = await this.prisma.order.count();
-    const orderNumber = `ORD-PUB-${new Date().getFullYear()}-${String(count + 1).padStart(5, '0')}`;
+    const entropy = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `ORD-PUB-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}-${entropy}`;
 
     const isGuest = !userId || dto.isGuest;
+
+    // Clean orderItemsData for Prisma insert
+    const prismaOrderItems = orderItemsData.map((item) => {
+      const { _resellerMeta, ...rest } = item;
+      return rest;
+    });
 
     const order = await this.prisma.$transaction(async (tx) => {
       const createdOrder = await tx.order.create({
@@ -177,10 +207,62 @@ export class PublicService {
           orderNotes: dto.orderNotes || null,
           prescriptionUrl: dto.prescriptionUrl || null,
           items: {
-            create: orderItemsData,
+            create: prismaOrderItems,
           },
         },
       });
+
+      // Phase 7: Process Reseller inventory deduction, ledger entry, and profile accumulation
+      for (const item of orderItemsData) {
+        if (item._resellerMeta) {
+          const meta = item._resellerMeta;
+          const lineGross = meta.calculatedPublicPrice * meta.quantity;
+          const lineCommission = meta.commissionAmount * meta.quantity;
+          const lineBase = meta.basePrice * meta.quantity;
+
+          // 1. Decrement listing stock & increment sales stats
+          await tx.wholesalerPublicListing.update({
+            where: { id: meta.listingId },
+            data: {
+              stockQuantity: { decrement: meta.quantity },
+              totalSoldUnits: { increment: meta.quantity },
+              totalGrossSales: { increment: lineGross },
+              totalCommissionPaid: { increment: lineCommission },
+            },
+          });
+
+          // 2. Create running commission ledger entry
+          const ledgerCount = await tx.resellerCommissionLedgerEntry.count();
+          const entryNumber = `RLED-${new Date().getFullYear()}-${String(ledgerCount + 1).padStart(5, '0')}`;
+
+          await tx.resellerCommissionLedgerEntry.create({
+            data: {
+              entryNumber,
+              wholesalerId: meta.wholesalerId,
+              listingId: meta.listingId,
+              orderId: createdOrder.id,
+              entryType: 'SALE_COMMISSION',
+              quantity: meta.quantity,
+              wholesalerBaseAmount: lineBase,
+              platformCommissionRate: meta.commissionRate,
+              platformCommission: lineCommission,
+              grossAmount: lineGross,
+              note: `Reseller public sale for Order #${orderNumber}`,
+            },
+          });
+
+          // 3. Update Wholesaler running customer profile metrics
+          await tx.customerProfile.update({
+            where: { userId: meta.wholesalerId },
+            data: {
+              totalResellerSalesCount: { increment: 1 },
+              totalResellerGrossVolume: { increment: lineGross },
+              totalResellerCommissionEarned: { increment: lineCommission },
+              totalResellerNetOwed: { increment: lineBase },
+            },
+          });
+        }
+      }
 
       // Insert digital download tokens if any
       const createdTokens: any[] = [];

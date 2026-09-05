@@ -141,6 +141,12 @@ export enum AuditAction {
   ORDER_CANCELLED = 'ORDER_CANCELLED',
   ORDER_REFUSED_AT_DELIVERY = 'ORDER_REFUSED_AT_DELIVERY',
   CUSTOMER_PROMOTED_TO_WHOLESALE = 'CUSTOMER_PROMOTED_TO_WHOLESALE',
+  WHOLESALER_PUBLIC_LISTING_SUBMITTED = 'WHOLESALER_PUBLIC_LISTING_SUBMITTED',
+  WHOLESALER_PUBLIC_LISTING_APPROVED = 'WHOLESALER_PUBLIC_LISTING_APPROVED',
+  WHOLESALER_PUBLIC_LISTING_REJECTED = 'WHOLESALER_PUBLIC_LISTING_REJECTED',
+  RESELLER_STATEMENT_GENERATED = 'RESELLER_STATEMENT_GENERATED',
+  RESELLER_STATEMENT_RECONCILED = 'RESELLER_STATEMENT_RECONCILED',
+  RESELLER_STATEMENT_SETTLED = 'RESELLER_STATEMENT_SETTLED',
 }
 
 export interface DynamicPermission {
@@ -1016,6 +1022,103 @@ export interface UserBehaviorEventDto {
   guestSessionId?: string;
   metadata?: Record<string, any>;
 }
+
+// -----------------------------------------------------------------------------
+// Phase 7: Wholesalers Selling to Public Types
+// -----------------------------------------------------------------------------
+
+export enum ResellerBrandingMode {
+  WHITE_LABEL = 'WHITE_LABEL',
+  WHOLESALER_BRAND = 'WHOLESALER_BRAND',
+}
+
+export interface WholesalerPublicListingCreateDto {
+  productId: string;
+  wholesalerBasePrice: number;
+  stockQuantity: number;
+  brandingMode?: ResellerBrandingMode;
+  notes?: string;
+}
+
+export interface WholesalerListingReviewDto {
+  status: 'APPROVED' | 'REJECTED' | 'PAUSED';
+  adjustedCommissionRate?: number;
+  adjustedBrandingMode?: ResellerBrandingMode;
+  reviewNotes?: string;
+}
+
+export interface WholesalerPublicListingResponse {
+  id: string;
+  wholesalerId: string;
+  wholesalerShopName: string;
+  productId: string;
+  productName: string;
+  productGenericName: string;
+  companyName: string;
+  wholesalerBasePrice: number;
+  commissionRate: number;
+  commissionAmount: number;
+  calculatedPublicPrice: number;
+  stockQuantity: number;
+  brandingMode: ResellerBrandingMode;
+  sellerDisplayName: string;
+  status: string;
+  reviewNotes?: string;
+  totalSoldUnits: number;
+  totalGrossSales: number;
+  totalCommissionPaid: number;
+  isSuspended: boolean;
+  createdAt: string;
+}
+
+export interface ResellerLedgerEntryResponse {
+  id: string;
+  entryNumber: string;
+  wholesalerId: string;
+  wholesalerShopName: string;
+  listingId?: string;
+  productName?: string;
+  orderId?: string;
+  entryType: string;
+  quantity: number;
+  wholesalerBaseAmount: number;
+  platformCommissionRate: number;
+  platformCommission: number;
+  grossAmount: number;
+  statementNumber?: string;
+  note?: string;
+  createdAt: string;
+}
+
+export interface ResellerMonthlyStatementResponse {
+  id: string;
+  statementNumber: string;
+  wholesalerId: string;
+  wholesalerShopName: string;
+  billingPeriodMonth: number;
+  billingPeriodYear: number;
+  totalSalesCount: number;
+  totalSoldUnits: number;
+  grossSalesVolume: number;
+  totalCommissionOwed: number;
+  netWholesalerPayout: number;
+  totalReturnsDeduction: number;
+  commissionRefundAmount: number;
+  closingBalance: number;
+  status: string;
+  wholesalerResponseAt?: string;
+  wholesalerNote?: string;
+  adminSettlementNote?: string;
+  settledAt?: string;
+  createdAt: string;
+}
+
+export interface ResellerStatementReconcileDto {
+  status: 'ACKNOWLEDGED_PAID' | 'DISPUTED';
+  note?: string;
+}
+
+
 
 
 

@@ -261,6 +261,63 @@ export class ReturnsService {
           });
         }
 
+        // Phase 7: Wholesaler Reseller Return Commission Reversal
+        const originalOrderItem = await this.prisma.orderItem.findUnique({
+          where: { id: item.orderItemId },
+          include: { resellerListing: true },
+        });
+
+        if (originalOrderItem?.wholesalerPublicListingId && originalOrderItem.resellerWholesalerId) {
+          const returnedUnits = item.returnedQuantity;
+          const unitBase = originalOrderItem.wholesalerBasePrice || 0;
+          const unitComm = originalOrderItem.platformCommissionAmount || 0;
+          const returnedBase = PricingEngine.roundToTwoDecimals(unitBase * returnedUnits);
+          const returnedComm = PricingEngine.roundToTwoDecimals(unitComm * returnedUnits);
+          const returnedGross = PricingEngine.roundToTwoDecimals((unitBase + unitComm) * returnedUnits);
+
+          // Re-increment reseller listing stock
+          await this.prisma.wholesalerPublicListing.update({
+            where: { id: originalOrderItem.wholesalerPublicListingId },
+            data: {
+              stockQuantity: { increment: returnedUnits },
+              totalSoldUnits: { decrement: returnedUnits },
+              totalGrossSales: { decrement: returnedGross },
+              totalCommissionPaid: { decrement: returnedComm },
+            },
+          });
+
+          // Create ledger reversal entry
+          const ledgerCount = await this.prisma.resellerCommissionLedgerEntry.count();
+          const entryNumber = `RLED-REV-${new Date().getFullYear()}-${String(ledgerCount + 1).padStart(5, '0')}`;
+
+          await this.prisma.resellerCommissionLedgerEntry.create({
+            data: {
+              entryNumber,
+              wholesalerId: originalOrderItem.resellerWholesalerId,
+              listingId: originalOrderItem.wholesalerPublicListingId,
+              orderId: returnRequest.orderId,
+              orderItemId: originalOrderItem.id,
+              entryType: 'RETURN_COMMISSION_REVERSAL',
+              quantity: returnedUnits,
+              wholesalerBaseAmount: -returnedBase,
+              platformCommissionRate: originalOrderItem.resellerListing?.commissionRate || 2.0,
+              platformCommission: -returnedComm,
+              grossAmount: -returnedGross,
+              note: `Commission reversal on approved Return #${returnRequest.returnNumber}`,
+            },
+          });
+
+          // Deduct from wholesaler running metrics
+          await this.prisma.customerProfile.update({
+            where: { userId: originalOrderItem.resellerWholesalerId },
+            data: {
+              totalResellerGrossVolume: { decrement: returnedGross },
+              totalResellerCommissionEarned: { decrement: returnedComm },
+              totalResellerNetOwed: { decrement: returnedBase },
+            },
+          });
+        }
+
         // Mark line item stock reversed
         await this.prisma.returnItem.update({
           where: { id: item.id },

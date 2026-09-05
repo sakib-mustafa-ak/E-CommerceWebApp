@@ -22,6 +22,7 @@ import {
   Clock,
   Plus,
   Minus,
+  Store,
 } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { useAuth } from '@/lib/auth-context';
@@ -33,6 +34,7 @@ export default function ProductDetailPage() {
   const { user } = useAuth();
 
   const [product, setProduct] = useState<any>(null);
+  const [resellerListing, setResellerListing] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -61,14 +63,18 @@ export default function ProductDetailPage() {
           setSelectedVariant(prod.variants[0]);
         }
 
-        // Fetch reviews & recommendations
-        const [revRes, recRes] = await Promise.all([
+        // Fetch reviews, recommendations & public reseller listing
+        const [revRes, recRes, resellerRes] = await Promise.all([
           api.get(`/public/products/${prod.id}/reviews`).catch(() => ({ data: [] })),
           api.get(`/public/products/${prod.id}/recommendations?limit=4`).catch(() => ({ data: [] })),
+          api.get(`/reseller/listings/public?productId=${prod.id}`).catch(() => ({ data: [] })),
         ]);
 
         setReviews(revRes.data || []);
         setRecommendations(recRes.data || []);
+        if (resellerRes.data && resellerRes.data.length > 0) {
+          setResellerListing(resellerRes.data[0]);
+        }
 
         // Log product view event
         api.post('/public/behavior-log', {
@@ -302,6 +308,14 @@ export default function ProductDetailPage() {
               <span className="font-bold text-white font-mono">{product.averageRating || '5.0'}</span>
               <span className="text-slate-500">({product.totalReviewsCount || reviews.length} verified reviews)</span>
             </div>
+
+            {/* Verified Seller Attribution */}
+            {resellerListing && (
+              <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/25 shadow-sm">
+                <Store className="w-4 h-4 text-indigo-400" />
+                <span>Verified Seller: <strong className="text-white">{resellerListing.sellerDisplayName}</strong></span>
+              </div>
+            )}
           </div>
 
           {/* Pricing Box with Quantity Discount Stepper */}
