@@ -19,6 +19,7 @@ import { StockModule } from './modules/stock/stock.module';
 import { MpoModule } from './modules/mpo/mpo.module';
 import { PublicModule } from './modules/public/public.module';
 import { ResellerModule } from './modules/reseller/reseller.module';
+import { GamingModule } from './modules/gaming/gaming.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ResellerModule } from './modules/reseller/reseller.module';
     MpoModule,
     PublicModule,
     ResellerModule,
+    GamingModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

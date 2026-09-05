@@ -43,6 +43,7 @@ model User {
   wholesalerPublicListings WholesalerPublicListing[]
   resellerLedgerEntries ResellerCommissionLedgerEntry[]
   resellerStatements   ResellerMonthlyStatement[]
+  gameOrders           GameTopUpOrder[]
   auditLogs            AuditLog[]
 }
 
@@ -960,6 +961,92 @@ model ResellerMonthlyStatement {
   @@index([status])
   @@index([billingPeriodYear, billingPeriodMonth])
 }
+
+// Phase 8: Gaming (Diamond Top-Ups & Game Voucher Recharge)
+model Game {
+  id                      String              @id @default(uuid())
+  name                    String              // e.g. "Free Fire", "Mobile Legends", "PUBG Mobile"
+  slug                    String              @unique
+  publisher               String              // e.g. "Garena", "Moonton", "Tencent Games"
+  category                String              @default("BATTLE_ROYALE") // BATTLE_ROYALE, MOBA, RPG, FPS, CASUAL
+  imageUrl                String?
+  bannerUrl               String?
+  requiresZoneId          Boolean             @default(false)
+  zoneIdLabel             String?             // e.g. "Zone ID (4-5 digits)"
+  requiresServer          Boolean             @default(false)
+  serverOptionsJson       String?             // JSON array e.g. ["Asia", "Europe", "America"]
+  idFormatValidationRegex String?             // Regex string e.g. "^[0-9]{8,12}$"
+  idInstructions          String?             // e.g. "Find your Player ID in Profile > Basic Info."
+  fulfillmentMode         String              @default("AUTO_API") // AUTO_API, MANUAL_STAFF
+  sortOrder               Int                 @default(0)
+  isActive                Boolean             @default(true)
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+
+  packages                GameTopUpPackage[]
+  orders                  GameTopUpOrder[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model GameTopUpPackage {
+  id           String           @id @default(uuid())
+  gameId       String
+  name         String           // e.g. "100 Diamonds + 10 Bonus", "Weekly Diamond Pass"
+  diamondCount Int              // Primary diamonds / UC / VP count
+  bonusCount   Int              @default(0)
+  priceBdt     Float            // Price in BDT (e.g. 85.00)
+  badgeText    String?          // e.g. "HOT", "BEST VALUE", "+10% BONUS"
+  iconUrl      String?
+  sortOrder    Int              @default(0)
+  isActive     Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  game         Game             @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  orders       GameTopUpOrder[]
+
+  @@index([gameId])
+  @@index([isActive])
+}
+
+model GameTopUpOrder {
+  id                     String           @id @default(uuid())
+  orderNumber            String           @unique // ORD-GAME-2026-00001
+  userId                 String?
+  guestEmail             String?
+  guestPhone             String?
+  gameId                 String
+  packageId              String
+  playerId               String
+  zoneId                 String?
+  serverRegion           String?
+  playerNickname         String?          // Verified in-game name
+  priceBdt               Float
+  paymentMethod          String           // BKASH, NAGAD, CARD (strictly no COD)
+  paymentStatus          String           @default("PAID")
+  fulfillmentStatus      String           @default("DELIVERED") // PENDING, PROCESSING, DELIVERED, FAILED
+  fulfillmentMode        String           @default("AUTO_API") // AUTO_API, MANUAL_STAFF
+  providerTransactionRef String?          // Top-up provider / recharge API reference ID
+  fulfilledByStaffId     String?
+  fulfilledAt            DateTime?
+  notes                  String?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+
+  user                   User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
+  game                   Game             @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  package                GameTopUpPackage @relation(fields: [packageId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([gameId])
+  @@index([packageId])
+  @@index([fulfillmentStatus])
+  @@index([orderNumber])
+  @@index([createdAt])
+}
+
 
 
 

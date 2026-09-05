@@ -147,6 +147,12 @@ export enum AuditAction {
   RESELLER_STATEMENT_GENERATED = 'RESELLER_STATEMENT_GENERATED',
   RESELLER_STATEMENT_RECONCILED = 'RESELLER_STATEMENT_RECONCILED',
   RESELLER_STATEMENT_SETTLED = 'RESELLER_STATEMENT_SETTLED',
+  GAME_CATALOG_CREATED = 'GAME_CATALOG_CREATED',
+  GAME_CATALOG_UPDATED = 'GAME_CATALOG_UPDATED',
+  GAME_PACKAGE_CREATED = 'GAME_PACKAGE_CREATED',
+  GAME_PACKAGE_UPDATED = 'GAME_PACKAGE_UPDATED',
+  GAME_TOPUP_FULFILLED = 'GAME_TOPUP_FULFILLED',
+  GAME_TOPUP_FAILED = 'GAME_TOPUP_FAILED',
 }
 
 export interface DynamicPermission {
@@ -1117,6 +1123,142 @@ export interface ResellerStatementReconcileDto {
   status: 'ACKNOWLEDGED_PAID' | 'DISPUTED';
   note?: string;
 }
+
+// -----------------------------------------------------------------------------
+// Phase 8: Gaming (Diamond Top-Ups & Game Voucher Recharge)
+// -----------------------------------------------------------------------------
+
+export enum GameFulfillmentMode {
+  AUTO_API = 'AUTO_API',
+  MANUAL_STAFF = 'MANUAL_STAFF',
+}
+
+export enum GameFulfillmentStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  DELIVERED = 'DELIVERED',
+  FAILED = 'FAILED',
+}
+
+export interface GameCreateDto {
+  name: string;
+  slug: string;
+  publisher: string;
+  category: string;
+  imageUrl?: string;
+  bannerUrl?: string;
+  requiresZoneId?: boolean;
+  zoneIdLabel?: string;
+  requiresServer?: boolean;
+  serverOptionsJson?: string; // JSON array of servers: ["Asia", "Europe", "North America"]
+  idFormatValidationRegex?: string;
+  idInstructions?: string;
+  fulfillmentMode?: GameFulfillmentMode;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+export interface GamePackageCreateDto {
+  gameId: string;
+  name: string;
+  diamondCount: number;
+  bonusCount?: number;
+  priceBdt: number;
+  badgeText?: string;
+  iconUrl?: string;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+export interface PlayerIdValidationDto {
+  gameSlug: string;
+  playerId: string;
+  zoneId?: string;
+  serverRegion?: string;
+}
+
+export interface PlayerIdValidationResponse {
+  isValid: boolean;
+  playerId: string;
+  zoneId?: string;
+  serverRegion?: string;
+  playerNickname?: string;
+  message?: string;
+}
+
+export interface GameTopUpCheckoutDto {
+  gameSlug: string;
+  packageId: string;
+  playerId: string;
+  zoneId?: string;
+  serverRegion?: string;
+  paymentMethod: 'BKASH' | 'NAGAD' | 'CARD'; // Explicitly no COD
+  guestEmail?: string;
+  guestPhone?: string;
+}
+
+export interface GamePackageResponse {
+  id: string;
+  gameId: string;
+  name: string;
+  diamondCount: number;
+  bonusCount: number;
+  totalDiamonds: number;
+  priceBdt: number;
+  badgeText?: string;
+  iconUrl?: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+export interface GameDetailResponse {
+  id: string;
+  name: string;
+  slug: string;
+  publisher: string;
+  category: string;
+  imageUrl?: string;
+  bannerUrl?: string;
+  requiresZoneId: boolean;
+  zoneIdLabel?: string;
+  requiresServer: boolean;
+  serverOptions: string[];
+  idFormatValidationRegex?: string;
+  idInstructions?: string;
+  fulfillmentMode: GameFulfillmentMode;
+  sortOrder: number;
+  isActive: boolean;
+  packages: GamePackageResponse[];
+}
+
+export interface GameTopUpOrderResponse {
+  id: string;
+  orderNumber: string;
+  gameName: string;
+  gameSlug: string;
+  packageName: string;
+  diamondCount: number;
+  bonusCount: number;
+  playerId: string;
+  zoneId?: string;
+  serverRegion?: string;
+  playerNickname?: string;
+  priceBdt: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  fulfillmentStatus: GameFulfillmentStatus;
+  fulfillmentMode: GameFulfillmentMode;
+  providerTransactionRef?: string;
+  fulfilledAt?: string;
+  createdAt: string;
+}
+
+export interface GameFulfillmentActionDto {
+  status: 'DELIVERED' | 'FAILED';
+  providerTransactionRef?: string;
+  notes?: string;
+}
+
 
 
 

@@ -15,6 +15,7 @@ import {
   User,
   ShoppingBag,
   Sparkles,
+  Gamepad2,
 } from 'lucide-react';
 
 export function Navbar() {
@@ -90,6 +91,14 @@ export function Navbar() {
               className="text-sm font-medium text-slate-300 hover:text-sky-400 transition-colors"
             >
               Storefront
+            </Link>
+
+            <Link
+              href="/gaming"
+              className="text-sm font-bold text-indigo-400 hover:text-indigo-300 transition-colors flex items-center gap-1.5"
+            >
+              <Gamepad2 className="w-4 h-4" />
+              Gaming Top-Up
             </Link>
 
             {/* Paikari Portal Link (Visible to Paikari, Staff, Admin) */}
