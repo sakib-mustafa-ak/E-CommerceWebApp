@@ -908,5 +908,115 @@ export interface PreOrderDraftMemoUpdateDto {
   supplyStatus?: string;
 }
 
+// -----------------------------------------------------------------------------
+// Phase 6: Public Market, Checkout, Digital Downloads & Reviews Types
+// -----------------------------------------------------------------------------
+
+export type ProductType = 'PHYSICAL' | 'DIGITAL' | 'SERVICE';
+
+export interface QuantityDiscountTier {
+  minQty: number;
+  discountPercent: number;
+}
+
+export interface PublicCheckoutItemDto {
+  productId: string;
+  quantity: number;
+  variant?: string;
+  unitPrice?: number;
+}
+
+export interface PublicCheckoutDto {
+  items: PublicCheckoutItemDto[];
+  isGuest?: boolean;
+  guestName?: string;
+  guestEmail?: string;
+  guestPhone?: string;
+  fulfillmentMethod: 'HOME_DELIVERY' | 'SELF_PICKUP' | 'DIGITAL_DOWNLOAD';
+  deliveryAddress?: string;
+  paymentMethod: 'COD' | 'BKASH' | 'CARD' | 'ADVANCE_DEPOSIT';
+  prescriptionUrl?: string;
+  orderNotes?: string;
+}
+
+export interface PublicCheckoutResponse {
+  orderId: string;
+  orderNumber: string;
+  totalAmount: number;
+  subtotal: number;
+  discountAmount: number;
+  deliveryFee: number;
+  advanceDepositRequired: number;
+  isAdvanceDepositRequired: boolean;
+  orderType: ProductType;
+  digitalDownloadTokens?: {
+    productId: string;
+    productName: string;
+    token: string;
+    downloadUrl: string;
+    expiresAt: string;
+    maxDownloads: number;
+  }[];
+  createdAt: string;
+}
+
+export interface DigitalDownloadTokenResponse {
+  token: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  downloadCount: number;
+  maxDownloads: number;
+  remainingDownloads: number;
+  expiresAt: string;
+  isExpired: boolean;
+  isLimitReached: boolean;
+  fileUrl?: string;
+}
+
+export interface ProductReviewCreateDto {
+  productId: string;
+  rating: number; // 1 to 5
+  comment: string;
+  videoUrl?: string;
+  imageUrl?: string;
+  guestName?: string;
+}
+
+export interface ProductReviewResponse {
+  id: string;
+  productId: string;
+  userId?: string | null;
+  reviewerName: string;
+  rating: number;
+  comment: string;
+  videoUrl?: string | null;
+  imageUrl?: string | null;
+  isVerifiedPurchase: boolean;
+  createdAt: string;
+}
+
+export interface WishlistItemResponse {
+  id: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  mrp: number;
+  unit: string;
+  isOfferParaLiveStock: boolean;
+  offerParaStockQty: number;
+  isInStock: boolean;
+  addedAt: string;
+}
+
+export interface UserBehaviorEventDto {
+  eventType: 'PRODUCT_VIEWED' | 'PRODUCT_ADDED_TO_CART' | 'PRODUCT_PURCHASED' | 'SEARCH_PERFORMED';
+  productId?: string;
+  guestSessionId?: string;
+  metadata?: Record<string, any>;
+}
+
+
 
 

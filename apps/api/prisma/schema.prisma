@@ -36,6 +36,10 @@ model User {
   stockSales           StockSaleRecord[]
   mpoProfile           MpoProfile?
   mpoBids              MpoBid[]
+  reviews              Review[]
+  wishlist             Wishlist[]
+  digitalTokens        DigitalDownloadToken[]
+  behaviorLogs         UserBehaviorLog[]
   auditLogs            AuditLog[]
 }
 
@@ -232,6 +236,17 @@ model Product {
   serviceBookingAvailable Boolean               @default(false)
   counterSaleEnabled      Boolean               @default(false)
 
+  // Phase 6: Public Market, Product Types & B2C Features
+  productType             String                @default("PHYSICAL") // PHYSICAL, DIGITAL, SERVICE
+  isCodAvailable          Boolean               @default(true)       // Per-product COD toggle
+  digitalFileUrl          String?
+  digitalDownloadLimit    Int                   @default(5)
+  digitalExpiryHours      Int                   @default(48)
+  quantityDiscountTiers   String?               // JSON: [{"minQty":5,"discountPercent":5},{"minQty":10,"discountPercent":8}]
+  variantsJson            String?               // JSON: [{"name":"Small","price":100},{"name":"Large","price":200}]
+  averageRating           Float                 @default(0)
+  totalReviewsCount       Int                   @default(0)
+
   generic                 Generic?              @relation(fields: [genericId], references: [id])
   company                 Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
   productOverrides        ProductOverrideRate[]
@@ -243,6 +258,9 @@ model Product {
   stockSaleItems          StockSaleItem[]
   mpoSelections           MpoProductSelection[]
   mpoListings             MpoListing[]
+  reviews                 Review[]
+  wishlistItems           Wishlist[]
+  digitalTokens           DigitalDownloadToken[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -250,6 +268,7 @@ model Product {
   @@index([name])
   @@index([dosageForm])
   @@index([companyId])
+  @@index([productType])
 }
 
 // Staging Pipeline for Medicine Bulk Imports (No Blind Imports)
@@ -338,7 +357,6 @@ model CustomerManualOverrideRate {
 model Order {
   id                      String          @id @default(uuid())
   orderNumber             String          @unique
-  userId                  String
   sectorType              String          @default("PHARMACY") // PHARMACY, WHOLESALE, OFFER_PARA, FOOD, etc.
   platformStatus          String          @default("DRAFT_SALE") // DRAFT_SALE, COMPLETE_SALE, CANCELLED, RETURNED (Rule 3)
   fulfillmentStatus       String          @default("PENDING") // PENDING, VERIFYING, PACKED, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, REFUSED_DELIVERY
@@ -390,15 +408,29 @@ model Order {
   isPreOrderDraft         Boolean         @default(false)
   preOrderSupplyStatus    String?         // PENDING_ARRIVAL, PARTIALLY_ARRIVED, CANCELLED_UNFULFILLED, FULFILLED
 
-  user                    User            @relation(fields: [userId], references: [id])
+  // Phase 6: Public Market, Guest Checkout & Digital Assets
+  isGuestOrder            Boolean         @default(false)
+  guestName               String?
+  guestEmail              String?
+  guestPhone              String?
+  orderType               String          @default("PHYSICAL") // PHYSICAL, DIGITAL, SERVICE
+  advanceDepositRequired  Float           @default(0)
+  advanceDepositPaid      Float           @default(0)
+  deliveryTrackingCode    String?
+  courierPartner          String?
+
+  userId                  String?
+  user                    User?           @relation(fields: [userId], references: [id])
   items                   OrderItem[]
   returnRequests          ReturnRequest[]
+  digitalTokens           DigitalDownloadToken[]
   createdAt               DateTime        @default(now())
   updatedAt               DateTime        @updatedAt
 
   @@index([userId])
   @@index([fulfillmentStatus])
   @@index([memoState])
+  @@index([orderType])
 }
 
 model OrderItem {
@@ -406,6 +438,7 @@ model OrderItem {
   orderId                    String
   productId                  String
   unitType                   String    @default("STRIP") // PIECE, STRIP, BOX
+  variant                    String?   // Size/Color/Flavor variant
   requestedQuantity          Int
   confirmedQuantity          Int       @default(0)
   actualReceivedQuantity     Int?      // For Pre-Order arrivals syncing
@@ -740,6 +773,82 @@ model MpoBid {
   @@index([listingId])
   @@index([wholesalerId])
 }
+
+// Phase 6: Public Market, Customer Reviews, Wishlist, Digital Tokens & Behavioral Logging
+model Review {
+  id                 String    @id @default(uuid())
+  productId          String
+  userId             String?
+  guestName          String?
+  rating             Int       @default(5) // 1 to 5
+  comment            String
+  videoUrl           String?
+  imageUrl           String?
+  isVerifiedPurchase Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  product            Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user               User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([rating])
+}
+
+model Wishlist {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+model DigitalDownloadToken {
+  id            String    @id @default(uuid())
+  token         String    @unique // Secure random token
+  orderId       String
+  productId     String
+  userId        String?
+  guestEmail    String?
+  downloadCount Int       @default(0)
+  maxDownloads  Int       @default(5)
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+
+  order         Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user          User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([token])
+  @@index([orderId])
+  @@index([productId])
+}
+
+model UserBehaviorLog {
+  id             String    @id @default(uuid())
+  userId         String?
+  guestSessionId String?
+  eventType      String    // PRODUCT_VIEWED, PRODUCT_ADDED_TO_CART, PRODUCT_PURCHASED, SEARCH_PERFORMED
+  productId      String?
+  metadata       String?   // JSON object with additional parameters
+  createdAt      DateTime  @default(now())
+
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([guestSessionId])
+  @@index([eventType])
+  @@index([productId])
+  @@index([createdAt])
+}
+
 
 
 
