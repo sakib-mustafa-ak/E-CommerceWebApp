@@ -23,6 +23,7 @@ import { useAuth } from '@/lib/auth-context';
 
 const ADMIN_NAV = [
   { name: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
+  { name: 'Medicine Database Staging', href: '/admin/medicine-staging', icon: Package },
   { name: 'Customers & Pricing Tiers', href: '/admin/customers', icon: Users },
   { name: 'Staff Roles & Matrix', href: '/admin/roles', icon: KeyRound },
   { name: 'Application Queue', href: '/admin/applications', icon: Inbox },

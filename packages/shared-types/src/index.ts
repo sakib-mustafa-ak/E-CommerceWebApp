@@ -71,6 +71,7 @@ export enum AuditAction {
   IP_RULE_DELETED = 'IP_RULE_DELETED',
   STAFF_ROLE_ASSIGNED = 'STAFF_ROLE_ASSIGNED',
   BULK_CUSTOMER_IMPORTED = 'BULK_CUSTOMER_IMPORTED',
+  MEDICINE_BATCH_PUBLISHED = 'MEDICINE_BATCH_PUBLISHED',
   LOGIN_FAILED_LOCKOUT = 'LOGIN_FAILED_LOCKOUT',
 }
 
@@ -114,7 +115,7 @@ export interface BulkImportCustomerRow {
   creditLimit?: number;
   codLimit?: number;
   deliveryFeeThreshold?: number;
-  manualRatesJson?: string; // JSON string of [{ productId, rateType, value }]
+  manualRatesJson?: string;
 }
 
 export interface BulkImportResult {
@@ -123,4 +124,94 @@ export interface BulkImportResult {
   failedCount: number;
   errors: { row: number; reason: string; data?: any }[];
   importedCustomerIds: string[];
+}
+
+// -----------------------------------------------------------------------------
+// MedEx-Style Pharmaceutical Engine Types (Phase 0-A)
+// -----------------------------------------------------------------------------
+
+export interface GenericInfo {
+  id: string;
+  name: string;
+  slug: string;
+  therapeuticClass?: string;
+  description?: string;
+  indications?: string;
+  dosageGuidelines?: string;
+  sideEffects?: string;
+  precautions?: string;
+  pregnancyCategory?: string;
+}
+
+export interface MedicineProductSummary {
+  id: string;
+  name: string;
+  slug: string;
+  genericId?: string;
+  genericName: string;
+  companyId: string;
+  companyName: string;
+  companyCode: string;
+  dosageForm: string;
+  strength: string;
+  mrp: number;
+  unit: string;
+  packSize?: string;
+  category: string;
+  description?: string;
+  isPrescriptionRequired: boolean;
+  isOfferParaLiveStock: boolean;
+  offerParaStockQty: number;
+  isPharmaTrackOpaque: boolean;
+}
+
+export interface GenericAlternativeResult {
+  currentProduct: {
+    id: string;
+    name: string;
+    genericName: string;
+    dosageForm: string;
+    strength: string;
+    mrp: number;
+    companyName: string;
+  };
+  genericInfo?: GenericInfo;
+  alternatives: {
+    productId: string;
+    brandName: string;
+    companyName: string;
+    dosageForm: string;
+    strength: string;
+    mrp: number;
+    priceDifference: number; // Positive = Cheaper than current product
+    priceDifferencePercent: number; // % savings
+    isLowerPriced: boolean;
+    isOfferParaLiveDeal: boolean;
+    offerParaStockQty?: number;
+  }[];
+}
+
+export interface MedicineSearchParams {
+  query?: string;
+  generic?: string;
+  company?: string;
+  dosageForm?: string;
+  category?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  limit?: number;
+  offset?: number;
+}
+
+export interface StagingBatchSummary {
+  id: string;
+  batchNumber: string;
+  fileName: string;
+  totalRows: number;
+  validRows: number;
+  duplicateRows: number;
+  errorRows: number;
+  status: string; // STAGED, PUBLISHED, REJECTED
+  importedBy: string;
+  createdAt: string;
 }

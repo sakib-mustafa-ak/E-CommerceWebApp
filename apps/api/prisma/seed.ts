@@ -4,16 +4,19 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding Siam\'s Aqua E-Commerce database...');
+  console.log('Seeding Siam\'s Aqua E-Commerce MedEx Pharmaceutical Database...');
 
-  // 1. Clear previous data
+  // 1. Clear previous data in proper sequence
   await prisma.auditLog.deleteMany({});
   await prisma.orderItem.deleteMany({});
   await prisma.order.deleteMany({});
   await prisma.customerManualOverrideRate.deleteMany({});
   await prisma.productOverrideRate.deleteMany({});
   await prisma.companyRate.deleteMany({});
+  await prisma.medicineStagingItem.deleteMany({});
+  await prisma.medicineStagingBatch.deleteMany({});
   await prisma.product.deleteMany({});
+  await prisma.generic.deleteMany({});
   await prisma.company.deleteMany({});
   await prisma.customerProfile.deleteMany({});
   await prisma.staffProfile.deleteMany({});
@@ -43,7 +46,7 @@ async function main() {
     { slug: 'pricing.manage_tiers', name: 'Configure Pricing Tiers', category: 'pricing' },
     { slug: 'pricing.manage_overrides', name: 'Set Customer Manual Overrides', category: 'pricing' },
     { slug: 'catalog.view_products', name: 'View Products & Inventory', category: 'catalog' },
-    { slug: 'catalog.manage_products', name: 'Create & Edit Products', category: 'catalog' },
+    { slug: 'catalog.manage_products', name: 'Create & Edit Products & Staging', category: 'catalog' },
     { slug: 'catalog.export', name: 'Export Stock Catalog CSV', category: 'catalog' },
     { slug: 'orders.view_orders', name: 'View Platform Orders', category: 'orders' },
     { slug: 'orders.fulfill', name: 'Fulfill & Dispatch Order Items', category: 'orders' },
@@ -86,21 +89,7 @@ async function main() {
           { permissionId: permMap.get('pricing.manage_tiers')! },
           { permissionId: permMap.get('pricing.manage_overrides')! },
           { permissionId: permMap.get('accounts.bulk_import')! },
-        ],
-      },
-    },
-  });
-
-  const catalogManagerRole = await prisma.role.create({
-    data: {
-      name: 'Catalog & Stock Specialist',
-      slug: 'catalog_specialist',
-      description: 'Manages products and inventory exports',
-      rolePermissions: {
-        create: [
-          { permissionId: permMap.get('catalog.view_products')! },
           { permissionId: permMap.get('catalog.manage_products')! },
-          { permissionId: permMap.get('catalog.export')! },
         ],
       },
     },
@@ -113,7 +102,7 @@ async function main() {
       name: 'Tier A (High Volume / Wholesaler)',
       description: 'Primary tier for large distributors and volume partners',
       defaultRateType: 'PERCENTAGE',
-      defaultValue: 15.0, // 15% default discount
+      defaultValue: 15.0,
     },
   });
 
@@ -123,7 +112,7 @@ async function main() {
       name: 'Tier B (Standard Paikari Retailer)',
       description: 'Standard discount tier for regular pharmacy shops',
       defaultRateType: 'PERCENTAGE',
-      defaultValue: 10.0, // 10% default discount
+      defaultValue: 10.0,
     },
   });
 
@@ -133,121 +122,423 @@ async function main() {
       name: 'Tier C (Entry Retail / New Shop)',
       description: 'Introductory tier for small village pharmacies',
       defaultRateType: 'PERCENTAGE',
-      defaultValue: 5.0, // 5% default discount
+      defaultValue: 5.0,
     },
   });
 
-  // 5. Companies & Products
+  // 5. Pharmaceutical Manufacturers
   const square = await prisma.company.create({
     data: { name: 'Square Pharmaceuticals Ltd.', code: 'SQUARE' },
   });
-
   const beximco = await prisma.company.create({
     data: { name: 'Beximco Pharmaceuticals Ltd.', code: 'BEXIMCO' },
   });
-
   const incepta = await prisma.company.create({
     data: { name: 'Incepta Pharmaceuticals Ltd.', code: 'INCEPTA' },
   });
+  const renata = await prisma.company.create({
+    data: { name: 'Renata Limited', code: 'RENATA' },
+  });
+  const opsonin = await prisma.company.create({
+    data: { name: 'Opsonin Pharma Ltd.', code: 'OPSONIN' },
+  });
+  const healthcare = await prisma.company.create({
+    data: { name: 'Healthcare Pharmaceuticals Ltd.', code: 'HEALTHCARE' },
+  });
+  const skf = await prisma.company.create({
+    data: { name: 'Eskayef Pharmaceuticals Ltd.', code: 'SKF' },
+  });
 
-  // Products
+  // 6. MedEx-Style Generics Monograph Database
+  const genericParacetamol = await prisma.generic.create({
+    data: {
+      name: 'Paracetamol',
+      slug: 'paracetamol',
+      therapeuticClass: 'Analgesics & Antipyretics',
+      indications: 'Fever, headache, toothache, earache, body pain, myalgia, dysmenorrhea, neuralgias and osteoarthritis pain.',
+      dosageGuidelines: 'Adult: 500 mg to 1000 mg every 4-6 hours (max 4000 mg/day). Children: 10-15 mg/kg body weight.',
+      sideEffects: 'Generally safe and well tolerated. Rare side effects include skin rash, allergic reaction, liver toxicity in overdose.',
+      precautions: 'Use with caution in patients with hepatic or renal impairment and chronic alcoholism.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  const genericParacetamolCaffeine = await prisma.generic.create({
+    data: {
+      name: 'Paracetamol + Caffeine',
+      slug: 'paracetamol-caffeine',
+      therapeuticClass: 'Enhanced Analgesic Combination',
+      indications: 'Tension headache, migraine, toothache, sore throat, feverishness and musculoskeletal aches.',
+      dosageGuidelines: 'Adult: 1-2 tablets every 4 to 6 hours as needed. Maximum 8 tablets in 24 hours.',
+      sideEffects: 'Mild insomnia, restlessness, palpitation if consumed with high-caffeine beverages.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  const genericEsomeprazole = await prisma.generic.create({
+    data: {
+      name: 'Esomeprazole',
+      slug: 'esomeprazole',
+      therapeuticClass: 'Proton Pump Inhibitors (PPI)',
+      indications: 'Gastroesophageal reflux disease (GERD), erosive esophagitis, Zollinger-Ellison syndrome, H. pylori eradication.',
+      dosageGuidelines: 'GERD & Ulcer: 20 mg to 40 mg once daily taken 30-60 minutes before breakfast for 4-8 weeks.',
+      sideEffects: 'Headache, diarrhea, nausea, abdominal pain, flatulence, constipation.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  const genericAzithromycin = await prisma.generic.create({
+    data: {
+      name: 'Azithromycin',
+      slug: 'azithromycin',
+      therapeuticClass: 'Macrolide Antibiotic',
+      indications: 'Upper and lower respiratory tract infections, pneumonia, sinusitis, pharyngitis, skin infections, typhoid fever.',
+      dosageGuidelines: '500 mg once daily for 3-5 days, taken 1 hour before or 2 hours after meals.',
+      sideEffects: 'Diarrhea, abdominal cramps, nausea, vomiting, temporary taste disturbance.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  const genericMontelukast = await prisma.generic.create({
+    data: {
+      name: 'Montelukast Sodium',
+      slug: 'montelukast-sodium',
+      therapeuticClass: 'Leukotriene Receptor Antagonist (Anti-Asthma)',
+      indications: 'Prophylaxis and chronic treatment of asthma, relief of symptoms of allergic rhinitis (seasonal and perennial).',
+      dosageGuidelines: 'Adult: 10 mg once daily in the evening.',
+      sideEffects: 'Upper respiratory infection, fever, headache, pharyngitis, cough, abdominal pain.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  const genericCefixime = await prisma.generic.create({
+    data: {
+      name: 'Cefixime',
+      slug: 'cefixime',
+      therapeuticClass: '3rd Generation Cephalosporin Antibiotic',
+      indications: 'Uncomplicated UTI, otitis media, pharyngitis, tonsillitis, acute bronchitis, typhoid fever.',
+      dosageGuidelines: 'Adults: 200-400 mg daily as single dose or in two divided doses for 7-14 days.',
+      sideEffects: 'Diarrhea, loose stools, nausea, abdominal pain, dyspepsia.',
+      pregnancyCategory: 'B',
+    },
+  });
+
+  // 7. MedEx-Style Medicine Formulations with Generic Linking
+  // --- PARACETAMOL 500mg TABLETS (Competing Brands across Companies) ---
+  const napa500 = await prisma.product.create({
+    data: {
+      name: 'Napa 500mg Tablet',
+      slug: 'napa-500mg-tablet-square',
+      genericId: genericParacetamol.id,
+      genericName: 'Paracetamol',
+      companyId: square.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 12.0, // 1.20 BDT per tab (12 BDT per strip of 10)
+      unit: 'Strip (10 tabs)',
+      packSize: '50 x 10\'s',
+      category: 'Allopathic',
+      description: 'Square\'s premier fast-acting Paracetamol formulation.',
+    },
+  });
+
+  const ace500 = await prisma.product.create({
+    data: {
+      name: 'Ace 500mg Tablet',
+      slug: 'ace-500mg-tablet-square',
+      genericId: genericParacetamol.id,
+      genericName: 'Paracetamol',
+      companyId: square.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 12.0,
+      unit: 'Strip (10 tabs)',
+      packSize: '50 x 10\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const fast500 = await prisma.product.create({
+    data: {
+      name: 'Fast 500mg Tablet',
+      slug: 'fast-500mg-tablet-acme',
+      genericId: genericParacetamol.id,
+      genericName: 'Paracetamol',
+      companyId: beximco.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 10.0, // Lower priced generic alternative! (৳10 vs ৳12)
+      unit: 'Strip (10 tabs)',
+      packSize: '50 x 10\'s',
+      category: 'Allopathic',
+      description: 'Beximco economical paracetamol alternative.',
+    },
+  });
+
+  const renova500 = await prisma.product.create({
+    data: {
+      name: 'Renova 500mg Tablet',
+      slug: 'renova-500mg-tablet-opsonin',
+      genericId: genericParacetamol.id,
+      genericName: 'Paracetamol',
+      companyId: opsonin.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 9.5, // Even lower priced alternative! (৳9.50)
+      unit: 'Strip (10 tabs)',
+      packSize: '50 x 10\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const pyrex500 = await prisma.product.create({
+    data: {
+      name: 'Pyrex 500mg Tablet',
+      slug: 'pyrex-500mg-tablet-skf',
+      genericId: genericParacetamol.id,
+      genericName: 'Paracetamol',
+      companyId: skf.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 11.0,
+      unit: 'Strip (10 tabs)',
+      packSize: '50 x 10\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  // --- PARACETAMOL + CAFFEINE (ENHANCED PAIN RELIEF) ---
   const napaExtra = await prisma.product.create({
     data: {
-      name: 'Napa Extra 500mg+65mg',
+      name: 'Napa Extra',
+      slug: 'napa-extra-square',
+      genericId: genericParacetamolCaffeine.id,
       genericName: 'Paracetamol + Caffeine',
-      mrp: 35.0,
       companyId: square.id,
-      category: 'Analgesic',
+      dosageForm: 'Tablet',
+      strength: '500 mg + 65 mg',
+      mrp: 35.0,
       unit: 'Strip (10 tabs)',
-      isPharmaTrackOpaque: true,
+      packSize: '20 x 10\'s',
+      category: 'Allopathic',
     },
   });
 
   const acePlus = await prisma.product.create({
     data: {
       name: 'Ace Plus Tablet',
+      slug: 'ace-plus-square',
+      genericId: genericParacetamolCaffeine.id,
       genericName: 'Paracetamol + Caffeine',
+      companyId: square.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg + 65 mg',
       mrp: 40.0,
-      companyId: square.id,
-      category: 'Analgesic',
       unit: 'Strip (10 tabs)',
-      isPharmaTrackOpaque: true,
+      packSize: '20 x 10\'s',
+      category: 'Allopathic',
     },
   });
 
-  const napaSyrup = await prisma.product.create({
+  const fastPlus = await prisma.product.create({
     data: {
-      name: 'Napa Syrup 60ml',
-      genericName: 'Paracetamol 120mg/5ml',
-      mrp: 55.5,
-      companyId: square.id,
-      category: 'Syrup',
-      unit: 'Bottle',
-      isPharmaTrackOpaque: true,
-    },
-  });
-
-  const bexiCold = await prisma.product.create({
-    data: {
-      name: 'BexiCold Tablet',
-      genericName: 'Pseudoephedrine + Paracetamol',
-      mrp: 120.0,
+      name: 'Fast Plus Tablet',
+      slug: 'fast-plus-beximco',
+      genericId: genericParacetamolCaffeine.id,
+      genericName: 'Paracetamol + Caffeine',
       companyId: beximco.id,
-      category: 'Cold & Cough',
-      unit: 'Box (50 tabs)',
-      isPharmaTrackOpaque: true,
+      dosageForm: 'Tablet',
+      strength: '500 mg + 65 mg',
+      mrp: 30.0, // Cheaper alternative! (৳30 vs ৳35/40)
+      unit: 'Strip (10 tabs)',
+      packSize: '20 x 10\'s',
+      category: 'Allopathic',
     },
   });
 
-  const pantonic = await prisma.product.create({
+  // --- ESOMEPRAZOLE 20mg CAPSULES/TABLETS (PPIs) ---
+  const maxpro20 = await prisma.product.create({
     data: {
-      name: 'Pantonic 20mg Capsule',
-      genericName: 'Pantoprazole Sodium',
+      name: 'Maxpro 20mg Capsule',
+      slug: 'maxpro-20mg-square',
+      genericId: genericEsomeprazole.id,
+      genericName: 'Esomeprazole',
+      companyId: square.id,
+      dosageForm: 'Capsule',
+      strength: '20 mg',
       mrp: 80.0,
-      companyId: incepta.id,
-      category: 'Gastric & PPI',
       unit: 'Strip (14 caps)',
-      isPharmaTrackOpaque: true,
+      packSize: '10 x 14\'s',
+      category: 'Allopathic',
+      description: 'Bangladesh\'s highest selling PPI for acidity & gastric relief.',
     },
   });
 
-  // Offer Para Live Stock Products (Rule 4: Separate live inventory)
+  const nexum20 = await prisma.product.create({
+    data: {
+      name: 'Nexum 20mg Tablet',
+      slug: 'nexum-20mg-beximco',
+      genericId: genericEsomeprazole.id,
+      genericName: 'Esomeprazole',
+      companyId: beximco.id,
+      dosageForm: 'Capsule',
+      strength: '20 mg',
+      mrp: 84.0,
+      unit: 'Strip (14 caps)',
+      packSize: '10 x 14\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const sergel20 = await prisma.product.create({
+    data: {
+      name: 'Sergel 20mg Capsule',
+      slug: 'sergel-20mg-healthcare',
+      genericId: genericEsomeprazole.id,
+      genericName: 'Esomeprazole',
+      companyId: healthcare.id,
+      dosageForm: 'Capsule',
+      strength: '20 mg',
+      mrp: 75.0, // Cheaper alternative! (৳75 vs ৳80)
+      unit: 'Strip (14 caps)',
+      packSize: '10 x 14\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const esonix20 = await prisma.product.create({
+    data: {
+      name: 'Esonix 20mg Tablet',
+      slug: 'esonix-20mg-incepta',
+      genericId: genericEsomeprazole.id,
+      genericName: 'Esomeprazole',
+      companyId: incepta.id,
+      dosageForm: 'Capsule',
+      strength: '20 mg',
+      mrp: 70.0, // Best price alternative! (৳70)
+      unit: 'Strip (14 caps)',
+      packSize: '10 x 14\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  // --- AZITHROMYCIN 500mg TABLETS ---
+  const zimax500 = await prisma.product.create({
+    data: {
+      name: 'Zimax 500mg Tablet',
+      slug: 'zimax-500mg-square',
+      genericId: genericAzithromycin.id,
+      genericName: 'Azithromycin',
+      companyId: square.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 175.0,
+      unit: 'Box (5 tabs)',
+      packSize: '3 x 5\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const tridosil500 = await prisma.product.create({
+    data: {
+      name: 'Tridosil 500mg Tablet',
+      slug: 'tridosil-500mg-beximco',
+      genericId: genericAzithromycin.id,
+      genericName: 'Azithromycin',
+      companyId: beximco.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 170.0,
+      unit: 'Box (5 tabs)',
+      packSize: '3 x 5\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  const azithral500 = await prisma.product.create({
+    data: {
+      name: 'Azithral 500mg Tablet',
+      slug: 'azithral-500mg-renata',
+      genericId: genericAzithromycin.id,
+      genericName: 'Azithromycin',
+      companyId: renata.id,
+      dosageForm: 'Tablet',
+      strength: '500 mg',
+      mrp: 155.0, // Cheaper alternative! (৳155 vs ৳175)
+      unit: 'Box (5 tabs)',
+      packSize: '3 x 5\'s',
+      category: 'Allopathic',
+    },
+  });
+
+  // --- MONTELUKAST 10mg TABLETS ---
+  const monas10 = await prisma.product.create({
+    data: {
+      name: 'Monas 10mg Tablet',
+      slug: 'monas-10mg-acme',
+      genericId: genericMontelukast.id,
+      genericName: 'Montelukast Sodium',
+      companyId: square.id,
+      dosageForm: 'Tablet',
+      strength: '10 mg',
+      mrp: 160.0,
+      unit: 'Strip (10 tabs)',
+      category: 'Allopathic',
+    },
+  });
+
+  const provair10 = await prisma.product.create({
+    data: {
+      name: 'Provair 10mg Tablet',
+      slug: 'provair-10mg-unimed',
+      genericId: genericMontelukast.id,
+      genericName: 'Montelukast Sodium',
+      companyId: incepta.id,
+      dosageForm: 'Tablet',
+      strength: '10 mg',
+      mrp: 145.0, // Cheaper alternative! (৳145 vs ৳160)
+      unit: 'Strip (10 tabs)',
+      category: 'Allopathic',
+    },
+  });
+
+  // --- OFFER PARA LIVE STOCK PRODUCT ---
   const offerParaVitC = await prisma.product.create({
     data: {
       name: 'Offer Para Vitamin C 500mg Chewable',
+      slug: 'offer-para-vit-c-square',
+      genericId: genericParacetamol.id, // linked to generic
       genericName: 'Ascorbic Acid',
-      mrp: 150.0,
       companyId: square.id,
-      category: 'Offer Para Flash Deals',
+      dosageForm: 'Chewable Tablet',
+      strength: '500 mg',
+      mrp: 150.0,
       unit: 'Bottle (30 tabs)',
+      category: 'Offer Para Flash Deals',
       isOfferParaLiveStock: true,
       offerParaStockQty: 240,
       isPharmaTrackOpaque: false,
     },
   });
 
-  // Layer 3: Company Rates (e.g. Square offers 16% on Tier A)
+  // 8. 4-Layer Pricing Rules Configuration
+  // Layer 3: Company Rates (e.g. Square offers 16% on Tier A, 10% on Tier B)
   await prisma.companyRate.create({
-    data: {
-      companyId: square.id,
-      tierId: tierA.id,
-      rateType: 'PERCENTAGE',
-      value: 16.0,
-    },
+    data: { companyId: square.id, tierId: tierA.id, rateType: 'PERCENTAGE', value: 16.0 },
+  });
+  await prisma.companyRate.create({
+    data: { companyId: square.id, tierId: tierB.id, rateType: 'PERCENTAGE', value: 10.0 },
+  });
+  await prisma.companyRate.create({
+    data: { companyId: beximco.id, tierId: tierA.id, rateType: 'PERCENTAGE', value: 14.0 },
   });
 
   // Layer 2: Product Override (Napa Extra has 18% override on Tier A)
   await prisma.productOverrideRate.create({
-    data: {
-      productId: napaExtra.id,
-      tierId: tierA.id,
-      rateType: 'PERCENTAGE',
-      value: 18.0,
-    },
+    data: { productId: napaExtra.id, tierId: tierA.id, rateType: 'PERCENTAGE', value: 18.0 },
   });
 
-  // 6. Seed Accounts for all 7 Account Types
-  // 1. Super Admin
+  // 9. Seed User Accounts for all 7 Account Types
   const admin = await prisma.user.create({
     data: {
       name: 'Siam (Super Admin)',
@@ -258,7 +549,6 @@ async function main() {
     },
   });
 
-  // 2. Staff: Order Manager
   const orderStaff = await prisma.user.create({
     data: {
       name: 'Rafiq Islam (Order Manager)',
@@ -271,7 +561,6 @@ async function main() {
     },
   });
 
-  // 3. Staff: Wholesale & Customer Manager
   const wholesaleStaff = await prisma.user.create({
     data: {
       name: 'Farhana Akter (Wholesale Manager)',
@@ -284,7 +573,6 @@ async function main() {
     },
   });
 
-  // 4. Paikari Seller (Retail Pharmacy Shop)
   const paikariUser = await prisma.user.create({
     data: {
       name: 'Al-Amin Shop Owner',
@@ -308,17 +596,16 @@ async function main() {
     },
   });
 
-  // Manual Override for Paikari User (Layer 1: Napa Syrup flat 45.00 BDT)
+  // Layer 1 Manual Override for Paikari User
   await prisma.customerManualOverrideRate.create({
     data: {
       userId: paikariUser.id,
-      productId: napaSyrup.id,
+      productId: napa500.id,
       rateType: 'FLAT_RATE',
-      value: 45.0,
+      value: 10.5, // Agreed custom shop rate of ৳10.50
     },
   });
 
-  // 5. Wholesaler Seller ("Hawlsel")
   const wholesalerUser = await prisma.user.create({
     data: {
       name: 'Kamal Distributor',
@@ -342,7 +629,6 @@ async function main() {
     },
   });
 
-  // 6. MPO (Medical Promotion Officer - Direct Admin Only)
   const mpoUser = await prisma.user.create({
     data: {
       name: 'Tanvir Ahmed (Dhaka North MPO)',
@@ -353,7 +639,6 @@ async function main() {
     },
   });
 
-  // 7. Food Vendor (Restaurant / Grocery)
   const foodVendorUser = await prisma.user.create({
     data: {
       name: 'Sultan Chef',
@@ -375,7 +660,6 @@ async function main() {
     },
   });
 
-  // 8. Public Retail Consumer
   const publicUser = await prisma.user.create({
     data: {
       name: 'Tariq Rahman',
@@ -386,7 +670,7 @@ async function main() {
     },
   });
 
-  // Sample Pending Application Queue Item
+  // Sample Pending Application Queue
   await prisma.applicationQueue.create({
     data: {
       businessName: 'Green Life Model Pharmacy',
@@ -398,13 +682,11 @@ async function main() {
       categoryInterest: 'Allopathic Medicine & Surgical Supplies',
       tradeLicenseNo: 'TRAD/DNCC/778899/2024',
       drugLicenseNo: 'DL-DH-778899',
-      tradeLicenseFileUrl: 'uploads/sample-trade-license.pdf',
-      drugLicenseFileUrl: 'uploads/sample-drug-license.pdf',
       status: 'PENDING_REVIEW',
     },
   });
 
-  // Sample Order in Draft Sale status (Rule 3)
+  // Sample Order in Draft Sale status
   await prisma.order.create({
     data: {
       orderNumber: 'ORD-2026-0001',
@@ -430,30 +712,78 @@ async function main() {
             totalPrice: 574.0,
           },
           {
-            productId: napaSyrup.id,
-            quantity: 10,
-            unitMrp: 55.5,
-            appliedUnitPrice: 45.0,
+            productId: napa500.id,
+            quantity: 40,
+            unitMrp: 12.0,
+            appliedUnitPrice: 10.5,
             appliedLayer: 'CUSTOMER_MANUAL_OVERRIDE',
             rateType: 'FLAT_RATE',
-            rateValue: 45.0,
-            totalPrice: 450.0,
+            rateValue: 10.5,
+            totalPrice: 420.0,
           },
         ],
       },
     },
   });
 
-  console.log('Siam\'s Aqua E-Commerce seed complete!');
-  console.log('Sample Accounts created:');
-  console.log('1. Super Admin: admin@siamaqua.com / SiamAqua@2026');
-  console.log('2. Order Manager: orderstaff@siamaqua.com / SiamAqua@2026');
-  console.log('3. Wholesale Manager: wholesalestaff@siamaqua.com / SiamAqua@2026');
-  console.log('4. Paikari Seller: paikari@alaminpharma.com / SiamAqua@2026');
-  console.log('5. Wholesaler Seller: wholesale@medidistributors.com / SiamAqua@2026');
-  console.log('6. MPO Field Rep: mpo.sakib@siamaqua.com / SiamAqua@2026');
-  console.log('7. Food Vendor: vendor@dhakabiryani.com / SiamAqua@2026');
-  console.log('8. Public Consumer: customer@gmail.com / SiamAqua@2026');
+  // Sample Staged Medicine Import Batch for Demonstration
+  const stagingBatch = await prisma.medicineStagingBatch.create({
+    data: {
+      batchNumber: 'MBATCH-2026-001',
+      fileName: 'incepta_catalog_sample.csv',
+      totalRows: 4,
+      validRows: 3,
+      duplicateRows: 1,
+      errorRows: 0,
+      status: 'STAGED',
+      importedBy: 'admin@siamaqua.com',
+      items: {
+        create: [
+          {
+            brandName: 'Pantonic 20mg Capsule',
+            genericName: 'Pantoprazole Sodium',
+            companyName: 'Incepta Pharmaceuticals Ltd.',
+            dosageForm: 'Capsule',
+            strength: '20 mg',
+            mrp: 80.0,
+            unit: 'Strip (14 caps)',
+            therapeuticClass: 'Proton Pump Inhibitors',
+            isDuplicate: false,
+            status: 'APPROVED',
+          },
+          {
+            brandName: 'Osartil 50mg Tablet',
+            genericName: 'Losartan Potassium',
+            companyName: 'Incepta Pharmaceuticals Ltd.',
+            dosageForm: 'Tablet',
+            strength: '50 mg',
+            mrp: 110.0,
+            unit: 'Strip (10 tabs)',
+            therapeuticClass: 'Angiotensin Receptor Blocker (Anti-Hypertensive)',
+            isDuplicate: false,
+            status: 'APPROVED',
+          },
+          {
+            brandName: 'Napa 500mg Tablet',
+            genericName: 'Paracetamol',
+            companyName: 'Square Pharmaceuticals Ltd.',
+            dosageForm: 'Tablet',
+            strength: '500 mg',
+            mrp: 12.0,
+            unit: 'Strip (10 tabs)',
+            isDuplicate: true,
+            existingProductId: napa500.id,
+            status: 'REJECTED',
+          },
+        ],
+      },
+    },
+  });
+
+  console.log('MedEx Pharmaceutical database seeding complete!');
+  console.log(`- Created ${await prisma.generic.count()} Generics`);
+  console.log(`- Created ${await prisma.product.count()} Brand Formulations across ${await prisma.company.count()} Manufacturers`);
+  console.log(`- Created Staging Batch with ${await prisma.medicineStagingItem.count()} staged review items`);
 }
 
 main()

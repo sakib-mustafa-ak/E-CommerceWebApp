@@ -11,6 +11,7 @@ import { BackupModule } from './modules/backup/backup.module';
 import { ImportModule } from './modules/import/import.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { EventsModule } from './modules/events/events.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { EventsModule } from './modules/events/events.module';
     ImportModule,
     AdminModule,
     EventsModule,
+    CatalogModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
   Sparkles,
@@ -16,8 +16,12 @@ import {
   ShieldCheck,
   CheckCircle2,
   ArrowRight,
-  TrendingUp,
+  TrendingDown,
   Package,
+  Layers,
+  Sparkle,
+  X,
+  RefreshCw,
 } from 'lucide-react';
 import { SectorType } from '@siam-aqua/shared-types';
 
@@ -96,68 +100,58 @@ const SECTOR_CARDS = [
   },
 ];
 
-const SAMPLE_PRODUCTS = [
-  {
-    name: 'Napa Extra 500mg+65mg',
-    generic: 'Paracetamol + Caffeine',
-    company: 'Square Pharmaceuticals Ltd.',
-    mrp: 35.0,
-    unit: 'Strip (10 tabs)',
-    category: 'Analgesic',
-  },
-  {
-    name: 'Ace Plus Tablet',
-    generic: 'Paracetamol + Caffeine',
-    company: 'Square Pharmaceuticals Ltd.',
-    mrp: 40.0,
-    unit: 'Strip (10 tabs)',
-    category: 'Analgesic',
-  },
-  {
-    name: 'Napa Syrup 60ml',
-    generic: 'Paracetamol 120mg/5ml',
-    company: 'Square Pharmaceuticals Ltd.',
-    mrp: 55.5,
-    unit: 'Bottle',
-    category: 'Syrup',
-  },
-  {
-    name: 'BexiCold Tablet',
-    generic: 'Pseudoephedrine + Paracetamol',
-    company: 'Beximco Pharmaceuticals Ltd.',
-    mrp: 120.0,
-    unit: 'Box (50 tabs)',
-    category: 'Cold & Cough',
-  },
-  {
-    name: 'Pantonic 20mg Capsule',
-    generic: 'Pantoprazole Sodium',
-    company: 'Incepta Pharmaceuticals Ltd.',
-    mrp: 80.0,
-    unit: 'Strip (14 caps)',
-    category: 'Gastric & PPI',
-  },
-  {
-    name: 'Offer Para Vitamin C 500mg',
-    generic: 'Ascorbic Acid Chewable',
-    company: 'Square Pharmaceuticals Ltd.',
-    mrp: 150.0,
-    unit: 'Bottle (30 tabs)',
-    category: 'Offer Para Deals',
-    isOfferPara: true,
-    liveStock: 240,
-  },
-];
-
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedForm, setSelectedForm] = useState<string>('');
+  const [products, setProducts] = useState<any[]>([]);
+  const [dosageForms, setDosageForms] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  const filteredProducts = SAMPLE_PRODUCTS.filter(
-    (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.generic.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.company.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  // Generic Alternatives Modal State
+  const [activeAlternativeModal, setActiveAlternativeModal] = useState<any | null>(null);
+  const [alternativesLoading, setAlternativesLoading] = useState(false);
+
+  // Fetch products & forms via Search API
+  const performSearch = async (query: string, form: string) => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (query) params.append('q', query);
+      if (form) params.append('form', form);
+
+      const [searchRes, formsRes] = await Promise.all([
+        fetch(`http://localhost:3001/api/catalog/search?${params.toString()}`),
+        fetch('http://localhost:3001/api/catalog/forms'),
+      ]);
+
+      const searchData = await searchRes.json();
+      const formsData = await formsRes.json();
+
+      if (searchData.products) setProducts(searchData.products);
+      if (Array.isArray(formsData)) setDosageForms(formsData);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    performSearch(searchTerm, selectedForm);
+  }, [searchTerm, selectedForm]);
+
+  const handleOpenAlternatives = async (productId: string) => {
+    setAlternativesLoading(true);
+    try {
+      const res = await fetch(`http://localhost:3001/api/catalog/products/${productId}/alternatives`);
+      const data = await res.json();
+      setActiveAlternativeModal(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setAlternativesLoading(false);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-16">
@@ -167,25 +161,24 @@ export default function HomePage() {
         <div className="max-w-2xl relative z-10 space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-sky-500/10 border border-sky-500/30 text-xs font-semibold text-sky-400 shadow-inner">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>Phase 0 Foundation • 8-Sector Unified Engine</span>
+            <span>MedEx-Style Pharmaceutical Engine • 8-Sector Unified Platform</span>
           </div>
           <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Siam's Aqua <span className="gradient-text">E-Commerce</span>
           </h1>
           <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            One single login system serving 8 completely isolated marketplaces for retail pharmacy,
-            Paikari shop owners, high-volume wholesale distributors, MPO field staff, and food merchants.
+            Search comprehensive brand formulations, compare generic alternatives across manufacturers, and explore dedicated B2B/B2C marketplace portals.
           </p>
 
-          {/* Quick Search */}
+          {/* MedEx Search Bar */}
           <div className="relative max-w-lg">
             <Search className="w-5 h-5 text-slate-400 absolute left-4 top-3.5" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search medicine brand, generic name, or manufacturer..."
-              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 shadow-lg"
+              placeholder="Search brand (e.g. Napa, Maxpro), generic, or company..."
+              className="w-full pl-12 pr-4 py-3.5 rounded-2xl bg-slate-900/90 border border-slate-700/80 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 shadow-lg font-medium"
             />
           </div>
 
@@ -258,68 +251,213 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Catalog Showcase */}
+      {/* Live MedEx Medicine Catalog & Generic Alternatives Showcase */}
       <section className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider font-mono">
-              Live Catalog Preview
+              MedEx Pharmaceutical Database
             </span>
             <h2 className="text-2xl font-bold text-white tracking-tight mt-1">
-              Pharmaceutical & Offer Para Products
+              Medicine Catalog & Generic Alternative Engine
             </h2>
           </div>
-          <span className="text-xs text-slate-400">
-            Showing {filteredProducts.length} items
-          </span>
+
+          {/* Dosage Form Filter Pills */}
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => setSelectedForm('')}
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                selectedForm === ''
+                  ? 'bg-sky-500 text-white'
+                  : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              All Forms
+            </button>
+            {dosageForms.map((form) => (
+              <button
+                key={form}
+                onClick={() => setSelectedForm(form)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                  selectedForm === form
+                    ? 'bg-sky-500 text-white'
+                    : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {form}
+              </button>
+            ))}
+          </div>
         </div>
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredProducts.map((p, idx) => (
+          {products.map((p) => (
             <div
-              key={idx}
+              key={p.id}
               className="p-5 rounded-2xl glass-card border border-slate-800/80 bg-slate-900/60 flex flex-col justify-between"
             >
               <div>
                 <div className="flex items-center justify-between text-xs mb-2">
-                  <span className="text-sky-400 font-medium">{p.category}</span>
-                  {p.isOfferPara ? (
+                  <span className="px-2 py-0.5 rounded bg-slate-800 text-sky-400 font-mono text-[10px] font-semibold">
+                    {p.dosageForm} • {p.strength}
+                  </span>
+                  {p.isOfferParaLiveStock ? (
                     <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] px-2 py-0.5 rounded-full font-mono font-bold flex items-center gap-1">
-                      <Tag className="w-3 h-3" /> Live Stock: {p.liveStock} units
+                      <Tag className="w-3 h-3" /> Live Stock: {p.offerParaStockQty}
                     </span>
                   ) : (
-                    <span className="text-slate-500 text-[11px] font-mono">
+                    <span className="text-slate-500 text-[10px] font-mono">
                       Main Pharmacy
                     </span>
                   )}
                 </div>
+
                 <h3 className="font-bold text-base text-slate-100">{p.name}</h3>
-                <div className="text-xs text-slate-400 italic mt-0.5">{p.generic}</div>
-                <div className="text-xs text-slate-500 mt-1">{p.company}</div>
+                <div className="text-xs text-sky-300/90 font-mono font-medium mt-0.5 flex items-center gap-1">
+                  <span>Generic:</span>
+                  <span className="underline">{p.genericName}</span>
+                </div>
+                <div className="text-xs text-slate-400 mt-1">{p.companyName}</div>
               </div>
 
-              <div className="pt-4 mt-4 border-t border-slate-800 flex items-center justify-between">
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase tracking-wider">
-                    Retail MRP / {p.unit}
+              <div className="pt-4 mt-4 border-t border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="text-[10px] text-slate-500 uppercase tracking-wider">
+                      MRP / {p.unit}
+                    </div>
+                    <div className="text-lg font-extrabold text-white font-mono">
+                      ৳{p.mrp.toFixed(2)}
+                    </div>
                   </div>
-                  <div className="text-lg font-extrabold text-white font-mono">
-                    ৳{p.mrp.toFixed(2)}
-                  </div>
+
+                  <Link
+                    href="/login"
+                    className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors flex items-center gap-1"
+                  >
+                    <Store className="w-3.5 h-3.5 text-amber-400" />
+                    Paikari Rate
+                  </Link>
                 </div>
 
-                <Link
-                  href="/login"
-                  className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-colors flex items-center gap-1"
+                {/* Generic Alternative Suggestion Button */}
+                <button
+                  type="button"
+                  onClick={() => handleOpenAlternatives(p.id)}
+                  className="w-full py-2 px-3 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 text-xs font-semibold border border-sky-500/30 transition-colors flex items-center justify-center gap-1.5"
                 >
-                  <Store className="w-3.5 h-3.5 text-amber-400" />
-                  View B2B Rate
-                </Link>
+                  <Layers className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Show Alternatives with Same Generic</span>
+                </button>
               </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* Generic Alternatives Modal */}
+      {activeAlternativeModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="max-w-2xl w-full glass-panel p-6 rounded-3xl border border-sky-500/40 bg-slate-900/95 shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start pb-3 border-b border-slate-800">
+              <div>
+                <span className="text-[10px] font-mono font-bold uppercase text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded border border-sky-500/30">
+                  MedEx Generic Alternative Comparison
+                </span>
+                <h2 className="text-lg font-bold text-white mt-1">
+                  Alternatives for: {activeAlternativeModal.currentProduct.name}
+                </h2>
+                <div className="text-xs text-slate-300 mt-0.5">
+                  Generic: <strong className="text-sky-300">{activeAlternativeModal.currentProduct.genericName}</strong> ({activeAlternativeModal.currentProduct.dosageForm} • {activeAlternativeModal.currentProduct.strength})
+                </div>
+              </div>
+              <button
+                onClick={() => setActiveAlternativeModal(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* MedEx Monograph Info */}
+            {activeAlternativeModal.genericInfo?.indications && (
+              <div className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 text-xs space-y-1">
+                <div className="font-bold text-slate-300">MedEx Indications & Uses:</div>
+                <p className="text-slate-400 leading-relaxed">{activeAlternativeModal.genericInfo.indications}</p>
+              </div>
+            )}
+
+            {/* Alternative Formulations List */}
+            <div className="space-y-3">
+              <div className="text-xs font-bold text-slate-300 uppercase tracking-wider font-mono">
+                Same-Generic Brand Formulations ({activeAlternativeModal.alternatives.length} Available)
+              </div>
+
+              {activeAlternativeModal.alternatives.length === 0 ? (
+                <div className="text-center py-6 text-xs text-slate-500 font-mono">
+                  No other alternative brands currently listed for this generic formulation.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {activeAlternativeModal.alternatives.map((alt: any) => (
+                    <div
+                      key={alt.productId}
+                      className={`p-3.5 rounded-2xl border flex items-center justify-between gap-4 transition-all ${
+                        alt.isLowerPriced
+                          ? 'border-emerald-500/40 bg-emerald-500/5'
+                          : 'border-slate-800 bg-slate-950/60'
+                      }`}
+                    >
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-sm text-slate-100">{alt.brandName}</span>
+                          {alt.isLowerPriced && (
+                            <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 text-[10px] font-mono font-bold flex items-center gap-1 border border-emerald-500/30">
+                              <TrendingDown className="w-3 h-3" /> Save {alt.priceDifferencePercent}%
+                            </span>
+                          )}
+                          {alt.isOfferParaLiveDeal && (
+                            <span className="px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 text-[10px] font-mono font-bold border border-rose-500/30">
+                              Offer Para Flash Deal
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-xs text-slate-400 mt-0.5">{alt.companyName}</div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-base font-extrabold text-white font-mono">
+                          ৳{alt.mrp.toFixed(2)}
+                        </div>
+                        {alt.isLowerPriced ? (
+                          <div className="text-[10px] text-emerald-400 font-semibold font-mono">
+                            -৳{alt.priceDifference.toFixed(2)} cheaper
+                          </div>
+                        ) : (
+                          <div className="text-[10px] text-slate-500 font-mono">
+                            Reference Price
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 flex justify-end">
+              <button
+                onClick={() => setActiveAlternativeModal(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+              >
+                Close Comparison
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -151,28 +151,103 @@ model Company {
   companyRates CompanyRate[]
 }
 
-model Product {
-  id                     String                @id @default(uuid())
-  name                   String
-  genericName            String?
-  mrp                    Float
-  companyId              String
-  category               String
-  unit                   String                @default("Box")
-  // Two separate inventories rule (Rule 4)
-  isOfferParaLiveStock   Boolean               @default(false)
-  offerParaStockQty      Int                   @default(0)
-  isPharmaTrackOpaque    Boolean               @default(true) // External PharmaTrack opaque stock
-  // Future proofing (Rule 8)
-  serviceBookingAvailable Boolean              @default(false)
-  counterSaleEnabled     Boolean               @default(false)
+// MedEx-Style Normalized Generic Entity
+model Generic {
+  id                String    @id @default(uuid())
+  name              String    @unique // e.g. "Paracetamol", "Omeprazole", "Azithromycin"
+  slug              String    @unique
+  therapeuticClass  String?   // e.g. "Analgesics & Antipyretics", "Proton Pump Inhibitors"
+  description       String?
+  indications       String?   // Structured indications info
+  dosageGuidelines  String?   // General dosage recommendations
+  sideEffects       String?   // Common side effects
+  precautions       String?   // Warnings & contraindications
+  pregnancyCategory String?   // e.g. "A", "B", "C", "D", "X"
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
-  company                Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  productOverrides       ProductOverrideRate[]
-  manualOverrides        CustomerManualOverrideRate[]
-  orderItems             OrderItem[]
-  createdAt              DateTime              @default(now())
-  updatedAt              DateTime              @updatedAt
+  products          Product[]
+}
+
+// MedEx-Style Medicine Product Entity with generic linking & dual inventory isolation
+model Product {
+  id                      String                @id @default(uuid())
+  name                    String                // Brand Name: e.g. "Napa Extra", "Ace Plus"
+  slug                    String                @unique
+  genericId               String?
+  genericName             String                // Denormalized generic tag for fast querying: e.g. "Paracetamol + Caffeine"
+  companyId               String
+  dosageForm              String                @default("Tablet") // Tablet, Syrup, Capsule, Injection, Suspension, Drop
+  strength                String                @default("500mg")  // e.g. "500 mg", "665 mg", "120 mg/5 ml", "20 mg"
+  mrp                     Float                 // Retail reference price in BDT
+  unit                    String                @default("Strip (10 tabs)")
+  packSize                String?               // e.g. "10 x 10's", "100 ml Bottle", "1 Vial"
+  category                String                @default("Allopathic") // Allopathic, Herbal, Surgical, OTC
+  description             String?
+  isPrescriptionRequired  Boolean               @default(false)
+
+  // Two separate inventories rule (Rule 4)
+  isOfferParaLiveStock    Boolean               @default(false)
+  offerParaStockQty       Int                   @default(0)
+  isPharmaTrackOpaque     Boolean               @default(true) // External PharmaTrack opaque stock
+
+  // Future proofing (Rule 8)
+  serviceBookingAvailable Boolean               @default(false)
+  counterSaleEnabled      Boolean               @default(false)
+
+  generic                 Generic?              @relation(fields: [genericId], references: [id])
+  company                 Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productOverrides        ProductOverrideRate[]
+  manualOverrides         CustomerManualOverrideRate[]
+  orderItems              OrderItem[]
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+
+  @@index([genericName])
+  @@index([name])
+  @@index([dosageForm])
+  @@index([companyId])
+}
+
+// Staging Pipeline for Medicine Bulk Imports (No Blind Imports)
+model MedicineStagingBatch {
+  id            String                @id @default(uuid())
+  batchNumber   String                @unique
+  fileName      String
+  totalRows     Int
+  validRows     Int                   @default(0)
+  duplicateRows Int                   @default(0)
+  errorRows     Int                   @default(0)
+  status        String                @default("STAGED") // STAGED, REVIEWING, PUBLISHED, REJECTED
+  importedBy    String
+  publishedAt   DateTime?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+
+  items         MedicineStagingItem[]
+}
+
+model MedicineStagingItem {
+  id                String               @id @default(uuid())
+  batchId           String
+  brandName         String
+  genericName       String
+  companyName       String
+  dosageForm        String
+  strength          String
+  mrp               Float
+  unit              String               @default("Strip (10 tabs)")
+  packSize          String?
+  category          String               @default("Allopathic")
+  indications       String?
+  therapeuticClass  String?
+  isDuplicate       Boolean              @default(false)
+  existingProductId String?
+  validationErrors  String?              // JSON array of validation issues
+  status            String               @default("PENDING") // PENDING, APPROVED, REJECTED, PUBLISHED
+
+  batch             MedicineStagingBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  createdAt         DateTime             @default(now())
 }
 
 model CompanyRate {
