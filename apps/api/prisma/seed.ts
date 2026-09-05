@@ -8,6 +8,8 @@ async function main() {
 
   // 1. Clear previous data in proper sequence
   await prisma.auditLog.deleteMany({});
+  await prisma.pharmaTrackShortList.deleteMany({});
+  await prisma.platformSetting.deleteMany({});
   await prisma.orderItem.deleteMany({});
   await prisma.order.deleteMany({});
   await prisma.customerManualOverrideRate.deleteMany({});
@@ -703,27 +705,74 @@ async function main() {
         create: [
           {
             productId: napaExtra.id,
-            quantity: 20,
+            unitType: 'STRIP',
+            requestedQuantity: 20,
+            confirmedQuantity: 20,
             unitMrp: 35.0,
+            tieredUnitPrice: 28.7,
+            finalUnitPrice: 28.7,
             appliedUnitPrice: 28.7,
             appliedLayer: 'PRODUCT_OVERRIDE',
             rateType: 'PERCENTAGE',
             rateValue: 18.0,
             totalPrice: 574.0,
+            verificationStatus: 'FULL_STOCK',
           },
           {
             productId: napa500.id,
-            quantity: 40,
+            unitType: 'STRIP',
+            requestedQuantity: 40,
+            confirmedQuantity: 40,
             unitMrp: 12.0,
+            tieredUnitPrice: 10.5,
+            finalUnitPrice: 10.5,
             appliedUnitPrice: 10.5,
             appliedLayer: 'CUSTOMER_MANUAL_OVERRIDE',
             rateType: 'FLAT_RATE',
             rateValue: 10.5,
             totalPrice: 420.0,
+            verificationStatus: 'FULL_STOCK',
           },
         ],
       },
     },
+  });
+
+  // Seed Initial Platform Settings
+  await prisma.platformSetting.createMany({
+    data: [
+      {
+        key: 'problem_customer_threshold',
+        value: '3',
+        description: 'Number of cancellations/refused deliveries before customer is auto-flagged for review',
+      },
+      {
+        key: 'default_delivery_fee',
+        value: '60',
+        description: 'Standard delivery fee in BDT for pharmacy orders',
+      },
+      {
+        key: 'default_free_delivery_threshold',
+        value: '3000',
+        description: 'Default order total in BDT to qualify for free delivery',
+      },
+      {
+        key: 'bank_account_info',
+        value: JSON.stringify({
+          bankName: 'Islami Bank Bangladesh Ltd.',
+          accountName: "Siam's Aqua Pharmaceutical Distribution",
+          accountNumber: '20501234567890',
+          branchName: 'Mirpur Branch, Dhaka',
+          routingNumber: '125263748',
+        }),
+        description: 'Company bank account details displayed for B2B bank transfers',
+      },
+      {
+        key: 'bkash_merchant_number',
+        value: '01700000001',
+        description: 'bKash merchant wallet for Paikari payments',
+      },
+    ],
   });
 
   // Sample Staged Medicine Import Batch for Demonstration

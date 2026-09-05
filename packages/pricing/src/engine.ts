@@ -60,6 +60,14 @@ export function calculateFromRateRule(mrp: number, rule: RateRule): {
  * Default: 0% discount (Full MRP)
  */
 export class PricingEngine {
+  public static roundToCurrency(value: number): number {
+    return roundToCurrency(value);
+  }
+
+  public static roundToTwoDecimals(value: number): number {
+    return roundToCurrency(value);
+  }
+
   /**
    * Resolves the price for a single product and customer.
    */

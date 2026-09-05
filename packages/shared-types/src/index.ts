@@ -50,6 +50,67 @@ export enum OrderPlatformStatus {
   RETURNED = 'RETURNED',
 }
 
+export enum FulfillmentStatus {
+  PENDING = 'PENDING',
+  VERIFYING = 'VERIFYING',
+  PACKED = 'PACKED',
+  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+  REFUSED_DELIVERY = 'REFUSED_DELIVERY',
+}
+
+export enum FulfillmentMethod {
+  SELF_PICKUP = 'SELF_PICKUP',
+  SEND_SOMEONE = 'SEND_SOMEONE',
+  HOME_DELIVERY = 'HOME_DELIVERY',
+}
+
+export enum UnitType {
+  PIECE = 'PIECE',
+  STRIP = 'STRIP', // পাতা
+  BOX = 'BOX',
+}
+
+export enum PaymentMethod {
+  COD = 'COD',
+  BKASH = 'BKASH',
+  BANK_TRANSFER = 'BANK_TRANSFER',
+  ADVANCE = 'ADVANCE',
+}
+
+export enum PaymentStatus {
+  UNPAID = 'UNPAID',
+  PAID = 'PAID',
+  ADVANCE_PAID = 'ADVANCE_PAID',
+}
+
+export enum MemoState {
+  PRELIMINARY_MRP = 'PRELIMINARY_MRP',
+  FINAL_TIERED = 'FINAL_TIERED',
+}
+
+export enum LineVerificationStatus {
+  PENDING = 'PENDING',
+  FULL_STOCK = 'FULL_STOCK',
+  PARTIAL_STOCK = 'PARTIAL_STOCK',
+  NONE_AVAILABLE = 'NONE_AVAILABLE',
+}
+
+export enum CancellationState {
+  NONE = 'NONE',
+  REQUESTED = 'REQUESTED',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  REFUSED_AT_DELIVERY = 'REFUSED_AT_DELIVERY',
+}
+
+export enum ShortListStatus {
+  OPEN = 'OPEN',
+  ORDERED = 'ORDERED',
+  RESOLVED = 'RESOLVED',
+}
+
 export enum ApplicationStatus {
   PENDING_REVIEW = 'PENDING_REVIEW',
   APPROVED = 'APPROVED',
@@ -73,6 +134,13 @@ export enum AuditAction {
   BULK_CUSTOMER_IMPORTED = 'BULK_CUSTOMER_IMPORTED',
   MEDICINE_BATCH_PUBLISHED = 'MEDICINE_BATCH_PUBLISHED',
   LOGIN_FAILED_LOCKOUT = 'LOGIN_FAILED_LOCKOUT',
+  ORDER_CREATED = 'ORDER_CREATED',
+  ORDER_VERIFIED = 'ORDER_VERIFIED',
+  ORDER_PRICE_OVERRIDDEN = 'ORDER_PRICE_OVERRIDDEN',
+  FINAL_MEMO_PUBLISHED = 'FINAL_MEMO_PUBLISHED',
+  ORDER_CANCELLED = 'ORDER_CANCELLED',
+  ORDER_REFUSED_AT_DELIVERY = 'ORDER_REFUSED_AT_DELIVERY',
+  CUSTOMER_PROMOTED_TO_WHOLESALE = 'CUSTOMER_PROMOTED_TO_WHOLESALE',
 }
 
 export interface DynamicPermission {
@@ -214,4 +282,157 @@ export interface StagingBatchSummary {
   status: string; // STAGED, PUBLISHED, REJECTED
   importedBy: string;
   createdAt: string;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 1: Paikari Market DTOs & Interfaces
+// -----------------------------------------------------------------------------
+
+export interface PaikariOrderItemInput {
+  productId: string;
+  unitType: UnitType;
+  requestedQuantity: number;
+}
+
+export interface CreatePaikariOrderDto {
+  items: PaikariOrderItemInput[];
+  fulfillmentMethod: FulfillmentMethod;
+  pickupPersonName?: string;
+  pickupPersonPhone?: string;
+  deliveryAddress?: string;
+  isTodayDelivery?: boolean;
+  paymentMethod: PaymentMethod;
+  orderNotes?: string;
+  voiceNoteUrl?: string;
+  prescriptionUrl?: string;
+  targetCustomerId?: string; // If placed by staff on behalf of customer
+}
+
+export interface VerifyLineItemDto {
+  itemId: string;
+  status: LineVerificationStatus; // FULL_STOCK, PARTIAL_STOCK, NONE_AVAILABLE
+  confirmedQuantity?: number;
+}
+
+export interface PriceOverrideDto {
+  itemId: string;
+  manualPrice: number;
+}
+
+export interface AddOrderItemsDto {
+  items: PaikariOrderItemInput[];
+}
+
+export interface OrderItemResponse {
+  id: string;
+  orderId: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  dosageForm: string;
+  strength: string;
+  unitType: UnitType;
+  requestedQuantity: number;
+  confirmedQuantity: number;
+  verificationStatus: LineVerificationStatus;
+  isOfferPara: boolean;
+  unitMrp: number;
+  tieredUnitPrice: number;
+  finalUnitPrice: number;
+  manualPriceOverrideByStaff?: number | null;
+  appliedLayer: string;
+  totalPrice: number;
+  fulfilledByStaffId?: string | null;
+  fulfilledByStaffName?: string | null;
+  fulfilledAt?: string | null;
+}
+
+export interface OrderResponse {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  customerName: string;
+  shopName: string;
+  customerPhone: string;
+  sectorType: SectorType;
+  platformStatus: OrderPlatformStatus;
+  fulfillmentStatus: FulfillmentStatus;
+  memoState: MemoState;
+  isFinalMemoPublished: boolean;
+  preliminarySubtotal: number;
+  finalSubtotal: number;
+  deliveryFee: number;
+  discountAmount: number;
+  totalAmount: number;
+  fulfillmentMethod: FulfillmentMethod;
+  pickupPersonName?: string | null;
+  pickupPersonPhone?: string | null;
+  deliveryAddress: string;
+  isTodayDelivery: boolean;
+  paymentMethod: PaymentMethod;
+  paymentStatus: PaymentStatus;
+  lastUpdatedByStaff?: string | null;
+  lastUpdatedByStaffName?: string | null;
+  cancellationState: CancellationState;
+  cancellationReason?: string | null;
+  cancellationRequestedAt?: string | null;
+  orderNotes?: string | null;
+  voiceNoteUrl?: string | null;
+  prescriptionUrl?: string | null;
+  placedByStaffId?: string | null;
+  placedByStaffName?: string | null;
+  items: OrderItemResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PharmaTrackShortListItem {
+  id: string;
+  orderId?: string | null;
+  orderNumber?: string | null;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  requestedQuantity: number;
+  unitType: string;
+  shopId: string;
+  shopName: string;
+  shopPhone?: string | null;
+  reportedByStaffId?: string | null;
+  reportedByStaffName?: string | null;
+  status: ShortListStatus;
+  createdAt: string;
+}
+
+export interface CustomerRankingItem {
+  customerId: string;
+  shopName: string;
+  ownerName: string;
+  phone: string;
+  accountType: AccountType;
+  tierId: string;
+  tierName: string;
+  monthlySalesVolume: number;
+  totalOrdersCount: number;
+  cancellationCount: number;
+  refusalCount: number;
+  isProblemCustomer: boolean;
+  problemFlagReason?: string | null;
+  eligibleForWholesaleUpgrade: boolean;
+}
+
+export interface PlatformSettingsDto {
+  problemCustomerThreshold: number;
+  defaultDeliveryFee: number;
+  defaultFreeDeliveryThreshold: number;
+  bankAccountDetails: {
+    bankName: string;
+    accountName: string;
+    accountNumber: string;
+    branchName: string;
+    routingNumber?: string;
+  };
+  bkashMerchantNumber: string;
 }
