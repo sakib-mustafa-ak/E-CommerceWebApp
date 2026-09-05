@@ -139,4 +139,53 @@ export class PricingEngine {
       this.calculatePrice(product, updatedCustomer, catalog),
     );
   }
+
+  /**
+   * Calculates volume discount on Offer Para items or retail sales.
+   */
+  public static calculateVolumeDiscount(
+    basePrice: number,
+    quantity: number,
+    tiers?: { minQty: number; discountPercent?: number; unitPrice?: number }[],
+  ): { unitPrice: number; discountPercent: number; totalPrice: number } {
+    const cleanBase = roundToCurrency(Math.max(0, basePrice));
+    if (!tiers || tiers.length === 0) {
+      return {
+        unitPrice: cleanBase,
+        discountPercent: 0,
+        totalPrice: roundToCurrency(cleanBase * quantity),
+      };
+    }
+
+    const sorted = [...tiers].sort((a, b) => b.minQty - a.minQty);
+    const matchingTier = sorted.find((t) => quantity >= t.minQty);
+
+    if (!matchingTier) {
+      return {
+        unitPrice: cleanBase,
+        discountPercent: 0,
+        totalPrice: roundToCurrency(cleanBase * quantity),
+      };
+    }
+
+    if (matchingTier.unitPrice !== undefined) {
+      const unitPrice = roundToCurrency(matchingTier.unitPrice);
+      const discountPercent =
+        cleanBase > 0 ? roundToCurrency(((cleanBase - unitPrice) / cleanBase) * 100) : 0;
+      return {
+        unitPrice,
+        discountPercent,
+        totalPrice: roundToCurrency(unitPrice * quantity),
+      };
+    }
+
+    const discountPercent = matchingTier.discountPercent || 0;
+    const unitPrice = roundToCurrency(cleanBase * (1 - discountPercent / 100));
+    return {
+      unitPrice,
+      discountPercent,
+      totalPrice: roundToCurrency(unitPrice * quantity),
+    };
+  }
 }
+

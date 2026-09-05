@@ -594,3 +594,146 @@ export interface WholesaleDashboardSummary {
   activePreOrdersCount: number;
 }
 
+// -----------------------------------------------------------------------------
+// Phase 4: Stock Management Module & Offer Para Types
+// -----------------------------------------------------------------------------
+
+export enum OfferParaDisplayMode {
+  EXACT_COUNT = 'EXACT_COUNT',
+  IN_STOCK_ONLY = 'IN_STOCK_ONLY',
+}
+
+export interface QuantityDiscountBreakpoint {
+  minQty: number;
+  discountPercent?: number;
+  unitPrice?: number;
+}
+
+export interface StockBatchDto {
+  productId: string;
+  batchNumber?: string;
+  initialQuantity: number;
+  purchaseCost: number;
+  sellingPrice: number;
+  wholesalePrice: number;
+  mfgDate?: string;
+  expiryDate: string;
+  supplierName?: string;
+  lowStockThreshold?: number;
+  notes?: string;
+}
+
+export interface StockBatchResponse {
+  id: string;
+  batchNumber: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  ownerId: string;
+  ownerName: string;
+  initialQuantity: number;
+  currentQuantity: number;
+  purchaseCost: number;
+  sellingPrice: number;
+  wholesalePrice: number;
+  mfgDate?: string | null;
+  expiryDate: string;
+  supplierName?: string | null;
+  lowStockThreshold: number;
+  isLowStock: boolean;
+  isExpiringSoon: boolean;
+  daysUntilExpiry: number;
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface StockSaleItemInput {
+  productId: string;
+  quantity: number;
+  batchId?: string;
+  customUnitPrice?: number;
+}
+
+export interface StockSaleCreateDto {
+  saleType: 'RETAIL' | 'WHOLESALE' | 'COUNTER_OFFLINE';
+  customerName?: string;
+  customerPhone?: string;
+  discountPercent?: number; // e.g. 5, 8, 10
+  paymentMethod?: string;
+  items: StockSaleItemInput[];
+  notes?: string;
+}
+
+export interface StockSaleResponse {
+  id: string;
+  receiptNumber: string;
+  ownerId: string;
+  saleType: string;
+  customerName?: string | null;
+  customerPhone?: string | null;
+  subtotal: number;
+  discountPercent: number;
+  discountAmount: number;
+  totalAmount: number;
+  totalCost: number;
+  profitMargin: number;
+  profitMarginPercent: number;
+  paymentMethod: string;
+  notes?: string | null;
+  createdAt: string;
+  items: {
+    id: string;
+    productId: string;
+    productName: string;
+    quantity: number;
+    unitCost: number;
+    unitPrice: number;
+    totalPrice: number;
+    profit: number;
+  }[];
+}
+
+export interface InventoryAnalyticsSummary {
+  totalProductsCount: number;
+  totalBatchesCount: number;
+  totalStockUnits: number;
+  totalValuationAtCost: number;
+  totalPotentialRevenue: number;
+  estimatedNetProfit: number;
+  overallMarginPercent: number;
+  lowStockAlertsCount: number;
+  expiringSoonAlertsCount: number;
+  reorderSuggestionsCount: number;
+}
+
+export interface StockAlertSummary {
+  lowStockProducts: {
+    productId: string;
+    productName: string;
+    companyName: string;
+    currentQuantity: number;
+    lowStockThreshold: number;
+    suggestedReorderQuantity: number;
+  }[];
+  expiringBatches: {
+    batchId: string;
+    batchNumber: string;
+    productId: string;
+    productName: string;
+    currentQuantity: number;
+    expiryDate: string;
+    daysUntilExpiry: number;
+    urgencyLevel: 'CRITICAL' | 'WARNING' | 'NOTICE';
+  }[];
+  reorderSuggestions: {
+    productId: string;
+    productName: string;
+    dailySalesVelocity: number;
+    currentStockDaysLeft: number;
+    recommendedOrderQty: number;
+  }[];
+}
+
+

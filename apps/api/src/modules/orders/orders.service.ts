@@ -244,21 +244,31 @@ export class OrdersService {
         ? await this.prisma.user.findUnique({ where: { id: actorId } })
         : null;
 
+    const isAllOfferPara = orderItemsData.length > 0 && orderItemsData.every((i) => i.isOfferPara);
+    const offerFinalSubtotal = orderItemsData.reduce((sum, i) => sum + i.totalPrice, 0);
+
+    const memoState = isAllOfferPara ? MemoState.FINAL_TIERED : MemoState.PRELIMINARY_MRP;
+    const isFinalMemoPublished = isAllOfferPara;
+    const finalSubtotal = isAllOfferPara ? offerFinalSubtotal : 0;
+    const initialTotalAmount = isAllOfferPara
+      ? PricingEngine.roundToTwoDecimals(offerFinalSubtotal + deliveryFee)
+      : preliminaryTotal;
+
     const order = await this.prisma.order.create({
       data: {
         orderNumber,
         userId: targetUserId,
-        sectorType: isWholesaleOrder ? SectorType.WHOLESALE : SectorType.PHARMACY,
+        sectorType: isWholesaleOrder ? SectorType.WHOLESALE : isAllOfferPara ? SectorType.OFFER_PARA : SectorType.PHARMACY,
         platformStatus: 'DRAFT_SALE',
         fulfillmentStatus: FulfillmentStatus.PENDING,
-        memoState: MemoState.PRELIMINARY_MRP,
-        isFinalMemoPublished: false,
+        memoState,
+        isFinalMemoPublished,
         preliminarySubtotal,
-        finalSubtotal: 0,
-        subtotal: preliminarySubtotal,
+        finalSubtotal,
+        subtotal: isAllOfferPara ? offerFinalSubtotal : preliminarySubtotal,
         deliveryFee,
         discountAmount: 0,
-        totalAmount: preliminaryTotal,
+        totalAmount: initialTotalAmount,
         fulfillmentMethod: dto.fulfillmentMethod,
         pickupPersonName: dto.pickupPersonName,
         pickupPersonPhone: dto.pickupPersonPhone,

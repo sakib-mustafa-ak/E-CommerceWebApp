@@ -32,6 +32,8 @@ model User {
   orders               Order[]
   returnRequests       ReturnRequest[]
   preOrders            PreOrder[]
+  stockBatches         StockBatch[]
+  stockSales           StockSaleRecord[]
   auditLogs            AuditLog[]
 }
 
@@ -116,6 +118,9 @@ model CustomerProfile {
   
   // Phase 3 Wholesale Category Access Control
   allowedCategories    String?      @default("ALL") // "ALL" or JSON array of allowed category strings
+  
+  // Phase 4 Stock Management Access Control (Granted explicitly by Admin)
+  hasStockModuleAccess Boolean      @default(false)
   
   user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   tier                 PricingTier  @relation(fields: [tierId], references: [id])
@@ -213,9 +218,11 @@ model Product {
   // Phase 3 Wholesale MOQ
   wholesaleMoq            Int                   @default(1)
 
-  // Two separate inventories rule (Rule 4)
+  // Two separate inventories rule (Rule 4) & Phase 4 Offer Para Live Marketplace
   isOfferParaLiveStock    Boolean               @default(false)
   offerParaStockQty       Int                   @default(0)
+  offerParaDisplayMode    String                @default("EXACT_COUNT") // EXACT_COUNT, IN_STOCK_ONLY
+  offerParaDiscountTiers  String?               // JSON array: [{"minQty":5,"discountPercent":20},{"minQty":10,"discountPercent":25}]
   isPharmaTrackOpaque     Boolean               @default(true) // External PharmaTrack opaque stock
 
   // Future proofing (Rule 8)
@@ -229,6 +236,8 @@ model Product {
   orderItems              OrderItem[]
   returnItems             ReturnItem[]
   preOrders               PreOrder[]
+  stockBatches            StockBatch[]
+  stockSaleItems          StockSaleItem[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -557,4 +566,77 @@ model PreOrder {
   @@index([userId])
   @@index([leadTimeDays])
 }
+
+// Phase 4: Stock Management Module Models (Multi-Tenant Inventory & Profit Tracking)
+model StockBatch {
+  id                  String          @id @default(uuid())
+  batchNumber         String          // e.g. BAT-2026-0001
+  productId           String
+  ownerId             String          // Admin for Offer Para / Wholesaler for individual resale store
+  initialQuantity     Int
+  currentQuantity     Int
+  purchaseCost        Float           // Purchase cost per unit in BDT
+  sellingPrice        Float           // Standard retail sale price
+  wholesalePrice      Float           // Wholesale rate for bulk resales
+  mfgDate             DateTime?
+  expiryDate          DateTime        // Expiry alert trigger
+  supplierName        String?
+  lowStockThreshold   Int             @default(10)
+  notes               String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  product             Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  owner               User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  saleItems           StockSaleItem[]
+
+  @@index([ownerId])
+  @@index([productId])
+  @@index([expiryDate])
+}
+
+model StockSaleRecord {
+  id                  String          @id @default(uuid())
+  receiptNumber       String          @unique // REC-2026-0001
+  ownerId             String
+  saleType            String          @default("RETAIL") // RETAIL, WHOLESALE, COUNTER_OFFLINE
+  customerName        String?
+  customerPhone       String?
+  subtotal            Float           @default(0)
+  discountPercent     Float           @default(0) // 5, 8, 10
+  discountAmount      Float           @default(0)
+  totalAmount         Float           @default(0)
+  totalCost           Float           @default(0)
+  profitMargin        Float           @default(0) // totalAmount - totalCost
+  paymentMethod       String          @default("CASH") // CASH, BKASH, CARD, TAB
+  notes               String?
+  createdAt           DateTime        @default(now())
+
+  owner               User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  items               StockSaleItem[]
+
+  @@index([ownerId])
+  @@index([createdAt])
+}
+
+model StockSaleItem {
+  id                  String          @id @default(uuid())
+  saleRecordId        String
+  batchId             String?
+  productId           String
+  productName         String
+  quantity            Int
+  unitCost            Float
+  unitPrice           Float
+  totalPrice          Float
+  profit              Float
+
+  saleRecord          StockSaleRecord @relation(fields: [saleRecordId], references: [id], onDelete: Cascade)
+  product             Product         @relation(fields: [productId], references: [id])
+  batch               StockBatch?     @relation(fields: [batchId], references: [id])
+
+  @@index([saleRecordId])
+  @@index([productId])
+}
+
 

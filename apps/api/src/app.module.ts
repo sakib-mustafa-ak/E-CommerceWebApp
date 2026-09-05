@@ -15,6 +15,7 @@ import { CatalogModule } from './modules/catalog/catalog.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ReturnsModule } from './modules/returns/returns.module';
 import { PreOrdersModule } from './modules/pre-orders/pre-orders.module';
+import { StockModule } from './modules/stock/stock.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { PreOrdersModule } from './modules/pre-orders/pre-orders.module';
     OrdersModule,
     ReturnsModule,
     PreOrdersModule,
+    StockModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
