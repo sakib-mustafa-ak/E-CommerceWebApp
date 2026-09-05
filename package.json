@@ -1,0 +1,24 @@
+{
+  "name": "siams-aqua-ecommerce",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Siam's Aqua E-Commerce Multi-Sector Platform",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "prisma:generate": "pnpm --filter @siam-aqua/api prisma generate",
+    "prisma:migrate": "pnpm --filter @siam-aqua/api prisma migrate dev",
+    "prisma:seed": "pnpm --filter @siam-aqua/api prisma db seed"
+  },
+  "devDependencies": {
+    "turbo": "^2.4.4",
+    "typescript": "^5.8.2"
+  },
+  "packageManager": "pnpm@12.3.4"
+}

@@ -1,0 +1,299 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String            @id @default(uuid())
+  email                String            @unique
+  phone                String?           @unique
+  passwordHash         String
+  name                 String
+  accountType          String            // SUPER_ADMIN, STAFF, PAIKARI_SELLER, WHOLESALER_SELLER, MPO, FOOD_VENDOR, PUBLIC_USER
+  is2FAEnabled         Boolean           @default(false)
+  twoFactorSecret      String?
+  twoFactorBackupCodes String?           // JSON array of hashed recovery codes
+  suspensionType       String            @default("NONE") // NONE, INDEFINITE, TEMPORARY
+  suspendedUntil       DateTime?
+  suspensionReason     String?
+  failedLoginAttempts  Int               @default(0)
+  lockoutUntil         DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  staffProfile         StaffProfile?
+  customerProfile      CustomerProfile?
+  userRoles            UserRole[]
+  manualOverrides      CustomerManualOverrideRate[]
+  orders               Order[]
+  auditLogs            AuditLog[]
+}
+
+model StaffProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  department   String?
+  employeeCode String?
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Role {
+  id              String           @id @default(uuid())
+  name            String
+  slug            String           @unique
+  description     String?
+  isSystem        Boolean          @default(false)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  rolePermissions RolePermission[]
+  userRoles       UserRole[]
+}
+
+model Permission {
+  id              String           @id @default(uuid())
+  slug            String           @unique
+  name            String
+  category        String           // orders, pricing, accounts, catalog, security, system
+  description     String?
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserRole {
+  userId String
+  roleId String
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role   Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+}
+
+model CustomerProfile {
+  id                   String       @id @default(uuid())
+  userId               String       @unique
+  shopName             String
+  ownerName            String
+  address              String
+  tradeLicenseNo       String?
+  drugLicenseNo        String?
+  tradeLicenseFileUrl  String?
+  drugLicenseFileUrl   String?
+  tierId               String
+  creditLimit          Float        @default(0)
+  codLimit             Float        @default(0)
+  deliveryFeeThreshold Float        @default(0)
+  runningTabBalance    Float        @default(0) // Future-proof Rule 8
+  user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier                 PricingTier  @relation(fields: [tierId], references: [id])
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+}
+
+model ApplicationQueue {
+  id                  String   @id @default(uuid())
+  businessName        String
+  ownerName           String
+  phone               String
+  email               String
+  address             String
+  accountType         String   // PAIKARI_SELLER, WHOLESALER_SELLER, FOOD_VENDOR
+  categoryInterest    String?
+  tradeLicenseNo      String?
+  drugLicenseNo       String?
+  tradeLicenseFileUrl String?
+  drugLicenseFileUrl  String?
+  status              String   @default("PENDING_REVIEW") // PENDING_REVIEW, APPROVED, REJECTED
+  reviewNote          String?
+  reviewedBy          String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
+model PricingTier {
+  id              String            @id @default(uuid())
+  code            String            @unique // TIER_A, TIER_B, TIER_C, etc.
+  name            String
+  description     String?
+  defaultRateType String            @default("PERCENTAGE") // PERCENTAGE, FLAT_RATE
+  defaultValue    Float             @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  customerProfiles CustomerProfile[]
+  companyRates     CompanyRate[]
+  productOverrides ProductOverrideRate[]
+}
+
+model Company {
+  id           String        @id @default(uuid())
+  name         String
+  code         String        @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  products     Product[]
+  companyRates CompanyRate[]
+}
+
+model Product {
+  id                     String                @id @default(uuid())
+  name                   String
+  genericName            String?
+  mrp                    Float
+  companyId              String
+  category               String
+  unit                   String                @default("Box")
+  // Two separate inventories rule (Rule 4)
+  isOfferParaLiveStock   Boolean               @default(false)
+  offerParaStockQty      Int                   @default(0)
+  isPharmaTrackOpaque    Boolean               @default(true) // External PharmaTrack opaque stock
+  // Future proofing (Rule 8)
+  serviceBookingAvailable Boolean              @default(false)
+  counterSaleEnabled     Boolean               @default(false)
+
+  company                Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  productOverrides       ProductOverrideRate[]
+  manualOverrides        CustomerManualOverrideRate[]
+  orderItems             OrderItem[]
+  createdAt              DateTime              @default(now())
+  updatedAt              DateTime              @updatedAt
+}
+
+model CompanyRate {
+  id        String      @id @default(uuid())
+  companyId String
+  tierId    String
+  rateType  String      @default("PERCENTAGE") // PERCENTAGE, FLAT_RATE
+  value     Float
+  company   Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  tier      PricingTier @relation(fields: [tierId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([companyId, tierId])
+}
+
+model ProductOverrideRate {
+  id        String      @id @default(uuid())
+  productId String
+  tierId    String
+  rateType  String      @default("PERCENTAGE") // PERCENTAGE, FLAT_RATE
+  value     Float
+  product   Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tier      PricingTier @relation(fields: [tierId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@unique([productId, tierId])
+}
+
+model CustomerManualOverrideRate {
+  id        String   @id @default(uuid())
+  userId    String
+  productId String
+  rateType  String   @default("PERCENTAGE") // PERCENTAGE, FLAT_RATE
+  value     Float
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, productId])
+}
+
+model Order {
+  id                 String      @id @default(uuid())
+  orderNumber        String      @unique
+  userId             String
+  sectorType         String      // PHARMACY, WHOLESALE, OFFER_PARA, FOOD, etc.
+  platformStatus     String      @default("DRAFT_SALE") // DRAFT_SALE, COMPLETE_SALE, CANCELLED, RETURNED (Rule 3)
+  subtotal           Float
+  discountAmount     Float       @default(0)
+  deliveryFee        Float       @default(0)
+  totalAmount        Float
+  isCod              Boolean     @default(true)
+  deliveryAddress    String
+  // Staff concurrency tracking (Rule 6)
+  lastUpdatedByStaff String?
+  // Future proofing fields (Rule 8)
+  isCounterSale      Boolean     @default(false)
+  isPrescriptionReq  Boolean     @default(false)
+  prescriptionUrl    String?
+
+  user               User        @relation(fields: [userId], references: [id])
+  items              OrderItem[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+}
+
+model OrderItem {
+  id                 String   @id @default(uuid())
+  orderId            String
+  productId          String
+  quantity           Int
+  unitMrp            Float
+  appliedUnitPrice   Float
+  appliedLayer       String   // CUSTOMER_MANUAL_OVERRIDE, PRODUCT_OVERRIDE, COMPANY_RATE, TIER_DEFAULT
+  rateType           String
+  rateValue          Float
+  totalPrice         Float
+  // Concurrency field per line item (Rule 6)
+  fulfilledByStaffId String?
+  fulfilledAt        DateTime?
+
+  order              Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product            Product  @relation(fields: [productId], references: [id])
+}
+
+model IpRule {
+  id        String    @id @default(uuid())
+  ipAddress String    @unique
+  type      String    @default("BLOCK") // ALLOW, BLOCK
+  reason    String
+  expiresAt DateTime?
+  createdBy String?
+  createdAt DateTime  @default(now())
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  actorEmail String?
+  action     String   // TIER_CHANGED, MANUAL_RATE_CHANGED, etc.
+  entityType String
+  entityId   String
+  beforeData String?  // JSON string
+  afterData  String?  // JSON string
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [actorId], references: [id])
+}
+
+model BackupRecord {
+  id              String    @id @default(uuid())
+  fileName        String
+  fileSizeBytes   Int
+  checksum        String
+  storageLocation String
+  status          String    @default("SUCCESS")
+  drillVerifiedAt DateTime?
+  drillNotes      String?
+  createdAt       DateTime  @default(now())
+}
