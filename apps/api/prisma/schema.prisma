@@ -30,6 +30,7 @@ model User {
   userRoles            UserRole[]
   manualOverrides      CustomerManualOverrideRate[]
   orders               Order[]
+  returnRequests       ReturnRequest[]
   auditLogs            AuditLog[]
 }
 
@@ -60,7 +61,7 @@ model Permission {
   id              String           @id @default(uuid())
   slug            String           @unique
   name            String
-  category        String           // orders, pricing, accounts, catalog, security, system
+  category        String           // orders, pricing, accounts, catalog, security, system, returns
   description     String?
 
   rolePermissions RolePermission[]
@@ -106,6 +107,11 @@ model CustomerProfile {
   isProblemCustomer    Boolean      @default(false)
   problemFlagReason    String?
   totalMonthlySales    Float        @default(0)
+
+  // Phase 2 Returns store credit & running returns metrics
+  creditBalance        Float        @default(0) // Running customer store credit / tab balance for next memo
+  totalReturnsCount    Int          @default(0)
+  totalReturnsValue    Float        @default(0)
   
   user                 User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   tier                 PricingTier  @relation(fields: [tierId], references: [id])
@@ -177,7 +183,7 @@ model Generic {
   products          Product[]
 }
 
-// MedEx-Style Medicine Product Entity with generic linking & dual inventory isolation
+// MedEx-Style Medicine Product Entity with returnability flags
 model Product {
   id                      String                @id @default(uuid())
   name                    String                // Brand Name: e.g. "Napa Extra", "Ace Plus"
@@ -194,6 +200,12 @@ model Product {
   description             String?
   isPrescriptionRequired  Boolean               @default(false)
 
+  // Phase 2 Returns fields
+  isReturnable            Boolean               @default(true)
+  returnCount             Int                   @default(0)
+  isHighReturnRate        Boolean               @default(false)
+  highReturnFlagReason    String?
+
   // Two separate inventories rule (Rule 4)
   isOfferParaLiveStock    Boolean               @default(false)
   offerParaStockQty       Int                   @default(0)
@@ -208,6 +220,7 @@ model Product {
   productOverrides        ProductOverrideRate[]
   manualOverrides         CustomerManualOverrideRate[]
   orderItems              OrderItem[]
+  returnItems             ReturnItem[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -301,59 +314,63 @@ model CustomerManualOverrideRate {
 }
 
 model Order {
-  id                      String      @id @default(uuid())
-  orderNumber             String      @unique
+  id                      String          @id @default(uuid())
+  orderNumber             String          @unique
   userId                  String
-  sectorType              String      @default("PHARMACY") // PHARMACY, WHOLESALE, OFFER_PARA, FOOD, etc.
-  platformStatus          String      @default("DRAFT_SALE") // DRAFT_SALE, COMPLETE_SALE, CANCELLED, RETURNED (Rule 3)
-  fulfillmentStatus       String      @default("PENDING") // PENDING, VERIFYING, PACKED, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, REFUSED_DELIVERY
+  sectorType              String          @default("PHARMACY") // PHARMACY, WHOLESALE, OFFER_PARA, FOOD, etc.
+  platformStatus          String          @default("DRAFT_SALE") // DRAFT_SALE, COMPLETE_SALE, CANCELLED, RETURNED (Rule 3)
+  fulfillmentStatus       String          @default("PENDING") // PENDING, VERIFYING, PACKED, OUT_FOR_DELIVERY, DELIVERED, CANCELLED, REFUSED_DELIVERY
   
   // Memo states & totals
-  memoState               String      @default("PRELIMINARY_MRP") // PRELIMINARY_MRP, FINAL_TIERED
-  isFinalMemoPublished    Boolean     @default(false)
-  preliminarySubtotal     Float       @default(0)
-  finalSubtotal           Float       @default(0)
-  subtotal                Float       @default(0)
-  discountAmount          Float       @default(0)
-  deliveryFee             Float       @default(0)
-  totalAmount             Float       @default(0)
+  memoState               String          @default("PRELIMINARY_MRP") // PRELIMINARY_MRP, FINAL_TIERED
+  isFinalMemoPublished    Boolean         @default(false)
+  preliminarySubtotal     Float           @default(0)
+  finalSubtotal           Float           @default(0)
+  subtotal                Float           @default(0)
+  discountAmount          Float           @default(0)
+  deliveryFee             Float           @default(0)
+  totalAmount             Float           @default(0)
   
   // Fulfillment & Logistics
-  fulfillmentMethod       String      @default("HOME_DELIVERY") // SELF_PICKUP, SEND_SOMEONE, HOME_DELIVERY
+  fulfillmentMethod       String          @default("HOME_DELIVERY") // SELF_PICKUP, SEND_SOMEONE, HOME_DELIVERY
   pickupPersonName        String?
   pickupPersonPhone       String?
   deliveryAddress         String
-  isTodayDelivery         Boolean     @default(true)
-  isCod                   Boolean     @default(true)
+  isTodayDelivery         Boolean         @default(true)
+  isCod                   Boolean         @default(true)
   
   // Payment
-  paymentMethod           String      @default("COD") // COD, BKASH, BANK_TRANSFER, ADVANCE
-  paymentStatus           String      @default("UNPAID") // UNPAID, PAID, ADVANCE_PAID
+  paymentMethod           String          @default("COD") // COD, BKASH, BANK_TRANSFER, ADVANCE
+  paymentStatus           String          @default("UNPAID") // UNPAID, PAID, ADVANCE_PAID
   
   // Staff concurrency & presence (Rule 6)
   lastUpdatedByStaff      String?
   lastUpdatedByStaffName  String?
   
   // Cancellation handling (3 states)
-  cancellationState       String      @default("NONE") // NONE, REQUESTED, APPROVED, REJECTED, REFUSED_AT_DELIVERY
+  cancellationState       String          @default("NONE") // NONE, REQUESTED, APPROVED, REJECTED, REFUSED_AT_DELIVERY
   cancellationReason      String?
   cancellationRequestedAt DateTime?
+
+  // Phase 2 Returns receipt tracking
+  confirmedReceiptAt      DateTime?
   
   // Media & Notes
   orderNotes              String?
   voiceNoteUrl            String?
-  isPrescriptionReq       Boolean     @default(false)
+  isPrescriptionReq       Boolean         @default(false)
   prescriptionUrl         String?
-  placedByStaffId         String?     // For orders placed on behalf of customer
+  placedByStaffId         String?         // For orders placed on behalf of customer
   placedByStaffName       String?
   
   // Future proofing fields (Rule 8)
-  isCounterSale           Boolean     @default(false)
+  isCounterSale           Boolean         @default(false)
 
-  user                    User        @relation(fields: [userId], references: [id])
+  user                    User            @relation(fields: [userId], references: [id])
   items                   OrderItem[]
-  createdAt               DateTime    @default(now())
-  updatedAt               DateTime    @updatedAt
+  returnRequests          ReturnRequest[]
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
 
   @@index([userId])
   @@index([fulfillmentStatus])
@@ -392,6 +409,53 @@ model OrderItem {
   product                    Product   @relation(fields: [productId], references: [id])
 }
 
+// Case-by-case manual return judgment request (Phase 2)
+model ReturnRequest {
+  id                  String       @id @default(uuid())
+  returnNumber        String       @unique // RET-2026-00001
+  orderId             String
+  userId              String
+  sectorType          String       @default("PHARMACY") // PHARMACY, PUBLIC, WHOLESALE
+  status              String       @default("PENDING") // PENDING, APPROVED, REJECTED
+  totalRefundCredit   Float        @default(0)
+  reason              String
+  voiceNoteUrl        String?
+  reviewedByStaffId   String?
+  reviewedByStaffName String?
+  reviewedAt          DateTime?
+  reviewNotes         String?
+
+  order               Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user                User         @relation(fields: [userId], references: [id])
+  items               ReturnItem[]
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  @@index([status])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// Line items in a return request (supports partial returns)
+model ReturnItem {
+  id                        String        @id @default(uuid())
+  returnRequestId           String
+  orderItemId               String
+  productId                 String
+  productName               String
+  genericName               String
+  unitType                  String        @default("STRIP")
+  originalUnitPrice         Float
+  originalPurchasedQuantity Int
+  returnedQuantity          Int
+  refundCreditAmount        Float
+  isOfferParaStock          Boolean       @default(false)
+  stockReversed             Boolean       @default(false)
+
+  returnRequest             ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+  product                   Product       @relation(fields: [productId], references: [id])
+}
+
 model PharmaTrackShortList {
   id                  String   @id @default(uuid())
   orderId             String?
@@ -417,7 +481,7 @@ model PharmaTrackShortList {
 
 model PlatformSetting {
   id          String   @id @default(uuid())
-  key         String   @unique // e.g. "problem_customer_threshold", "default_free_delivery_threshold", "bank_account_info"
+  key         String   @unique // e.g. "problem_customer_threshold", "default_free_delivery_threshold", "bank_account_info", "return_window_days", "high_return_product_threshold"
   value       String   // JSON or string
   description String?
   updatedBy   String?

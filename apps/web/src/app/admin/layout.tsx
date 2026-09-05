@@ -23,6 +23,7 @@ import { useAuth } from '@/lib/auth-context';
 
 const ADMIN_NAV = [
   { name: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
+  { name: 'Returns Review Queue', href: '/admin/returns', icon: History },
   { name: 'PharmaTrack Short List', href: '/admin/short-list', icon: FileSpreadsheet },
   { name: 'Customer Rankings & Upgrades', href: '/admin/rankings', icon: Users },
   { name: 'Place Order on Behalf', href: '/admin/orders/create-on-behalf', icon: Store },

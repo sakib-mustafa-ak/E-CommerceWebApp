@@ -435,4 +435,97 @@ export interface PlatformSettingsDto {
     routingNumber?: string;
   };
   bkashMerchantNumber: string;
+  returnWindowDays?: number;
+  highReturnProductThreshold?: number;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 2: Returns Management Engine Types
+// -----------------------------------------------------------------------------
+
+export enum ReturnStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+}
+
+export interface ReturnItemInput {
+  orderItemId: string;
+  returnedQuantity: number;
+}
+
+export interface CreateReturnDto {
+  orderId: string;
+  items: ReturnItemInput[];
+  reason: string;
+  voiceNoteUrl?: string;
+}
+
+export interface ReviewReturnDto {
+  approve: boolean;
+  reviewNotes?: string;
+}
+
+export interface ReturnItemResponse {
+  id: string;
+  returnRequestId: string;
+  orderItemId: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  unitType: string;
+  originalUnitPrice: number;
+  originalPurchasedQuantity: number;
+  returnedQuantity: number;
+  refundCreditAmount: number;
+  isOfferParaStock: boolean;
+  stockReversed: boolean;
+}
+
+export interface ReturnRequestResponse {
+  id: string;
+  returnNumber: string;
+  orderId: string;
+  orderNumber: string;
+  userId: string;
+  customerName: string;
+  shopName: string;
+  customerPhone: string;
+  sectorType: SectorType;
+  status: ReturnStatus;
+  totalRefundCredit: number;
+  reason: string;
+  voiceNoteUrl?: string | null;
+  reviewedByStaffId?: string | null;
+  reviewedByStaffName?: string | null;
+  reviewedAt?: string | null;
+  reviewNotes?: string | null;
+  items: ReturnItemResponse[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface HighReturnProductSummary {
+  productId: string;
+  name: string;
+  genericName: string;
+  companyName: string;
+  returnCount: number;
+  isHighReturnRate: boolean;
+  highReturnFlagReason?: string | null;
+  totalUnitsReturned: number;
+  isReturnable: boolean;
+}
+
+export interface CustomerMonthlyReturnSummary {
+  customerId: string;
+  shopName: string;
+  creditBalance: number;
+  totalReturnsCount: number;
+  totalReturnsValue: number;
+  monthlyBreakdown: {
+    monthYear: string;
+    returnsCount: number;
+    totalCreditIssued: number;
+  }[];
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import {
@@ -24,6 +24,9 @@ import {
   Sparkles,
   Store,
   ChevronRight,
+  RotateCcw,
+  Mic,
+  MicOff,
 } from 'lucide-react';
 import Link from 'next/link';
 import { io, Socket } from 'socket.io-client';
@@ -40,35 +43,31 @@ export default function PaikariLiveOrderMemoPage() {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [isSubmittingCancel, setIsSubmittingCancel] = useState(false);
 
+  // Return Request Modal State (Phase 2)
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [returnItems, setReturnItems] = useState<{ [orderItemId: string]: number }>({});
+  const [returnReason, setReturnReason] = useState('');
+  const [isRecordingReturnVoice, setIsRecordingReturnVoice] = useState(false);
+  const [returnVoiceAudioUrl, setReturnVoiceAudioUrl] = useState<string | null>(null);
+  const [isSubmittingReturn, setIsSubmittingReturn] = useState(false);
+  const [returnSuccessMsg, setReturnSuccessMsg] = useState<string | null>(null);
+
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+
   useEffect(() => {
     fetchOrderDetails();
 
     const socket: Socket = io('http://localhost:4000', { transports: ['websocket'] });
     socket.emit('joinRoom', { room: `order:${orderId}` });
 
-    socket.on('lineItemFulfilled', (data) => {
-      fetchOrderDetails();
-    });
-
-    socket.on('linePriceOverridden', (data) => {
-      fetchOrderDetails();
-    });
-
-    socket.on('finalMemoPublished', (data) => {
-      fetchOrderDetails();
-    });
-
-    socket.on('orderStatusChanged', (data) => {
-      fetchOrderDetails();
-    });
-
-    socket.on('cancellationHandled', (data) => {
-      fetchOrderDetails();
-    });
-
-    socket.on('itemsAddedToOrder', (data) => {
-      fetchOrderDetails();
-    });
+    socket.on('lineItemFulfilled', () => fetchOrderDetails());
+    socket.on('linePriceOverridden', () => fetchOrderDetails());
+    socket.on('finalMemoPublished', () => fetchOrderDetails());
+    socket.on('orderStatusChanged', () => fetchOrderDetails());
+    socket.on('cancellationHandled', () => fetchOrderDetails());
+    socket.on('itemsAddedToOrder', () => fetchOrderDetails());
+    socket.on('returnStatusUpdated', () => fetchOrderDetails());
 
     return () => {
       socket.disconnect();
@@ -118,6 +117,91 @@ export default function PaikariLiveOrderMemoPage() {
     }
   };
 
+  // Voice note recording for returns
+  const startReturnVoiceRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        setReturnVoiceAudioUrl(audioUrl);
+      };
+
+      mediaRecorderRef.current.start();
+      setIsRecordingReturnVoice(true);
+    } catch (err) {
+      alert('Microphone access is required to record voice reason.');
+    }
+  };
+
+  const stopReturnVoiceRecording = () => {
+    if (mediaRecorderRef.current && isRecordingReturnVoice) {
+      mediaRecorderRef.current.stop();
+      setIsRecordingReturnVoice(false);
+      mediaRecorderRef.current.stream.getTracks().forEach((t) => t.stop());
+    }
+  };
+
+  const handleSubmitReturn = async () => {
+    if (!order || !returnReason.trim()) {
+      alert('Please provide a reason for the return.');
+      return;
+    }
+
+    const itemsToReturn = Object.entries(returnItems)
+      .filter(([_, qty]) => qty > 0)
+      .map(([orderItemId, returnedQuantity]) => ({
+        orderItemId,
+        returnedQuantity,
+      }));
+
+    if (itemsToReturn.length === 0) {
+      alert('Please select at least one item and quantity to return.');
+      return;
+    }
+
+    setIsSubmittingReturn(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await fetch('http://localhost:4000/api/returns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          orderId: order.id,
+          items: itemsToReturn,
+          reason: returnReason,
+          voiceNoteUrl: returnVoiceAudioUrl || undefined,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || 'Failed to submit return request.');
+      }
+
+      const returnData = await res.json();
+      setReturnSuccessMsg(`Return #${returnData.returnNumber} submitted successfully! Our staff will review your case.`);
+      setShowReturnModal(false);
+      setReturnReason('');
+      setReturnVoiceAudioUrl(null);
+      setReturnItems({});
+    } catch (e: any) {
+      alert(e.message || 'Failed to submit return request.');
+    } finally {
+      setIsSubmittingReturn(false);
+    }
+  };
+
   if (isLoading || !order) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
@@ -128,6 +212,7 @@ export default function PaikariLiveOrderMemoPage() {
   }
 
   const isFinal = order.memoState === MemoState.FINAL_TIERED && order.isFinalMemoPublished;
+  const isDelivered = order.fulfillmentStatus === FulfillmentStatus.DELIVERED;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
@@ -151,7 +236,15 @@ export default function PaikariLiveOrderMemoPage() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
-        {/* Real-time Status Progress Banner (Requirement 6) */}
+        {/* Success Alert Banner */}
+        {returnSuccessMsg && (
+          <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+            <span>{returnSuccessMsg}</span>
+          </div>
+        )}
+
+        {/* Real-time Status Progress Banner */}
         <div className="glass-panel p-6 rounded-2xl border border-slate-800/80 bg-slate-900/40 space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -166,37 +259,40 @@ export default function PaikariLiveOrderMemoPage() {
               </h2>
             </div>
 
-            {/* Cancellation State Action (Requirement 12) */}
-            {order.fulfillmentStatus !== FulfillmentStatus.CANCELLED &&
-              order.fulfillmentStatus !== FulfillmentStatus.DELIVERED &&
-              order.fulfillmentStatus !== FulfillmentStatus.REFUSED_DELIVERY && (
-                <div>
-                  {order.cancellationState === CancellationState.REQUESTED ? (
-                    <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4" />
-                      Cancellation Requested (Pending Staff Review)
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => setShowCancelModal(true)}
-                      className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold transition-colors"
-                    >
-                      {order.fulfillmentStatus === FulfillmentStatus.PENDING
-                        ? 'Cancel Order'
-                        : 'Request Cancellation'}
-                    </button>
-                  )}
-                </div>
+            {/* Actions: Cancellation vs Return */}
+            <div className="flex items-center gap-2">
+              {isDelivered && (
+                <button
+                  onClick={() => setShowReturnModal(true)}
+                  className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <RotateCcw className="w-4 h-4" /> Request Partial / Full Return
+                </button>
               )}
-          </div>
 
-          {/* Cancellation Notice Banner */}
-          {order.cancellationState === CancellationState.APPROVED && (
-            <div className="p-3 rounded-xl bg-red-950/40 border border-red-500/30 text-xs text-red-300 flex items-center gap-2">
-              <XCircle className="w-4 h-4 text-red-400 shrink-0" />
-              <span>This order has been cancelled ({order.cancellationReason || 'by customer request'}).</span>
+              {order.fulfillmentStatus !== FulfillmentStatus.CANCELLED &&
+                order.fulfillmentStatus !== FulfillmentStatus.DELIVERED &&
+                order.fulfillmentStatus !== FulfillmentStatus.REFUSED_DELIVERY && (
+                  <div>
+                    {order.cancellationState === CancellationState.REQUESTED ? (
+                      <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5">
+                        <AlertTriangle className="w-4 h-4" />
+                        Cancellation Requested (Pending Staff Review)
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setShowCancelModal(true)}
+                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold transition-colors"
+                      >
+                        {order.fulfillmentStatus === FulfillmentStatus.PENDING
+                          ? 'Cancel Order'
+                          : 'Request Cancellation'}
+                      </button>
+                    )}
+                  </div>
+                )}
             </div>
-          )}
+          </div>
 
           {/* Progress Bar */}
           <div className="grid grid-cols-4 gap-2 text-center text-[11px] font-semibold pt-2">
@@ -205,7 +301,7 @@ export default function PaikariLiveOrderMemoPage() {
               { status: 'VERIFYING', label: '2. Stock Checking' },
               { status: 'PACKED', label: '3. Packed' },
               { status: 'DELIVERED', label: '4. Delivered' },
-            ].map((step, idx) => {
+            ].map((step) => {
               const statusOrder = ['PENDING', 'VERIFYING', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED'];
               const currentIdx = statusOrder.indexOf(order.fulfillmentStatus);
               const stepIdx = statusOrder.indexOf(step.status);
@@ -227,7 +323,7 @@ export default function PaikariLiveOrderMemoPage() {
           </div>
         </div>
 
-        {/* MEMO CARD (Preliminary MRP vs Final Tiered) */}
+        {/* MEMO CARD */}
         <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-6">
           <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-4">
             <div>
@@ -257,86 +353,84 @@ export default function PaikariLiveOrderMemoPage() {
             </div>
           </div>
 
-          {/* Line Items Table with Live Verification Badges */}
+          {/* Line Items Table */}
           <div className="space-y-3">
-            {order.items.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  className={`p-4 rounded-xl border transition-all ${
-                    item.verificationStatus === LineVerificationStatus.FULL_STOCK
-                      ? 'bg-emerald-950/10 border-emerald-500/30'
-                      : item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK
-                      ? 'bg-amber-950/10 border-amber-500/30'
-                      : item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE
-                      ? 'bg-red-950/20 border-red-500/30 opacity-70'
-                      : 'bg-slate-950/50 border-slate-800'
-                  }`}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm text-slate-100">{item.productName}</span>
-                        {item.isOfferPara && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">
-                            Offer Para Live
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        {item.genericName} &bull; {item.companyName} &bull; {item.unitType}
-                      </div>
+            {order.items.map((item) => (
+              <div
+                key={item.id}
+                className={`p-4 rounded-xl border transition-all ${
+                  item.verificationStatus === LineVerificationStatus.FULL_STOCK
+                    ? 'bg-emerald-950/10 border-emerald-500/30'
+                    : item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK
+                    ? 'bg-amber-950/10 border-amber-500/30'
+                    : item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE
+                    ? 'bg-red-950/20 border-red-500/30 opacity-70'
+                    : 'bg-slate-950/50 border-slate-800'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-slate-100">{item.productName}</span>
+                      {item.isOfferPara && (
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">
+                          Offer Para Live
+                        </span>
+                      )}
                     </div>
+                    <div className="text-xs text-slate-400">
+                      {item.genericName} &bull; {item.companyName} &bull; {item.unitType}
+                    </div>
+                  </div>
 
-                    {/* Verification Status Pill */}
-                    <div className="flex items-center gap-3">
-                      {item.verificationStatus === LineVerificationStatus.PENDING && (
-                        <span className="text-xs text-slate-400 flex items-center gap-1">
-                          <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
-                          Checking stock...
-                        </span>
-                      )}
+                  {/* Verification Status Pill */}
+                  <div className="flex items-center gap-3">
+                    {item.verificationStatus === LineVerificationStatus.PENDING && (
+                      <span className="text-xs text-slate-400 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                        Checking stock...
+                      </span>
+                    )}
 
-                      {item.verificationStatus === LineVerificationStatus.FULL_STOCK && (
-                        <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          Full: {item.confirmedQuantity} {item.unitType}s
-                        </span>
-                      )}
+                    {item.verificationStatus === LineVerificationStatus.FULL_STOCK && (
+                      <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Full: {item.confirmedQuantity} {item.unitType}s
+                      </span>
+                    )}
 
-                      {item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK && (
-                        <span className="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1">
-                          <AlertTriangle className="w-3.5 h-3.5" />
-                          Partial: {item.confirmedQuantity} of {item.requestedQuantity}
-                        </span>
-                      )}
+                    {item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK && (
+                      <span className="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1">
+                        <AlertTriangle className="w-3.5 h-3.5" />
+                        Partial: {item.confirmedQuantity} of {item.requestedQuantity}
+                      </span>
+                    )}
 
-                      {item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE && (
-                        <span className="px-2 py-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-1">
-                          <XCircle className="w-3.5 h-3.5" />
-                          None Available (Seek alternative)
-                        </span>
-                      )}
+                    {item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE && (
+                      <span className="px-2 py-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5" />
+                        None Available
+                      </span>
+                    )}
 
-                      {/* Pricing Per Line */}
-                      <div className="text-right font-mono">
-                        <div className="text-xs font-bold text-slate-200">
-                          {isFinal
-                            ? `৳${item.totalPrice.toFixed(2)}`
-                            : `৳${(item.unitMrp * item.requestedQuantity).toFixed(2)}`}
-                        </div>
-                        <div className="text-[10px] text-slate-500">
-                          {isFinal ? `৳${item.finalUnitPrice.toFixed(2)} / unit` : `৳${item.unitMrp.toFixed(2)} MRP`}
-                        </div>
+                    {/* Pricing */}
+                    <div className="text-right font-mono">
+                      <div className="text-xs font-bold text-slate-200">
+                        {isFinal
+                          ? `৳${item.totalPrice.toFixed(2)}`
+                          : `৳${(item.unitMrp * item.requestedQuantity).toFixed(2)}`}
+                      </div>
+                      <div className="text-[10px] text-slate-500">
+                        {isFinal ? `৳${item.finalUnitPrice.toFixed(2)} / unit` : `৳${item.unitMrp.toFixed(2)} MRP`}
                       </div>
                     </div>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
 
-          {/* Memo Summary Calculations */}
+          {/* Totals */}
           <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div className="text-xs text-slate-400 space-y-1">
               <div>
@@ -345,11 +439,6 @@ export default function PaikariLiveOrderMemoPage() {
               <div>
                 Payment Method: <span className="text-slate-200 font-semibold">{order.paymentMethod}</span>
               </div>
-              {order.voiceNoteUrl && (
-                <div className="flex items-center gap-1 text-sky-400 pt-1">
-                  <Volume2 className="w-3.5 h-3.5" /> Voice note attached
-                </div>
-              )}
             </div>
 
             <div className="w-full sm:w-64 space-y-2 text-xs">
@@ -374,6 +463,135 @@ export default function PaikariLiveOrderMemoPage() {
         </div>
       </main>
 
+      {/* RETURN REQUEST DIALOG MODAL (Phase 2) */}
+      {showReturnModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900 max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div>
+                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                  <RotateCcw className="w-5 h-5 text-amber-400" />
+                  Request Return for Order #{order.orderNumber}
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Approved returns are credited to your store account balance for your next memo.
+                </p>
+              </div>
+              <button onClick={() => setShowReturnModal(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+
+            {/* Select items and partial quantities to return */}
+            <div className="space-y-3">
+              <label className="text-xs font-semibold text-slate-300">Select Items & Quantities to Return:</label>
+              {order.items.map((item) => {
+                const maxQty = item.confirmedQuantity > 0 ? item.confirmedQuantity : item.requestedQuantity;
+                const currentQty = returnItems[item.id] || 0;
+
+                return (
+                  <div
+                    key={item.id}
+                    className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3 text-xs"
+                  >
+                    <div>
+                      <div className="font-semibold text-slate-200">{item.productName}</div>
+                      <div className="text-[11px] text-slate-400">
+                        Purchased: {maxQty} {item.unitType}s &bull; Unit Rate: ৳{item.finalUnitPrice.toFixed(2)}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                        <button
+                          type="button"
+                          onClick={() => setReturnItems({ ...returnItems, [item.id]: Math.max(0, currentQty - 1) })}
+                          className="px-2 py-0.5 text-slate-400 hover:text-white"
+                        >
+                          -
+                        </button>
+                        <span className="w-8 text-center font-mono font-bold text-amber-400">{currentQty}</span>
+                        <button
+                          type="button"
+                          onClick={() => setReturnItems({ ...returnItems, [item.id]: Math.min(maxQty, currentQty + 1) })}
+                          className="px-2 py-0.5 text-slate-400 hover:text-white"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <span className="w-16 text-right font-mono font-semibold text-emerald-400">
+                        ৳{(currentQty * item.finalUnitPrice).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Reason & Voice Note */}
+            <div className="space-y-3 pt-2 border-t border-slate-800">
+              <label className="text-xs font-semibold text-slate-300">Reason for Return (Required):</label>
+              <textarea
+                rows={2}
+                value={returnReason}
+                onChange={(e) => setReturnReason(e.target.value)}
+                placeholder="Reason (e.g. Expired, damaged blister pack, doctor altered prescription)..."
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+              />
+
+              {/* Voice Note Recorder for Return */}
+              <div className="flex items-center justify-between pt-1">
+                <span className="text-xs text-slate-400">Optional Audio Voice Explanation:</span>
+                {!isRecordingReturnVoice ? (
+                  <button
+                    type="button"
+                    onClick={startReturnVoiceRecording}
+                    className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1.5"
+                  >
+                    <Mic className="w-3.5 h-3.5 text-red-400" />
+                    Record Voice Note
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={stopReturnVoiceRecording}
+                    className="px-3 py-1.5 rounded-xl bg-red-500/20 border border-red-500/40 text-xs font-bold text-red-300 flex items-center gap-1.5 animate-pulse"
+                  >
+                    <MicOff className="w-3.5 h-3.5" /> Stop & Save
+                  </button>
+                )}
+              </div>
+
+              {returnVoiceAudioUrl && (
+                <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+                  <audio src={returnVoiceAudioUrl} controls className="h-7 w-48" />
+                  <button onClick={() => setReturnVoiceAudioUrl(null)} className="text-[10px] text-red-400 hover:underline">
+                    Remove
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Submit */}
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setShowReturnModal(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmitReturn}
+                disabled={isSubmittingReturn}
+                className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+              >
+                {isSubmittingReturn ? 'Submitting...' : 'Submit Return Request'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* CANCELLATION REQUEST MODAL */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
@@ -387,7 +605,7 @@ export default function PaikariLiveOrderMemoPage() {
               rows={3}
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              placeholder="Reason for cancellation (e.g. Customer cancelled, stock acquired elsewhere)..."
+              placeholder="Reason for cancellation..."
               className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-red-500"
             />
 

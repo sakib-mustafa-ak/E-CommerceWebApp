@@ -196,7 +196,8 @@ export class OrdersService {
 
     // Generate unique order number
     const count = await this.prisma.order.count();
-    const orderNumber = `PKR-${new Date().getFullYear()}-${String(count + 1).padStart(5, '0')}`;
+    const entropy = Math.floor(1000 + Math.random() * 9000);
+    const orderNumber = `PKR-${new Date().getFullYear()}-${String(count + 1).padStart(4, '0')}-${entropy}`;
 
     const placedByStaff =
       actorAccountType === AccountType.SUPER_ADMIN || actorAccountType === AccountType.STAFF
@@ -883,6 +884,7 @@ export class OrdersService {
     if (newStatus === FulfillmentStatus.DELIVERED) {
       updateData.platformStatus = 'COMPLETE_SALE';
       updateData.paymentStatus = PaymentStatus.PAID;
+      updateData.confirmedReceiptAt = new Date();
     }
 
     const updatedOrder = await this.prisma.order.update({

@@ -13,6 +13,7 @@ import { AdminModule } from './modules/admin/admin.module';
 import { EventsModule } from './modules/events/events.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { ReturnsModule } from './modules/returns/returns.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { OrdersModule } from './modules/orders/orders.module';
     EventsModule,
     CatalogModule,
     OrdersModule,
+    ReturnsModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
