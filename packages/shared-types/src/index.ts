@@ -736,4 +736,177 @@ export interface StockAlertSummary {
   }[];
 }
 
+// -----------------------------------------------------------------------------
+// Phase 5: MPO Market & Pre-Order Sector Types
+// -----------------------------------------------------------------------------
+
+export interface MpoCreateAccountDto {
+  name: string;
+  email: string;
+  phone?: string;
+  password?: string;
+  photoUrl?: string;
+  territory: string;
+  assignedCompanyIds?: string[];
+  companyIds?: string[];
+  selectedProductIds?: string[];
+  productIds?: string[];
+  adminPrivateNotes?: string;
+  adminNotes?: string;
+}
+
+export interface MpoProfileResponse {
+  id: string;
+  userId: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  photoUrl?: string | null;
+  territory: string;
+  anonymousLabel: string;
+  adminPrivateNotes?: string | null;
+  adminNotes?: string | null;
+  assignedCompanies: {
+    id: string;
+    name: string;
+    code: string;
+  }[];
+  selectedProducts?: {
+    id: string;
+    name: string;
+    genericName: string;
+    companyName: string;
+    mrp: number;
+    unit: string;
+  }[];
+  productCount: number;
+  totalSubmissions: number;
+  totalSalesCount: number;
+  totalSalesVolume: number;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface MpoTerritoryGroupSummary {
+  territory: string;
+  mpoCount: number;
+  totalListingsCount?: number;
+  totalAvailableUnits?: number;
+  mpos: {
+    id: string;
+    userId?: string;
+    name: string;
+    email?: string;
+    phone?: string;
+    territory?: string;
+    anonymousLabel?: string;
+    photoUrl?: string;
+    assignedCompanies?: { id: string; name: string; code: string }[];
+    productCount?: number;
+    totalSubmissions?: number;
+    totalSalesCount?: number;
+    totalSalesVolume?: number;
+    adminPrivateNotes?: string;
+    createdAt?: string;
+  }[];
+}
+
+export interface MpoListingCreateDto {
+  productId: string;
+  offeredQuantity?: number;
+  quantity?: number;
+  bonusQuantity?: number;
+  bonusRatio?: string; // e.g. "10+2", "20+5", "100+15"
+  mpoTargetPrice?: number;
+  mpoAskingDiscountPercent?: number;
+  stockType?: 'IN_STOCK' | 'PRE_ORDER';
+  leadTimeDays?: number;
+  notes?: string;
+}
+
+export interface MpoListingReviewDto {
+  status?: string;
+  isApproved?: boolean;
+  rejectionReason?: string;
+  adminReviewNotes?: string;
+  isVisiblePublic?: boolean;
+  publishToPublic?: boolean;
+  isVisiblePaikari?: boolean;
+  publishToPaikari?: boolean;
+  isVisibleWholesale?: boolean;
+  publishToWholesale?: boolean;
+  publicUnitPrice?: number;
+  publicPrice?: number;
+  paikariUnitPrice?: number;
+  paikariPrice?: number;
+  wholesaleUnitPrice?: number;
+  wholesalePrice?: number;
+  showBonus?: boolean;
+}
+
+export interface MpoListingResponse {
+  id: string;
+  listingNumber?: string;
+  mpoProfileId?: string;
+  productId: string;
+  productName: string;
+  genericName: string;
+  companyName: string;
+  dosageForm?: string;
+  strength?: string;
+  unitMrp?: number;
+  mrp?: number;
+  anonymousLabel: string;
+  anonymousAlias?: string;
+  offeredQuantity?: number;
+  quantity?: number;
+  bonusQuantity?: number;
+  bonusRatio?: string | null;
+  mpoTargetPrice?: number;
+  unitPrice?: number;
+  status: string;
+  rejectionReason?: string;
+  isVisiblePublic?: boolean;
+  isVisiblePaikari?: boolean;
+  isVisibleWholesale?: boolean;
+  publicUnitPrice?: number;
+  paikariUnitPrice?: number;
+  wholesaleUnitPrice?: number;
+  bids?: any[];
+  myBid?: any;
+  createdAt: string;
+}
+
+export interface MpoBidCreateDto {
+  listingId?: string;
+  bidUnitPrice?: number;
+  bidQuantity?: number;
+  bidDiscountPercent?: number;
+  requestedQuantity?: number;
+  counterNotes?: string;
+}
+
+export interface MpoBidResponse {
+  id: string;
+  listingId: string;
+  wholesalerId?: string;
+  wholesalerName?: string;
+  anonymousBidderAlias?: string;
+  bidUnitPrice?: number;
+  bidQuantity?: number;
+  bidDiscountPercent?: number;
+  status: string;
+  createdAt: string;
+}
+
+export interface PreOrderDraftMemoUpdateDto {
+  items?: { orderItemId: string; actualReceivedQuantity: number }[];
+  actualReceivedQuantity?: number;
+  isUnfulfilledCancelled?: boolean;
+  cancellationNotice?: string;
+  cancelReason?: string;
+  supplyStatus?: string;
+}
+
+
 

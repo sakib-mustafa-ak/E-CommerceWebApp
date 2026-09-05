@@ -16,6 +16,7 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { ReturnsModule } from './modules/returns/returns.module';
 import { PreOrdersModule } from './modules/pre-orders/pre-orders.module';
 import { StockModule } from './modules/stock/stock.module';
+import { MpoModule } from './modules/mpo/mpo.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { StockModule } from './modules/stock/stock.module';
     ReturnsModule,
     PreOrdersModule,
     StockModule,
+    MpoModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

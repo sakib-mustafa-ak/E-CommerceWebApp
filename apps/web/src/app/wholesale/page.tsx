@@ -53,16 +53,24 @@ export default function WholesalePage() {
     );
   }
 
-  const [activeTab, setActiveTab] = useState<'CATALOG' | 'PRE_ORDERS' | 'ORDERS'>('CATALOG');
+  const [activeTab, setActiveTab] = useState<'CATALOG' | 'PRE_ORDERS' | 'MPO_DEALS' | 'ORDERS'>('CATALOG');
   const [dashboard, setDashboard] = useState<WholesaleDashboardSummary | null>(null);
   const [products, setProducts] = useState<MedicineProductSummary[]>([]);
   const [myPreOrders, setMyPreOrders] = useState<PreOrderResponse[]>([]);
+  const [mpoDeals, setMpoDeals] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<{ [productId: string]: number }>({});
   const [loading, setLoading] = useState(true);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [orderSuccessMsg, setOrderSuccessMsg] = useState<string | null>(null);
+
+  // MPO Bid Modal State
+  const [bidModalOpen, setBidModalOpen] = useState(false);
+  const [selectedMpoDeal, setSelectedMpoDeal] = useState<any | null>(null);
+  const [bidUnitPrice, setBidUnitPrice] = useState<number>(0);
+  const [bidQuantity, setBidQuantity] = useState<number>(20);
+  const [bidSubmitting, setBidSubmitting] = useState(false);
 
   // Pre-Order Modal State
   const [preOrderModalOpen, setPreOrderModalOpen] = useState(false);
@@ -205,10 +213,57 @@ export default function WholesalePage() {
         const po = await poRes.json();
         setMyPreOrders(po);
       }
+
+      // 4. Fetch anonymous MPO deals feed
+      const mpoRes = await fetch('http://localhost:3001/mpo/wholesale/feed', {
+        headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+      });
+      if (mpoRes.ok) {
+        const m = await mpoRes.json();
+        setMpoDeals(m);
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenBidModal = (deal: any) => {
+    setSelectedMpoDeal(deal);
+    setBidUnitPrice(deal.myBid?.bidUnitPrice || deal.unitPrice || 0);
+    setBidQuantity(deal.myBid?.bidQuantity || 20);
+    setBidModalOpen(true);
+  };
+
+  const handlePlaceMpoBid = async () => {
+    if (!selectedMpoDeal) return;
+    setBidSubmitting(true);
+    try {
+      const res = await fetch(`http://localhost:3001/mpo/wholesale/listings/${selectedMpoDeal.id}/bid`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token') || ''}`,
+        },
+        body: JSON.stringify({
+          bidUnitPrice,
+          bidQuantity,
+        }),
+      });
+
+      if (res.ok) {
+        setOrderSuccessMsg('Your counter-bid has been submitted anonymously to Siam\'s Aqua. The representative will review it.');
+        setBidModalOpen(false);
+        loadData();
+      } else {
+        const err = await res.json();
+        alert(err.message || 'Failed to submit bid');
+      }
+    } catch (err) {
+      alert('Failed to submit bid');
+    } finally {
+      setBidSubmitting(false);
     }
   };
 
@@ -418,6 +473,17 @@ export default function WholesalePage() {
             Wholesale Catalog & Carton Rates
           </button>
           <button
+            onClick={() => setActiveTab('MPO_DEALS')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              activeTab === 'MPO_DEALS'
+                ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                : 'text-amber-400/90 hover:text-amber-300 bg-amber-500/10 border border-amber-500/20'
+            }`}
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Anonymous MPO Deals & Verified Stock ({mpoDeals.length})
+          </button>
+          <button
             onClick={() => setActiveTab('PRE_ORDERS')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeTab === 'PRE_ORDERS'
@@ -573,7 +639,119 @@ export default function WholesalePage() {
         </div>
       )}
 
-      {/* TAB 2: PRE-ORDERS */}
+      {/* TAB 2: MPO DEALS & VERIFIED STOCK */}
+      {activeTab === 'MPO_DEALS' && (
+        <div className="space-y-4">
+          <div className="glass-panel p-4 rounded-3xl border border-amber-500/20 bg-amber-500/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider font-mono">
+                <Sparkles className="w-4 h-4" /> Anonymous Verified Quota Stock Lots
+              </div>
+              <h3 className="text-sm font-bold text-white mt-1">Direct Verified Representative Deals</h3>
+              <p className="text-xs text-slate-400">
+                Goods physically route through Siam&apos;s Aqua inventory with verified quality. Place counter-bids or buy at deal rates.
+              </p>
+            </div>
+            <button
+              onClick={loadData}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300"
+            >
+              <RefreshCw className="w-3.5 h-3.5" /> Refresh Lots
+            </button>
+          </div>
+
+          {mpoDeals.length === 0 ? (
+            <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-2">
+              <Package className="w-8 h-8 text-slate-600 mx-auto" />
+              <div className="text-sm font-bold text-slate-300">No Active MPO Lots Open for Bidding</div>
+              <p className="text-xs text-slate-500">
+                Verified representative quota stock will appear here once approved by Siam&apos;s Aqua.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {mpoDeals.map((deal) => (
+                <div
+                  key={deal.id}
+                  className="glass-panel p-5 rounded-3xl border border-slate-800 bg-slate-900/80 hover:border-amber-500/30 transition-all space-y-4"
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                          {deal.anonymousLabel}
+                        </span>
+                        <span className="text-[10px] text-slate-500 font-mono">
+                          {deal.listingNumber}
+                        </span>
+                      </div>
+                      <h4 className="text-base font-bold text-white mt-1.5">{deal.productName}</h4>
+                      <div className="text-xs text-slate-400">
+                        {deal.genericName} • {deal.companyName}
+                      </div>
+                    </div>
+
+                    <div className="text-right">
+                      <div className="text-xs text-slate-500">Deal Unit Price</div>
+                      <div className="text-lg font-bold text-amber-400 font-mono">
+                        ৳{deal.unitPrice?.toFixed(2) || '0.00'}
+                      </div>
+                      <div className="text-[10px] text-slate-500 line-through">
+                        MRP: ৳{deal.unitMrp?.toFixed(2)}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bonus Promotion Banner */}
+                  {deal.bonusQuantity > 0 && (
+                    <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-semibold text-emerald-300 flex items-center justify-between">
+                      <span>Bonus Promotion: <strong>+{deal.bonusQuantity} FREE</strong> ({deal.bonusRatio})</span>
+                      <span className="text-[10px] text-emerald-400 font-mono">Itemized ৳0</span>
+                    </div>
+                  )}
+
+                  {/* My Counter-Bid Status Banner */}
+                  {deal.myBid && (
+                    <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs flex items-center justify-between">
+                      <div>
+                        <span className="text-slate-400">Your Bid: </span>
+                        <strong className="text-white font-mono">৳{deal.myBid.bidUnitPrice}</strong> for{' '}
+                        <strong className="text-slate-300">{deal.myBid.bidQuantity} units</strong>
+                      </div>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                          deal.myBid.status === 'ACCEPTED'
+                            ? 'bg-emerald-500/20 text-emerald-300'
+                            : deal.myBid.status === 'REJECTED'
+                            ? 'bg-rose-500/20 text-rose-300'
+                            : 'bg-amber-500/20 text-amber-300'
+                        }`}
+                      >
+                        {deal.myBid.status}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between pt-3 border-t border-slate-800/80">
+                    <div className="text-xs text-slate-400">
+                      Available: <strong className="text-white font-mono">{deal.offeredQuantity} units</strong>
+                    </div>
+
+                    <button
+                      onClick={() => handleOpenBidModal(deal)}
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition-all flex items-center gap-1.5"
+                    >
+                      {deal.myBid ? 'Update Counter-Bid' : 'Place Counter-Bid'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* TAB 3: PRE-ORDERS */}
       {activeTab === 'PRE_ORDERS' && (
         <div className="space-y-4">
           <div className="glass-panel p-4 rounded-3xl border border-slate-800 bg-slate-900/80 flex items-center justify-between">
@@ -618,7 +796,7 @@ export default function WholesalePage() {
                     </div>
                     <div className="text-sm font-bold text-white">{po.productName}</div>
                     <div className="text-xs text-slate-400">{po.genericName} • {po.companyName}</div>
-                    {po.notes && <div className="text-xs text-slate-500 italic">Notes: "{po.notes}"</div>}
+                    {po.notes && <div className="text-xs text-slate-500 italic">Notes: &ldquo;{po.notes}&rdquo;</div>}
                   </div>
 
                   <div className="flex items-center gap-6 bg-slate-950 p-3 rounded-2xl border border-slate-800 text-xs">
@@ -637,6 +815,80 @@ export default function WholesalePage() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* MPO COUNTER-BID MODAL */}
+      {bidModalOpen && selectedMpoDeal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="glass-panel max-w-md w-full p-6 rounded-3xl border border-amber-500/30 bg-slate-900 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <div>
+                <h3 className="text-base font-bold text-white">Place Counter-Bid on MPO Lot</h3>
+                <p className="text-xs text-slate-400">Seller: {selectedMpoDeal.anonymousLabel}</p>
+              </div>
+              <button onClick={() => setBidModalOpen(false)} className="text-slate-400 hover:text-white">✕</button>
+            </div>
+
+            <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-1">
+              <div className="font-bold text-white">{selectedMpoDeal.productName}</div>
+              <div className="text-slate-400">
+                MRP: ৳{selectedMpoDeal.unitMrp} • Asked Deal Price: <strong className="text-amber-300">৳{selectedMpoDeal.unitPrice}</strong>
+              </div>
+              {selectedMpoDeal.bonusQuantity > 0 && (
+                <div className="text-emerald-400 font-bold text-[11px] pt-1">
+                  +{selectedMpoDeal.bonusQuantity} free bonus units included ({selectedMpoDeal.bonusRatio})
+                </div>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="space-y-1">
+                <label className="font-bold text-slate-300">Bid Quantity (Units)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max={selectedMpoDeal.offeredQuantity}
+                  value={bidQuantity}
+                  onChange={(e) => setBidQuantity(parseInt(e.target.value, 10) || 1)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="font-bold text-slate-300">Bid Unit Price (৳)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  value={bidUnitPrice}
+                  onChange={(e) => setBidUnitPrice(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-white font-mono outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+
+            <div className="text-[11px] text-slate-400 p-2.5 rounded-xl bg-slate-800/40">
+              Total Proposed: <strong className="text-emerald-400 font-mono">৳{(bidUnitPrice * bidQuantity).toFixed(2)}</strong>. You will be notified when the representative accepts or rejects.
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+              <button
+                type="button"
+                onClick={() => setBidModalOpen(false)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handlePlaceMpoBid}
+                disabled={bidSubmitting || bidQuantity <= 0 || bidUnitPrice <= 0}
+                className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-xs text-slate-950 font-bold transition-all shadow-lg shadow-amber-500/30 disabled:opacity-50"
+              >
+                {bidSubmitting ? 'Submitting...' : 'Submit Anonymous Counter-Bid'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

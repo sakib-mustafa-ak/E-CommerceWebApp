@@ -34,6 +34,8 @@ model User {
   preOrders            PreOrder[]
   stockBatches         StockBatch[]
   stockSales           StockSaleRecord[]
+  mpoProfile           MpoProfile?
+  mpoBids              MpoBid[]
   auditLogs            AuditLog[]
 }
 
@@ -172,6 +174,7 @@ model Company {
 
   products     Product[]
   companyRates CompanyRate[]
+  mpoCompanies MpoCompany[]
 }
 
 // MedEx-Style Normalized Generic Entity
@@ -238,6 +241,8 @@ model Product {
   preOrders               PreOrder[]
   stockBatches            StockBatch[]
   stockSaleItems          StockSaleItem[]
+  mpoSelections           MpoProductSelection[]
+  mpoListings             MpoListing[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -380,8 +385,10 @@ model Order {
   placedByStaffId         String?         // For orders placed on behalf of customer
   placedByStaffName       String?
   
-  // Future proofing fields (Rule 8)
+  // Future proofing fields (Rule 8) & Phase 5 Pre-Order Draft Memos
   isCounterSale           Boolean         @default(false)
+  isPreOrderDraft         Boolean         @default(false)
+  preOrderSupplyStatus    String?         // PENDING_ARRIVAL, PARTIALLY_ARRIVED, CANCELLED_UNFULFILLED, FULFILLED
 
   user                    User            @relation(fields: [userId], references: [id])
   items                   OrderItem[]
@@ -401,6 +408,9 @@ model OrderItem {
   unitType                   String    @default("STRIP") // PIECE, STRIP, BOX
   requestedQuantity          Int
   confirmedQuantity          Int       @default(0)
+  actualReceivedQuantity     Int?      // For Pre-Order arrivals syncing
+  isBonusItem                Boolean   @default(false)
+  bonusRatio                 String?   // e.g. "10+2"
   
   // Verification states (Full / Partial / None)
   verificationStatus         String    @default("PENDING") // PENDING, FULL_STOCK, PARTIAL_STOCK, NONE_AVAILABLE
@@ -638,5 +648,98 @@ model StockSaleItem {
   @@index([saleRecordId])
   @@index([productId])
 }
+
+// Phase 5: MPO Market, Anonymity Engine & Wholesaler Bidding Models
+model MpoProfile {
+  id                   String                @id @default(uuid())
+  userId               String                @unique
+  territory            String                // e.g., "Dhaka South", "Chittagong Central"
+  anonymousLabel       String                // e.g., "Anonymous 1 (Siam's Aqua Store)"
+  photoUrl             String?
+  assignedCompanies    MpoCompany[]
+  productSelections    MpoProductSelection[]
+  listings             MpoListing[]
+  totalSubmissions     Int                   @default(0)
+  totalSalesCount      Int                   @default(0)
+  totalSalesVolume     Float                 @default(0)
+  adminPrivateNotes    String?
+  user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+
+  @@index([territory])
+}
+
+model MpoCompany {
+  id           String      @id @default(uuid())
+  mpoProfileId String
+  companyId    String
+  mpoProfile   MpoProfile  @relation(fields: [mpoProfileId], references: [id], onDelete: Cascade)
+  company      Company     @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([mpoProfileId, companyId])
+}
+
+model MpoProductSelection {
+  id           String      @id @default(uuid())
+  mpoProfileId String
+  productId    String
+  mpoProfile   MpoProfile  @relation(fields: [mpoProfileId], references: [id], onDelete: Cascade)
+  product      Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([mpoProfileId, productId])
+}
+
+model MpoListing {
+  id                      String      @id @default(uuid())
+  listingNumber           String      @unique // e.g. MPO-2026-0001
+  mpoProfileId            String
+  productId               String
+  offeredQuantity         Int
+  bonusQuantity           Int         @default(0) // Free items (e.g., 2 in 10+2)
+  bonusRatio              String?     // e.g., "10+2", "20+5"
+  mpoTargetPrice          Float       // MPO's expected net unit price
+  unitMrp                 Float
+  status                  String      @default("PENDING_ADMIN_REVIEW") // PENDING_ADMIN_REVIEW, APPROVED, REJECTED, BID_ACCEPTED, FULFILLED, STALE
+  rejectionReason         String?
+  adminApprovedAt         DateTime?
+  adminApprovedBy         String?
+  staleNudgeSentAt        DateTime?
+
+  // Channel Visibility Matrix & Channel-Specific Pricing set by Admin
+  isVisiblePublic         Boolean     @default(false)
+  isVisiblePaikari        Boolean     @default(false)
+  isVisibleWholesale      Boolean     @default(false)
+  publicUnitPrice         Float?
+  paikariUnitPrice        Float?
+  wholesaleUnitPrice      Float?
+
+  bids                    MpoBid[]
+  mpoProfile              MpoProfile  @relation(fields: [mpoProfileId], references: [id], onDelete: Cascade)
+  product                 Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt               DateTime    @default(now())
+  updatedAt               DateTime    @updatedAt
+
+  @@index([status])
+  @@index([mpoProfileId])
+  @@index([productId])
+}
+
+model MpoBid {
+  id              String      @id @default(uuid())
+  listingId       String
+  wholesalerId    String      // User ID of wholesaler
+  bidUnitPrice    Float
+  bidQuantity     Int
+  status          String      @default("PENDING") // PENDING, ACCEPTED, REJECTED, EXPIRED
+  mpoListing      MpoListing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  wholesaler      User        @relation(fields: [wholesalerId], references: [id], onDelete: Cascade)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([listingId])
+  @@index([wholesalerId])
+}
+
 
 

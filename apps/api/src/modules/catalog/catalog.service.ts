@@ -77,11 +77,49 @@ export class CatalogService {
   }
 
   async getAllCompanies() {
-    return this.prisma.company.findMany({
+    const companies = await this.prisma.company.findMany({
       include: {
         _count: { select: { products: true } },
+        products: {
+          select: {
+            isOfferParaLiveStock: true,
+            offerParaStockQty: true,
+            mpoListings: {
+              where: { status: 'APPROVED' },
+              select: { id: true },
+            },
+          },
+        },
       },
       orderBy: { name: 'asc' },
     });
+
+    return companies
+      .map((c) => {
+        const activeOfferParaProducts = c.products.filter(
+          (p) => p.isOfferParaLiveStock && p.offerParaStockQty > 0,
+        );
+        const activeMpoListingsCount = c.products.reduce(
+          (sum, p) => sum + p.mpoListings.length,
+          0,
+        );
+        const hasActiveOffers =
+          activeOfferParaProducts.length > 0 || activeMpoListingsCount > 0;
+
+        return {
+          id: c.id,
+          name: c.name,
+          code: c.code,
+          productCount: c._count.products,
+          hasActiveOffers,
+          offerParaProductCount: activeOfferParaProducts.length,
+          mpoListingsCount: activeMpoListingsCount,
+        };
+      })
+      .sort((a, b) => {
+        if (a.hasActiveOffers && !b.hasActiveOffers) return -1;
+        if (!a.hasActiveOffers && b.hasActiveOffers) return 1;
+        return a.name.localeCompare(b.name);
+      });
   }
 }
