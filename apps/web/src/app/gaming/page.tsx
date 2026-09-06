@@ -187,6 +187,7 @@ export default function GamingHubPage() {
   return (
     <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
       {/* Hero Banner */}
+
       <div className="relative overflow-hidden bg-gradient-to-b from-violet-50 via-white to-slate-50 border-b border-slate-200 pt-10 pb-16">
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-100/50 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute bottom-0 left-10 w-80 h-80 bg-sky-100/50 rounded-full blur-3xl pointer-events-none" />
@@ -207,21 +208,18 @@ export default function GamingHubPage() {
             </div>
 
             {/* Trust Badges */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                  <ShieldCheck className="w-4 h-4 text-emerald-500" /> 100% Official Partner
-                </div>
+            <div className="flex flex-col sm:flex-row gap-2 w-full md:w-auto">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">Official Direct Handshake</span>
               </div>
-              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                  <Clock className="w-4 h-4 text-sky-500" /> Instant Recharge
-                </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-sky-500 shrink-0" />
+                <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">30s Auto Delivery</span>
               </div>
-              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
-                  <Award className="w-4 h-4 text-amber-500" /> Zero Account Risk
-                </div>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white border border-slate-200 shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
+                <span className="text-xs font-semibold text-slate-700 whitespace-nowrap">100% Ban Protection</span>
               </div>
             </div>
           </div>
@@ -263,13 +261,14 @@ export default function GamingHubPage() {
         </div>
       </div>
 
+
       {/* Live Recharges Ticker */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
         <div className="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between gap-4 overflow-hidden shadow-sm">
           <div className="flex items-center gap-2 text-xs font-bold text-violet-700 shrink-0 uppercase tracking-wider">
             <Radio className="w-4 h-4 text-emerald-500 animate-pulse" /> Live Recharges:
           </div>
-          <div className="text-xs text-slate-500 truncate flex items-center gap-6">
+          <div className="text-xs text-slate-500 truncate flex items-center gap-6 overflow-x-auto">
             <span>Tanvir*** recharged <strong className="text-slate-900">100 Diamonds</strong> (Free Fire) • 1m ago</span>
             <span>Sadia*** purchased <strong className="text-slate-900">Weekly Pass</strong> (MLBB) • 3m ago</span>
             <span>ProGamer*** recharged <strong className="text-slate-900">660 UC</strong> (PUBG Mobile) • 5m ago</span>

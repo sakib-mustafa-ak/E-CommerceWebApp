@@ -281,7 +281,7 @@ export default function AdminResellersPage() {
             <span>Reseller Gross Volume</span>
             <TrendingUp className="w-4 h-4 text-sky-600" />
           </div>
-          <div className="text-2xl font-black text-white mt-2">
+          <div className="text-2xl font-black text-slate-900 mt-2">
             ৳{(ledgerSummary?.totalGrossVolume || 0).toLocaleString()}
           </div>
           <div className="text-xs text-slate-500 mt-1">Public buyer purchases</div>
@@ -388,7 +388,7 @@ export default function AdminResellersPage() {
               No listings found matching filter.
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-sm text-slate-600">
                 <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
@@ -492,7 +492,7 @@ export default function AdminResellersPage() {
               No transactions recorded on the platform ledger yet.
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-sm text-slate-600">
                 <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
@@ -636,7 +636,7 @@ export default function AdminResellersPage() {
                 No statements generated yet. Use the form above to generate statements for wholesalers.
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto min-w-[640px]">
                 <table className="w-full text-left text-sm text-slate-600">
                   <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                     <tr>
@@ -728,7 +728,7 @@ export default function AdminResellersPage() {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto min-w-[640px]">
             <table className="w-full text-left text-sm text-slate-600">
               <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                 <tr>

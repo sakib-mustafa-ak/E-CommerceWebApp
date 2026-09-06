@@ -385,7 +385,7 @@ export default function PublicCheckoutPage() {
               <div className="pt-3 border-t border-slate-200 space-y-2 text-xs">
                 <div className="flex justify-between text-slate-500">
                   <span>Subtotal</span>
-                  <span className="font-mono text-white">৳{originalSubtotal.toFixed(2)}</span>
+                  <span className="font-mono text-slate-900">৳{originalSubtotal.toFixed(2)}</span>
                 </div>
 
                 {discountAmount > 0 && (
@@ -397,7 +397,7 @@ export default function PublicCheckoutPage() {
 
                 <div className="flex justify-between text-slate-500">
                   <span>Delivery Charge</span>
-                  <span className="font-mono text-white">
+                  <span className="font-mono text-slate-900">
                     {deliveryFee === 0 ? 'FREE (Digital)' : `৳${deliveryFee.toFixed(2)}`}
                   </span>
                 </div>

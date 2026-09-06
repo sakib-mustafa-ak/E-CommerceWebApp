@@ -193,7 +193,7 @@ export default function MedicineStagingAdminPage() {
           Staged Batches in Review Queue
         </h2>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto min-w-[640px]">
           <table className="w-full text-left text-xs">
             <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
               <tr>
@@ -266,7 +266,7 @@ export default function MedicineStagingAdminPage() {
             )}
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto min-w-[640px]">
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
                 <tr>

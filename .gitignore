@@ -123,3 +123,30 @@ Thumbs.db
 
 
 .agents
+# Note: locally installed skills live under .agents/ and stay uncommitted.
+# skills-lock.json (repo root) IS tracked as the team-shared skill manifest.
+
+# ------------------------------------------------------------------------------
+# Graphify Knowledge-Graph Outputs (regenerated per run, never commit)
+# ------------------------------------------------------------------------------
+graphify-out/
+
+# ------------------------------------------------------------------------------
+# Python (required by the graphify pipeline; repo has no committed Python code)
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# ------------------------------------------------------------------------------
+# Impeccable Transient State (committed: surfaces/, live/config.json, DESIGN.md)
+# ------------------------------------------------------------------------------
+.impeccable/live/
+.impeccable/tmp/
+.impeccable/review/
+.impeccable/build/
+.impeccable/mocks/
+.impeccable/config.local.json
+.impeccable/hook.cache.json
+.impeccable/hook.pending.json

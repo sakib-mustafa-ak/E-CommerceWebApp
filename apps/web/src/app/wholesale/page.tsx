@@ -537,7 +537,7 @@ export default function WholesalePage() {
         <div className="space-y-6">
           {/* Wholesale Products Table */}
           <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-xs">
                 <thead className="bg-white text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
                   <tr>

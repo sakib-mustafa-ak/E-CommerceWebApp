@@ -236,7 +236,7 @@ export default function WholesalerPublicResellingPage() {
             <span>Public Listings</span>
             <Store className="w-4 h-4 text-indigo-600" />
           </div>
-          <div className="text-2xl font-black text-white mt-2">
+          <div className="text-2xl font-black text-slate-900 mt-2">
             {listings.length}
           </div>
           <div className="text-xs text-slate-500 mt-1">
@@ -249,7 +249,7 @@ export default function WholesalerPublicResellingPage() {
             <span>Gross Sales Volume</span>
             <TrendingUp className="w-4 h-4 text-sky-600" />
           </div>
-          <div className="text-2xl font-black text-white mt-2">
+          <div className="text-2xl font-black text-slate-900 mt-2">
             ৳{(ledgerSummary?.totalGrossVolume || 0).toLocaleString()}
           </div>
           <div className="text-xs text-slate-500 mt-1">Total public customer spend</div>
@@ -338,7 +338,7 @@ export default function WholesalerPublicResellingPage() {
               </div>
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-sm text-slate-600">
                 <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
@@ -427,7 +427,7 @@ export default function WholesalerPublicResellingPage() {
               No ledger transactions recorded yet.
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-sm text-slate-600">
                 <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
@@ -467,7 +467,7 @@ export default function WholesalerPublicResellingPage() {
                         )}
                       </td>
                       <td className="px-4 py-3.5 text-xs">
-                        <div className="font-semibold text-white">{entry.productName || 'General Entry'}</div>
+                        <div className="font-semibold text-slate-900">{entry.productName || 'General Entry'}</div>
                         <div className="text-slate-500 text-[11px]">{entry.note}</div>
                       </td>
                       <td className="px-4 py-3.5 text-slate-600 font-medium">
@@ -506,7 +506,7 @@ export default function WholesalerPublicResellingPage() {
               No monthly statements generated yet.
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto min-w-[640px]">
               <table className="w-full text-left text-sm text-slate-600">
                 <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
@@ -776,7 +776,7 @@ export default function WholesalerPublicResellingPage() {
             <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-500">
                 <span>Gross Sales Volume:</span>
-                <span className="font-semibold text-white">৳{selectedStatement.grossSalesVolume.toLocaleString()}</span>
+                <span className="font-semibold text-slate-900">৳{selectedStatement.grossSalesVolume.toLocaleString()}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-slate-500">
                 <span>Platform Commission (2%):</span>

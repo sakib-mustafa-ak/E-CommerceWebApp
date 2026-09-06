@@ -27,7 +27,10 @@ export default function RootLayout({
             </div>
           </footer>
         </AuthProvider>
-      </body>
+      {/* impeccable-live-start */}
+<script src="http://localhost:8400/live.js?token=35ae004b-deb1-4c45-864d-4be060bc1e6e"></script>
+{/* impeccable-live-end */}
+</body>
     </html>
   );
 }

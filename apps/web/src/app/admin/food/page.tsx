@@ -192,7 +192,7 @@ export default function AdminFoodPage() {
                           [restaurant.id]: Number(e.target.value) / 100,
                         })
                       }
-                      className="w-16 px-2 py-1 bg-white border border-slate-200 rounded-lg text-white font-mono text-xs text-center"
+                      className="w-16 px-2 py-1 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono text-xs text-center"
                     />
                     <span className="font-mono text-slate-500">%</span>
                   </div>

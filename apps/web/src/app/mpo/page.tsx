@@ -13,6 +13,7 @@ import {
   Clock,
   Send,
   Search,
+  TrendingUp,
 } from 'lucide-react';
 import { api } from '@/lib/api-client';
 import { useAuth } from '@/lib/auth-context';
@@ -159,13 +160,16 @@ export default function MpoPortalPage() {
 
             {/* Stats */}
             <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <div className="px-5 py-3 rounded-2xl bg-white border border-slate-200 text-right">
-                <div className="text-[10px] uppercase font-bold text-slate-500 font-mono">Target Sales Volume</div>
-                <div className="text-xl font-bold text-emerald-600 font-mono">
+              <div className="px-5 py-3 rounded-2xl bg-white border border-slate-200 text-right shadow-xs">
+                <div className="flex items-center justify-end gap-1.5 text-[10px] font-mono font-bold text-slate-500 uppercase">
+                  <Briefcase className="w-3 h-3 text-[#0F5B78]" />
+                  <span>Target Volume</span>
+                </div>
+                <div className="text-2xl font-bold font-mono text-slate-900 tracking-tight mt-0.5">
                   ৳{profile?.totalSalesVolume?.toLocaleString() || 0}
                 </div>
-                <div className="text-[10px] text-slate-500">
-                  {profile?.totalSalesCount || 0} Deals Fulfilled
+                <div className="inline-block mt-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-semibold">
+                  {profile?.totalSalesCount || 0} Closed Memos
                 </div>
               </div>
             </div>

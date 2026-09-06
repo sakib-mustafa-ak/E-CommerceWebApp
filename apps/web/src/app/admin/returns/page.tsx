@@ -162,7 +162,7 @@ export default function StaffReturnsReviewQueuePage() {
 
       {/* Returns Ledger Table */}
       <div className="bg-white border border-[#E2E8F0] rounded-lg shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto min-w-[640px]">
           <table className="w-full text-left text-xs">
             <thead className="bg-[#F8F9FA] border-b border-[#E2E8F0] text-[#475569] font-medium">
               <tr>

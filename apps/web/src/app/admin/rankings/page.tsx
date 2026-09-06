@@ -119,7 +119,7 @@ export default function CustomerRankingsDashboardPage() {
 
         {/* Customer Rankings Grid Table */}
         <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto min-w-[640px]">
             <table className="w-full text-left text-xs">
               <thead className="bg-white border-b border-slate-200 text-slate-500 font-semibold">
                 <tr>

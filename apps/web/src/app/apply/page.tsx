@@ -102,7 +102,7 @@ export default function ApplyPage() {
         <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-200 text-xs font-semibold uppercase tracking-wider">
           B2B Partner Onboarding
         </span>
-        <h1 className="text-3xl font-extrabold tracking-tight text-white mt-3">
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900 mt-3">
           Partner Registration Application
         </h1>
         <p className="text-sm text-slate-500 mt-2 max-w-lg mx-auto">

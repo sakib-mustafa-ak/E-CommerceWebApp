@@ -136,22 +136,59 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* 8 Sector Multi-Platform Status Ledger */}
-      <div className="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm space-y-4">
-        <div className="flex justify-between items-center pb-3 border-b border-[#F1F5F9]">
+      <div className="bg-white border border-[#E2E8F0] rounded-lg p-4 sm:p-5 shadow-sm space-y-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 pb-3 border-b border-[#F1F5F9]">
           <div>
-            <h2 className="text-sm font-bold text-[#0F172A]">
-              8-Sector Operational Registry
+            <h2 className="text-sm font-bold text-[#0F172A] flex items-center gap-2">
+              <span>8-Sector Operational Registry</span>
+              <span className="inline-flex sm:hidden text-[10px] font-mono font-medium text-[#0F5B78] bg-[#EDF5F8] px-1.5 py-0.5 rounded border border-[#CBD5E1]">
+                SYNCED
+              </span>
             </h2>
             <p className="text-xs text-[#64748B]">
               Multi-sector platform routing, database isolation, and security perimeter status.
             </p>
           </div>
-          <span className="text-xs font-mono font-medium text-[#0F5B78] bg-[#EDF5F8] px-2 py-0.5 rounded border border-[#CBD5E1]">
+          <span className="hidden sm:inline-flex text-xs font-mono font-medium text-[#0F5B78] bg-[#EDF5F8] px-2 py-0.5 rounded border border-[#CBD5E1] shrink-0">
             ARCHITECTURE_SYNCED
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        {/* Mobile Card Grid View (< md) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:hidden">
+          {sectors.map((s) => (
+            <div key={s.code} className="p-3 rounded-lg border border-[#E2E8F0] bg-[#F8F9FA] space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-[10px] font-bold text-[#0F5B78] bg-white px-1.5 py-0.5 rounded border border-[#CBD5E1]">
+                  {s.code}
+                </span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  Active
+                </span>
+              </div>
+              <div>
+                <div className="font-semibold text-xs text-[#0F172A]">{s.name}</div>
+                <div className="text-[11px] text-[#64748B] mt-0.5">{s.model}</div>
+              </div>
+              <div className="flex items-center justify-between pt-1.5 border-t border-[#E2E8F0]/60 text-[11px]">
+                <span className="text-[#64748B] truncate max-w-[170px] text-[10px]">{s.status.split('(')[1]?.replace(')', '') || s.status}</span>
+                {s.link !== '#' && (
+                  <Link
+                    href={s.link}
+                    className="inline-flex items-center gap-1 font-semibold text-[#0F5B78] hover:underline shrink-0"
+                  >
+                    <span>Open</span>
+                    <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Table View (≥ md) */}
+        <div className="hidden md:block overflow-x-auto w-full">
           <table className="w-full text-left text-xs border border-[#E2E8F0] rounded">
             <thead className="bg-[#F8F9FA] text-[#475569] font-medium border-b border-[#E2E8F0]">
               <tr>
@@ -165,7 +202,7 @@ export default function AdminDashboardPage() {
             <tbody className="divide-y divide-[#E2E8F0]">
               {sectors.map((s) => (
                 <tr key={s.code} className="hover:bg-[#F8F9FA] transition-colors">
-                  <td className="p-3 font-mono text-[11px] text-[#64748B]">{s.code}</td>
+                  <td className="p-3 font-mono text-[11px] font-semibold text-[#0F5B78]">{s.code}</td>
                   <td className="p-3 font-semibold text-[#0F172A]">{s.name}</td>
                   <td className="p-3 text-[#475569]">{s.model}</td>
                   <td className="p-3">

@@ -346,29 +346,40 @@ export default function PaikariPortalPage() {
             </div>
 
             {/* Free Delivery Meter & Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <div className="px-5 py-3 rounded-2xl bg-white border border-slate-200">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Truck className="w-4 h-4 text-emerald-600" />
-                  <span className="text-[10px] font-bold text-slate-500 uppercase font-mono">Free Delivery Goal</span>
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-center gap-1.5">
+                    <Truck className="w-3.5 h-3.5 text-[#0F5B78]" />
+                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">
+                      Free Delivery Goal
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-mono font-semibold text-slate-500">
+                    ৳{deliveryFeeThreshold}
+                  </span>
                 </div>
-                <div className="text-sm font-bold text-emerald-600 font-mono">
-                  {preliminarySubtotal >= deliveryFeeThreshold
-                    ? 'FREE QUALIFIED!'
-                    : `Add ৳${amountNeededForFreeDelivery.toFixed(0)} more`}
-                </div>
-                <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1.5">
-                  <div
-                    className="h-full bg-emerald-500 transition-all duration-300"
-                    style={{ width: `${progressToFreeDelivery}%` }}
-                  />
+                <div className="flex items-center gap-3">
+                  <div className="text-xs font-bold font-mono text-slate-900 whitespace-nowrap">
+                    {preliminarySubtotal >= deliveryFeeThreshold
+                      ? 'QUALIFIED (৳0 Fee)'
+                      : `Add ৳${amountNeededForFreeDelivery.toFixed(0)}`}
+                  </div>
+                  <div className="w-32 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-emerald-500 transition-all duration-300"
+                      style={{ width: `${progressToFreeDelivery}%` }}
+                    />
+                  </div>
                 </div>
               </div>
+              <div className="hidden sm:block w-px h-8 bg-slate-200" />
               <Link
                 href="/admin/orders/create-on-behalf"
-                className="px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-sky-600 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+                className="px-3.5 py-2 rounded-lg bg-[#0F5B78] hover:bg-[#0C4860] text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-colors whitespace-nowrap"
               >
-                Order on behalf?
+                <span>Order on Behalf</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
