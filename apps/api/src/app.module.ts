@@ -20,6 +20,7 @@ import { MpoModule } from './modules/mpo/mpo.module';
 import { PublicModule } from './modules/public/public.module';
 import { ResellerModule } from './modules/reseller/reseller.module';
 import { GamingModule } from './modules/gaming/gaming.module';
+import { FoodModule } from './modules/food/food.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { GamingModule } from './modules/gaming/gaming.module';
     PublicModule,
     ResellerModule,
     GamingModule,
+    FoodModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

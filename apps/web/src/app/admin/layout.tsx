@@ -24,6 +24,7 @@ import { useAuth } from '@/lib/auth-context';
 
 const ADMIN_NAV = [
   { name: 'Dashboard Overview', href: '/admin', icon: LayoutDashboard },
+  { name: 'Food Vendors & Restaurants', href: '/admin/food', icon: Utensils },
   { name: 'Gaming Top-Up Desk', href: '/admin/gaming', icon: Gamepad2 },
   { name: 'Wholesaler Public Resellers', href: '/admin/resellers', icon: Store },
   { name: 'MPO Market & Territories', href: '/admin/mpo', icon: Briefcase },

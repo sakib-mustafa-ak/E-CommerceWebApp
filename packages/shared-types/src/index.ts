@@ -153,6 +153,13 @@ export enum AuditAction {
   GAME_PACKAGE_UPDATED = 'GAME_PACKAGE_UPDATED',
   GAME_TOPUP_FULFILLED = 'GAME_TOPUP_FULFILLED',
   GAME_TOPUP_FAILED = 'GAME_TOPUP_FAILED',
+  FOOD_VENDOR_REGISTERED = 'FOOD_VENDOR_REGISTERED',
+  FOOD_VENDOR_APPROVED = 'FOOD_VENDOR_APPROVED',
+  FOOD_ITEM_CREATED = 'FOOD_ITEM_CREATED',
+  FOOD_ITEM_86ED = 'FOOD_ITEM_86ED',
+  FOOD_ORDER_CREATED = 'FOOD_ORDER_CREATED',
+  FOOD_ORDER_COOKING_STARTED = 'FOOD_ORDER_COOKING_STARTED',
+  FOOD_ORDER_STATUS_CHANGED = 'FOOD_ORDER_STATUS_CHANGED',
 }
 
 export interface DynamicPermission {
@@ -1258,6 +1265,200 @@ export interface GameFulfillmentActionDto {
   providerTransactionRef?: string;
   notes?: string;
 }
+
+// -----------------------------------------------------------------------------
+// Phase 9: Food Sector (Foodpanda-Style, Commission-Based)
+// -----------------------------------------------------------------------------
+
+export enum FoodFulfillmentType {
+  HOME_DELIVERY = 'HOME_DELIVERY',
+  PICKUP = 'PICKUP',
+}
+
+export enum FoodOrderStatus {
+  PENDING = 'PENDING',
+  CONFIRMED = 'CONFIRMED',
+  COOKING = 'COOKING',
+  OUT_FOR_DELIVERY = 'OUT_FOR_DELIVERY',
+  READY_FOR_PICKUP = 'READY_FOR_PICKUP',
+  DELIVERED = 'DELIVERED',
+  CANCELLED = 'CANCELLED',
+}
+
+export interface RestaurantCreateDto {
+  name: string;
+  slug?: string;
+  description?: string;
+  area: string;
+  address: string;
+  phone: string;
+  bannerImageUrl?: string;
+  logoUrl?: string;
+  cuisines: string[];
+  commissionRate?: number;
+  deliveryFee?: number;
+  isPlatformDelivery?: boolean;
+}
+
+export interface RestaurantUpdateDto extends Partial<RestaurantCreateDto> {
+  isOpen?: boolean;
+}
+
+export interface MenuCategoryDto {
+  restaurantId?: string;
+  name: string;
+  description?: string;
+  sortOrder?: number;
+}
+
+export interface MenuItemCreateDto {
+  restaurantId?: string;
+  categoryId: string;
+  name: string;
+  description?: string;
+  priceBdt: number;
+  imageUrl?: string;
+  isAvailable?: boolean;
+  isVegetarian?: boolean;
+  preparationTimeMinutes?: number;
+  sortOrder?: number;
+}
+
+export interface MenuItemUpdateDto extends Partial<MenuItemCreateDto> {
+  isAvailable?: boolean;
+}
+
+export interface MenuItemResponse {
+  id: string;
+  restaurantId: string;
+  categoryId: string;
+  name: string;
+  description?: string | null;
+  priceBdt: number;
+  imageUrl?: string | null;
+  isAvailable: boolean;
+  isVegetarian: boolean;
+  preparationTimeMinutes: number;
+  sortOrder: number;
+  createdAt?: string;
+}
+
+export interface MenuCategoryResponse {
+  id: string;
+  restaurantId: string;
+  name: string;
+  description?: string | null;
+  sortOrder: number;
+  menuItems: MenuItemResponse[];
+}
+
+export interface RestaurantDetailResponse {
+  id: string;
+  vendorUserId: string;
+  name: string;
+  slug: string;
+  description?: string | null;
+  area: string;
+  address: string;
+  phone: string;
+  bannerImageUrl?: string | null;
+  logoUrl?: string | null;
+  cuisines: string[];
+  commissionRate: number;
+  deliveryFee: number;
+  isPlatformDelivery: boolean;
+  isOpen: boolean;
+  isApproved: boolean;
+  approvedAt?: string | null;
+  approvedByStaffId?: string | null;
+  createdAt?: string;
+  categories: MenuCategoryResponse[];
+}
+
+export interface FoodOrderItemInput {
+  menuItemId: string;
+  quantity: number;
+  specialNotes?: string;
+}
+
+export interface FoodOrderCreateDto {
+  restaurantId: string;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string;
+  fulfillmentType: FoodFulfillmentType;
+  deliveryArea?: string;
+  deliveryAddress?: string;
+  paymentMethod: string;
+  specialInstructions?: string;
+  items: FoodOrderItemInput[];
+}
+
+export interface FoodOrderItemResponse {
+  id: string;
+  menuItemId: string;
+  itemName: string;
+  unitPriceBdt: number;
+  quantity: number;
+  totalPriceBdt: number;
+  specialNotes?: string | null;
+}
+
+export interface FoodOrderResponse {
+  id: string;
+  orderNumber: string;
+  restaurantId: string;
+  restaurantName: string;
+  restaurantPhone?: string;
+  restaurantAddress?: string;
+  userId?: string | null;
+  customerName: string;
+  customerPhone: string;
+  customerEmail?: string | null;
+  fulfillmentType: FoodFulfillmentType;
+  deliveryArea?: string | null;
+  deliveryAddress?: string | null;
+  subtotalBdt: number;
+  deliveryFeeBdt: number;
+  totalAmountBdt: number;
+  depositRequiredBdt: number;
+  depositPaidBdt: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  orderStatus: FoodOrderStatus;
+  cookingMinutesEstimated: number;
+  cookingStartedAt?: string | null;
+  cookingTargetAt?: string | null;
+  specialInstructions?: string | null;
+  commissionRate: number;
+  commissionAmountBdt: number;
+  netVendorEarningsBdt: number;
+  deliveredAt?: string | null;
+  cancelledAt?: string | null;
+  cancellationReason?: string | null;
+  createdAt: string;
+  items: FoodOrderItemResponse[];
+}
+
+export interface FoodOrderStatusUpdateDto {
+  status: FoodOrderStatus;
+  cookingMinutes?: number;
+  cancellationReason?: string;
+}
+
+export interface RestaurantLedgerResponse {
+  restaurantId: string;
+  restaurantName: string;
+  commissionRate: number;
+  totalOrdersCount: number;
+  deliveredOrdersCount: number;
+  grossSalesBdt: number;
+  platformCommissionBdt: number;
+  netVendorPayoutBdt: number;
+  recentOrders: FoodOrderResponse[];
+}
+
+
 
 
 
