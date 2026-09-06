@@ -85,6 +85,12 @@ export class StockController {
     return this.stockService.recordSale(req.user.id, dto);
   }
 
+  @Post('counter-sale')
+  async recordCounterSale(@Req() req: any, @Body() dto: StockSaleCreateDto) {
+    this.checkStockModulePermission(req.user);
+    return this.stockService.recordSale(req.user.id, dto);
+  }
+
   @Post('grant-access/:userId')
   @UseGuards(AccountTypeGuard)
   @RequireAccountTypes(AccountType.SUPER_ADMIN)

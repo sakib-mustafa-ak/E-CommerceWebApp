@@ -1573,6 +1573,251 @@ export interface FrequentlyBoughtTogetherResponse {
   bundleDiscountSavingsBdt: number;
 }
 
+// -----------------------------------------------------------------------------
+// Phase 11.3: Rewards Points + Referral Program Types
+// -----------------------------------------------------------------------------
+
+export interface RewardTransactionResponse {
+  id: string;
+  type: string;
+  points: number;
+  balanceAfter: number;
+  referenceType?: string | null;
+  referenceId?: string | null;
+  description: string;
+  createdAt: string;
+}
+
+export interface RewardAccountResponse {
+  id: string;
+  userId: string;
+  pointsBalance: number;
+  lifetimeEarned: number;
+  lifetimeRedeemed: number;
+  referralCode: string;
+  referredByCode?: string | null;
+  tierLevel: string;
+  equivalentDiscountBdt: number;
+  recentTransactions?: RewardTransactionResponse[];
+}
+
+export interface RedeemPointsDto {
+  pointsToRedeem: number;
+  orderSubtotal: number;
+}
+
+export interface ClaimReferralDto {
+  referralCode: string;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 11.4: Bundle Deals & Flash Sales Types
+// -----------------------------------------------------------------------------
+
+export interface FlashSaleDealDto {
+  title: string;
+  productId: string;
+  flashPriceBdt: number;
+  quotaLimit?: number;
+  startTime: string;
+  endTime: string;
+}
+
+export interface FlashSaleDealResponse {
+  id: string;
+  title: string;
+  slug: string;
+  productId: string;
+  productName?: string;
+  productSlug?: string;
+  flashPriceBdt: number;
+  originalMrp: number;
+  discountPercent: number;
+  quotaLimit: number;
+  quotaClaimed: number;
+  remainingQuota: number;
+  startTime: string;
+  endTime: string;
+  isActive: boolean;
+  isExpired: boolean;
+}
+
+export interface ProductBundleDealDto {
+  title: string;
+  description?: string;
+  bundlePriceBdt: number;
+  items: Array<{ productId: string; quantity: number }>;
+}
+
+export interface ProductBundleDealResponse {
+  id: string;
+  title: string;
+  slug: string;
+  description?: string | null;
+  bundlePriceBdt: number;
+  totalMrpBdt: number;
+  savingsPercent: number;
+  items: Array<{
+    productId: string;
+    productName: string;
+    productSlug: string;
+    quantity: number;
+    unitMrp: number;
+  }>;
+  isActive: boolean;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 11.5: Abandoned Cart Reminders Types
+// -----------------------------------------------------------------------------
+
+export interface AbandonedCartSessionResponse {
+  id: string;
+  userId?: string | null;
+  guestSessionId?: string | null;
+  customerEmail?: string | null;
+  customerPhone?: string | null;
+  items: any[];
+  cartSubtotalBdt: number;
+  lastActivityAt: string;
+  reminderSentCount: number;
+  lastReminderSentAt?: string | null;
+  status: string;
+}
+
+export interface AbandonedCartReminderTriggerDto {
+  sessionId: string;
+  channel?: 'SMS' | 'EMAIL' | 'NOTIFICATION';
+  customMessage?: string;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 11.6: Price-Drop Alerts Types
+// -----------------------------------------------------------------------------
+
+export interface CreatePriceDropSubscriptionDto {
+  productId: string;
+  targetPriceBdt?: number;
+  customerEmail?: string;
+  customerPhone?: string;
+}
+
+export interface PriceDropAlertResponse {
+  id: string;
+  productId: string;
+  productName: string;
+  productSlug: string;
+  baselineMrp: number;
+  currentMrp: number;
+  targetPriceBdt: number;
+  savingsBdt: number;
+  savingsPercent: number;
+  isTriggered: boolean;
+  isNotified: boolean;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 11.7: Support Ticket System Types
+// -----------------------------------------------------------------------------
+
+export interface CreateSupportTicketDto {
+  subject: string;
+  category: 'ORDER' | 'PAYMENT' | 'RETURN' | 'QUALITY' | 'GENERAL';
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  message: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  attachments?: string[];
+}
+
+export interface TicketMessageResponse {
+  id: string;
+  ticketId: string;
+  senderId?: string | null;
+  senderName: string;
+  senderRole: string;
+  message: string;
+  attachments?: string[];
+  createdAt: string;
+}
+
+export interface SupportTicketResponse {
+  id: string;
+  ticketNumber: string;
+  userId?: string | null;
+  customerName: string;
+  customerEmail?: string | null;
+  customerPhone?: string | null;
+  subject: string;
+  category: string;
+  priority: string;
+  status: string;
+  assignedToStaffId?: string | null;
+  assignedToStaffName?: string | null;
+  createdAt: string;
+  updatedAt: string;
+  messages?: TicketMessageResponse[];
+}
+
+export interface TicketReplyDto {
+  message: string;
+  attachments?: string[];
+}
+
+export interface UpdateTicketStatusDto {
+  status: 'OPEN' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+  assignedToStaffId?: string;
+}
+
+// -----------------------------------------------------------------------------
+// Phase 11.8: Bulk Order Upload / Quotation Request Tool Types
+// -----------------------------------------------------------------------------
+
+export interface BulkQuotationItemInput {
+  rawQuery: string;
+  requestedQuantity: number;
+}
+
+export interface BulkQuotationRequestDto {
+  rawText?: string;
+  items?: BulkQuotationItemInput[];
+  buyerName?: string;
+  buyerPhone?: string;
+}
+
+export interface BulkQuotationItemResponse {
+  id: string;
+  rawQuery: string;
+  matchedProductId?: string | null;
+  matchedProductName?: string | null;
+  genericName?: string | null;
+  requestedQuantity: number;
+  unitMrp: number;
+  quotedUnitPrice: number;
+  totalQuotedPrice: number;
+  isAvailable: boolean;
+  matchConfidence: 'EXACT_SKU' | 'GENERIC_MATCH' | 'FUZZY_MATCH' | 'NOT_FOUND';
+  notes?: string | null;
+}
+
+export interface BulkQuotationResponse {
+  id: string;
+  quoteNumber: string;
+  buyerId?: string | null;
+  buyerName: string;
+  buyerPhone: string;
+  buyerAccountType: string;
+  tierCode?: string | null;
+  totalMatchedItems: number;
+  totalUnmatchedItems: number;
+  estimatedTotalBdt: number;
+  status: string;
+  convertedOrderId?: string | null;
+  createdAt: string;
+  items: BulkQuotationItemResponse[];
+}
+
 
 
 

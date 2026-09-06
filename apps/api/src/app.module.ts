@@ -23,6 +23,12 @@ import { GamingModule } from './modules/gaming/gaming.module';
 import { FoodModule } from './modules/food/food.module';
 import { CommunityModule } from './modules/community/community.module';
 import { RecommendationsModule } from './modules/recommendations/recommendations.module';
+import { RewardsModule } from './modules/rewards/rewards.module';
+import { DealsModule } from './modules/deals/deals.module';
+import { AbandonedCartsModule } from './modules/abandoned-carts/abandoned-carts.module';
+import { PriceAlertsModule } from './modules/price-alerts/price-alerts.module';
+import { TicketsModule } from './modules/tickets/tickets.module';
+import { BulkOrderModule } from './modules/bulk-order/bulk-order.module';
 
 @Module({
   imports: [
@@ -49,6 +55,12 @@ import { RecommendationsModule } from './modules/recommendations/recommendations
     FoodModule,
     CommunityModule,
     RecommendationsModule,
+    RewardsModule,
+    DealsModule,
+    AbandonedCartsModule,
+    PriceAlertsModule,
+    TicketsModule,
+    BulkOrderModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],

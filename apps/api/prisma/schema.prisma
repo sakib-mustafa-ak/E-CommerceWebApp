@@ -47,6 +47,8 @@ model User {
   restaurant           Restaurant?
   foodOrders           FoodOrder[]
   communityPosts       CommunityPost[]
+  rewardAccount        RewardAccount?
+  supportTickets       SupportTicket[]
   auditLogs            AuditLog[]
 }
 
@@ -278,6 +280,8 @@ model Product {
   wishlistItems           Wishlist[]
   digitalTokens           DigitalDownloadToken[]
   wholesalerPublicListings WholesalerPublicListing[]
+  flashSaleDeals          FlashSaleDeal[]
+  priceDropSubscriptions  PriceDropSubscription[]
   createdAt               DateTime              @default(now())
   updatedAt               DateTime              @updatedAt
 
@@ -1216,6 +1220,213 @@ model CommunityPost {
   @@index([authorId])
   @@index([slug])
   @@index([createdAt])
+}
+
+// Phase 11.3: Rewards Points & Referral Program
+model RewardAccount {
+  id               String              @id @default(uuid())
+  userId           String              @unique
+  pointsBalance    Int                 @default(0)
+  lifetimeEarned   Int                 @default(0)
+  lifetimeRedeemed Int                 @default(0)
+  referralCode     String              @unique
+  referredByCode   String?
+  tierLevel        String              @default("BRONZE") // BRONZE, SILVER, GOLD, PLATINUM
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions     RewardTransaction[]
+
+  @@index([userId])
+  @@index([referralCode])
+}
+
+model RewardTransaction {
+  id            String        @id @default(uuid())
+  accountId     String
+  type          String        // EARN_ORDER, REDEEM_ORDER, REFERRAL_BONUS_REFERRER, REFERRAL_BONUS_REFEREE, ADMIN_ADJUSTMENT
+  points        Int
+  balanceAfter  Int
+  referenceType String?       // ORDER, REFERRAL, ADMIN
+  referenceId   String?
+  description   String
+  createdAt     DateTime      @default(now())
+
+  account       RewardAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@index([accountId])
+  @@index([createdAt])
+}
+
+// Phase 11.4: Bundle Deals & Flash Sales
+model FlashSaleDeal {
+  id              String   @id @default(uuid())
+  title           String
+  slug            String   @unique
+  productId       String
+  flashPriceBdt   Float
+  originalMrp     Float
+  discountPercent Float
+  quotaLimit      Int      @default(50)
+  quotaClaimed    Int      @default(0)
+  startTime       DateTime
+  endTime         DateTime
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  product         Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([isActive])
+  @@index([startTime, endTime])
+}
+
+model ProductBundleDeal {
+  id             String   @id @default(uuid())
+  title          String
+  slug           String   @unique
+  description    String?
+  bundlePriceBdt Float
+  totalMrpBdt    Float
+  savingsPercent Float
+  itemsJson      String   // JSON array: [{ productId, quantity, unitMrp }]
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([slug])
+}
+
+// Phase 11.5: Abandoned Cart Reminders
+model AbandonedCartSession {
+  id                 String    @id @default(uuid())
+  userId             String?
+  guestSessionId     String?
+  customerEmail      String?
+  customerPhone      String?
+  itemsJson          String    // JSON array of cart items
+  cartSubtotalBdt    Float
+  lastActivityAt     DateTime  @default(now())
+  reminderSentCount  Int       @default(0)
+  lastReminderSentAt DateTime?
+  status             String    @default("ABANDONED") // ACTIVE, ABANDONED, RECOVERED, EXPIRED
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  @@index([status])
+  @@index([lastActivityAt])
+  @@index([userId])
+}
+
+// Phase 11.6: Price-Drop Alerts
+model PriceDropSubscription {
+  id                String   @id @default(uuid())
+  userId            String?
+  customerEmail     String?
+  customerPhone     String?
+  productId         String
+  targetPriceBdt    Float
+  baselineMrp       Float
+  lastNotifiedPrice Float?
+  isNotified        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  product           Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([isNotified])
+}
+
+// Phase 11.7: Support Ticket System
+model SupportTicket {
+  id                  String          @id @default(uuid())
+  ticketNumber        String          @unique // TKT-2026-XXXX
+  userId              String?
+  customerName        String
+  customerEmail       String?
+  customerPhone       String?
+  subject             String
+  category            String          // ORDER, PAYMENT, RETURN, QUALITY, GENERAL
+  priority            String          @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
+  status              String          @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  assignedToStaffId   String?
+  assignedToStaffName String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  user                User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  messages            TicketMessage[]
+
+  @@index([status])
+  @@index([category])
+  @@index([priority])
+  @@index([userId])
+}
+
+model TicketMessage {
+  id              String        @id @default(uuid())
+  ticketId        String
+  senderId        String?
+  senderName      String
+  senderRole      String        // CUSTOMER, STAFF, ADMIN
+  message         String
+  attachmentsJson String?       // JSON array of URLs
+  createdAt       DateTime      @default(now())
+
+  ticket          SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@index([ticketId])
+  @@index([createdAt])
+}
+
+// Phase 11.8: Bulk Order Upload / Quotation Request Tool
+model BulkQuotationRequest {
+  id                  String              @id @default(uuid())
+  quoteNumber         String              @unique // QUOTE-2026-XXXX
+  buyerId             String?
+  buyerName           String
+  buyerPhone          String
+  buyerAccountType    String              // PAIKARI_SELLER, WHOLESALER_SELLER, PUBLIC_USER
+  tierCode            String?             // TIER_A, TIER_B, TIER_C
+  rawInputText        String?
+  totalMatchedItems   Int                 @default(0)
+  totalUnmatchedItems Int                 @default(0)
+  estimatedTotalBdt   Float               @default(0)
+  status              String              @default("QUOTED") // DRAFT, QUOTED, CONVERTED_TO_ORDER, EXPIRED
+  convertedOrderId    String?
+  notes               String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  items               BulkQuotationItem[]
+
+  @@index([quoteNumber])
+  @@index([buyerId])
+  @@index([status])
+}
+
+model BulkQuotationItem {
+  id                 String               @id @default(uuid())
+  quotationId        String
+  rawQuery           String
+  matchedProductId   String?
+  matchedProductName String?
+  genericName        String?
+  requestedQuantity  Int
+  unitMrp            Float                @default(0)
+  quotedUnitPrice    Float                @default(0)
+  totalQuotedPrice   Float                @default(0)
+  isAvailable        Boolean              @default(true)
+  matchConfidence    String               // EXACT_SKU, GENERIC_MATCH, FUZZY_MATCH, NOT_FOUND
+  notes              String?
+
+  quotation          BulkQuotationRequest @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+
+  @@index([quotationId])
 }
 
 
