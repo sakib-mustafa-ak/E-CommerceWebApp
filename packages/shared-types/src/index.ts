@@ -1530,6 +1530,50 @@ export interface CommunityPostResponse {
   updatedAt: string;
 }
 
+// -----------------------------------------------------------------------------
+// Phase 11.1: Recommendation & Suggestion Engine
+// -----------------------------------------------------------------------------
+
+export enum RecommendationStrategy {
+  PERSONALIZED = 'PERSONALIZED',
+  FREQUENTLY_BOUGHT_TOGETHER = 'FREQUENTLY_BOUGHT_TOGETHER',
+  GENERIC_SUBSTITUTES = 'GENERIC_SUBSTITUTES',
+  TRENDING_POPULAR = 'TRENDING_POPULAR',
+}
+
+export interface BehaviorEventDto {
+  eventType: 'PRODUCT_VIEWED' | 'PRODUCT_ADDED_TO_CART' | 'PRODUCT_PURCHASED' | 'SEARCH_PERFORMED';
+  productId?: string;
+  metadata?: Record<string, any>;
+  guestSessionId?: string;
+}
+
+export interface RecommendationItemResponse {
+  id: string;
+  name: string;
+  slug: string;
+  genericName?: string | null;
+  dosageForm?: string | null;
+  companyName?: string | null;
+  priceBdt: number;
+  mrpBdt?: number | null;
+  imageUrl?: string | null;
+  categoryName?: string | null;
+  stockCount: number;
+  recommendationScore: number;
+  recommendationReason: string;
+  discountPercentage?: number;
+}
+
+export interface FrequentlyBoughtTogetherResponse {
+  mainProduct: RecommendationItemResponse;
+  bundledProducts: RecommendationItemResponse[];
+  bundleTotalPriceBdt: number;
+  bundleOriginalPriceBdt: number;
+  bundleDiscountSavingsBdt: number;
+}
+
+
 
 
 

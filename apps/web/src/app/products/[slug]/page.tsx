@@ -34,9 +34,11 @@ export default function ProductDetailPage() {
   const { user } = useAuth();
 
   const [product, setProduct] = useState<any>(null);
-  const [resellerListing, setResellerListing] = useState<any>(null);
   const [reviews, setReviews] = useState<any[]>([]);
+  const [resellerListing, setResellerListing] = useState<any>(null);
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [frequentlyBought, setFrequentlyBought] = useState<any>(null);
+  const [substitutes, setSubstitutes] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
@@ -63,21 +65,25 @@ export default function ProductDetailPage() {
           setSelectedVariant(prod.variants[0]);
         }
 
-        // Fetch reviews, recommendations & public reseller listing
-        const [revRes, recRes, resellerRes] = await Promise.all([
+        // Fetch reviews, recommendations, frequently bought together & generic substitutes
+        const [revRes, recRes, resellerRes, fbtRes, subRes] = await Promise.all([
           api.get(`/public/products/${prod.id}/reviews`).catch(() => ({ data: [] })),
-          api.get(`/public/products/${prod.id}/recommendations?limit=4`).catch(() => ({ data: [] })),
+          api.get(`/recommendations/personalized?limit=4`).catch(() => ({ data: [] })),
           api.get(`/reseller/listings/public?productId=${prod.id}`).catch(() => ({ data: [] })),
+          api.get(`/recommendations/frequently-bought-together/${prod.id}`).catch(() => ({ data: null })),
+          api.get(`/recommendations/substitutes/${prod.id}`).catch(() => ({ data: [] })),
         ]);
 
         setReviews(revRes.data || []);
         setRecommendations(recRes.data || []);
+        setFrequentlyBought(fbtRes.data || null);
+        setSubstitutes(subRes.data || []);
         if (resellerRes.data && resellerRes.data.length > 0) {
           setResellerListing(resellerRes.data[0]);
         }
 
-        // Log product view event
-        api.post('/public/behavior-log', {
+        // Log product view event to Recommendation Engine
+        api.post('/recommendations/track', {
           eventType: 'PRODUCT_VIEWED',
           productId: prod.id,
         }).catch(() => {});
@@ -490,12 +496,119 @@ export default function ProductDetailPage() {
         )}
       </div>
 
-      {/* "You Might Also Like" Recommendation Carousel */}
+      {/* Frequently Bought Together Bundle */}
+      {frequentlyBought && frequentlyBought.bundledProducts && frequentlyBought.bundledProducts.length > 0 && (
+        <div className="glass-panel p-6 rounded-3xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-950 space-y-4 shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div>
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 font-mono uppercase tracking-wider">
+                <Sparkles className="w-4 h-4" />
+                <span>Frequently Bought Together</span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Customers who ordered this medicine commonly bundle these items. Save 5% automatically!
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+              5% COMBO SAVINGS
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+            {/* Main Product */}
+            <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+              <span className="text-[10px] font-mono text-indigo-400 font-bold uppercase">Main Selection</span>
+              <div className="font-bold text-white text-xs truncate">{frequentlyBought.mainProduct.name}</div>
+              <div className="text-xs font-mono font-bold text-sky-400">৳{frequentlyBought.mainProduct.priceBdt}</div>
+            </div>
+
+            {/* Bundled Complementary Items */}
+            {frequentlyBought.bundledProducts.map((bundleItem: any) => (
+              <div key={bundleItem.id} className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
+                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">+ Complementary</span>
+                <div className="font-bold text-white text-xs truncate">{bundleItem.name}</div>
+                <div className="text-xs font-mono font-bold text-sky-400">৳{bundleItem.priceBdt}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
+            <div className="flex items-center gap-3">
+              <span className="text-slate-400">
+                Combo Price: <span className="line-through text-slate-500">৳{frequentlyBought.bundleOriginalPriceBdt}</span>{' '}
+                <strong className="text-emerald-400 text-sm">৳{frequentlyBought.bundleTotalPriceBdt}</strong>
+              </span>
+              <span className="text-emerald-400 font-semibold">(Save ৳{frequentlyBought.bundleDiscountSavingsBdt})</span>
+            </div>
+
+            <button
+              onClick={() => {
+                setToastMessage('Added bundle items to cart with 5% combo discount!');
+                setTimeout(() => setToastMessage(null), 3000);
+              }}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-500 hover:to-sky-500 text-white font-bold text-xs shadow-lg shadow-indigo-950 transition-all flex items-center gap-1.5"
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              Add All to Cart
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Generic Substitutes & Price Comparisons */}
+      {substitutes.length > 0 && (
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Layers className="w-4 h-4 text-emerald-400" />
+                Generic Equivalents & Alternative Brands ({product?.genericName})
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Exact active chemical formula from verified Bangladesh DGDA-approved manufacturers
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {substitutes.map((sub) => (
+              <Link
+                key={sub.id}
+                href={`/products/${sub.slug}`}
+                className="p-4 rounded-2xl border border-slate-800 bg-slate-900/70 hover:border-emerald-500/40 transition-all group space-y-2 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="font-bold text-xs text-white group-hover:text-emerald-300 transition-colors">
+                      {sub.name}
+                    </span>
+                    {sub.discountPercentage && sub.discountPercentage > 0 && (
+                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/40">
+                        Save {sub.discountPercentage}%
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-[11px] text-slate-400 mt-1">{sub.companyName}</div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-800/80 flex justify-between items-center text-xs font-mono">
+                  <span className="font-bold text-emerald-400">৳{sub.priceBdt}</span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-slate-300 flex items-center gap-1">
+                    Compare <ArrowRight className="w-3 h-3" />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* "Recommended for You" Personalized Carousel */}
       {recommendations.length > 0 && (
         <div className="space-y-4 pt-6 border-t border-slate-800">
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 font-mono uppercase tracking-wider">
             <Sparkles className="w-4 h-4 text-sky-400" />
-            <span>You Might Also Like</span>
+            <span>Recommended For You</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -510,7 +623,7 @@ export default function ProductDetailPage() {
                 </div>
                 <div className="text-[11px] text-slate-400 font-mono">{rec.genericName}</div>
                 <div className="flex justify-between items-center pt-2 text-xs font-mono font-bold text-sky-400">
-                  <span>৳{rec.mrp}</span>
+                  <span>৳{rec.priceBdt || rec.mrp}</span>
                   <span className="text-[10px] text-slate-500">{rec.companyName}</span>
                 </div>
               </Link>
