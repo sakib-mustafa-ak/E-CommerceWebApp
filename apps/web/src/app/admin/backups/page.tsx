@@ -112,30 +112,30 @@ export default function BackupsAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-white">Automated Backups & Data Exporter</h1>
-        <p className="text-xs text-slate-400">
+        <h1 className="text-xl font-bold text-slate-900">Automated Backups & Data Exporter</h1>
+        <p className="text-xs text-slate-500">
           Nightly snapshot dumps, 30-day cold storage retention rotation, monthly restore drills, and standalone CSV data export.
         </p>
       </div>
 
       {message && (
-        <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-xs text-sky-300 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-sky-400" />
+        <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-700 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-sky-600" />
           <span>{message}</span>
         </div>
       )}
 
       {/* Standalone CSV Exports */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
           Standalone CSV Data Exporter (Rule 9)
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 flex justify-between items-center">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex justify-between items-center">
             <div>
-              <div className="font-bold text-xs text-slate-200">Memos & Orders Export (CSV)</div>
-              <div className="text-[11px] text-slate-400">Complete transaction records with line items & status</div>
+              <div className="font-bold text-xs text-slate-700">Memos & Orders Export (CSV)</div>
+              <div className="text-[11px] text-slate-500">Complete transaction records with line items & status</div>
             </div>
             <button
               onClick={() => handleExport('export/orders.csv', 'siamaqua_orders_export.csv')}
@@ -146,10 +146,10 @@ export default function BackupsAdminPage() {
             </button>
           </div>
 
-          <div className="p-4 rounded-2xl bg-slate-950/70 border border-slate-800 flex justify-between items-center">
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex justify-between items-center">
             <div>
-              <div className="font-bold text-xs text-slate-200">Inventory Stock Catalog (CSV)</div>
-              <div className="text-[11px] text-slate-400">Dual inventory breakdown (PharmaTrack vs Offer Para)</div>
+              <div className="font-bold text-xs text-slate-700">Inventory Stock Catalog (CSV)</div>
+              <div className="text-[11px] text-slate-500">Dual inventory breakdown (PharmaTrack vs Offer Para)</div>
             </div>
             <button
               onClick={() => handleExport('export/stock.csv', 'siamaqua_stock_export.csv')}
@@ -163,21 +163,21 @@ export default function BackupsAdminPage() {
       </div>
 
       {/* Automated Backups & Restore Drills */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div>
-            <h2 className="text-base font-bold text-white flex items-center gap-2">
-              <Database className="w-4 h-4 text-sky-400" />
+            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <Database className="w-4 h-4 text-sky-600" />
               Automated Snapshots & Cold Storage (30-Day Retention)
             </h2>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               SHA256 verified full snapshots stored in S3 cold storage. Older records automatically pruned.
             </p>
           </div>
           <button
             onClick={handleTriggerBackup}
             disabled={loading}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-[#0F5B78] hover:bg-[#0d4f69] text-white font-bold text-xs shadow-md  transition-all flex items-center gap-1.5"
           >
             <HardDrive className="w-3.5 h-3.5" />
             <span>{loading ? 'Creating Snapshot...' : 'Trigger Full Backup Now'}</span>
@@ -186,7 +186,7 @@ export default function BackupsAdminPage() {
 
         <div className="overflow-x-auto pt-2">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
               <tr>
                 <th className="p-2.5">Snapshot File</th>
                 <th className="p-2.5">Size</th>
@@ -198,16 +198,16 @@ export default function BackupsAdminPage() {
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
               {backups.map((b) => (
-                <tr key={b.id} className="hover:bg-slate-800/30">
-                  <td className="p-2.5 font-mono text-slate-200">{b.fileName}</td>
-                  <td className="p-2.5 font-mono text-slate-400">{(b.fileSizeBytes / 1024).toFixed(1)} KB</td>
-                  <td className="p-2.5 font-mono text-[11px] text-sky-400">{b.storageLocation}</td>
+                <tr key={b.id} className="hover:bg-slate-100/30">
+                  <td className="p-2.5 font-mono text-slate-700">{b.fileName}</td>
+                  <td className="p-2.5 font-mono text-slate-500">{(b.fileSizeBytes / 1024).toFixed(1)} KB</td>
+                  <td className="p-2.5 font-mono text-[11px] text-sky-600">{b.storageLocation}</td>
                   <td className="p-2.5 font-mono text-[10px] text-slate-500">
                     {b.checksum?.substring(0, 16)}...
                   </td>
                   <td className="p-2.5">
                     {b.drillVerifiedAt ? (
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
+                      <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
                         <CheckCircle2 className="w-3 h-3" /> Drill Verified
                       </span>
                     ) : (
@@ -218,9 +218,9 @@ export default function BackupsAdminPage() {
                     <button
                       onClick={() => handleRunDrill(b.id)}
                       disabled={loading}
-                      className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] font-semibold border border-slate-700 transition-colors flex items-center gap-1 ml-auto"
+                      className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-700 text-[11px] font-semibold border border-slate-200 transition-colors flex items-center gap-1 ml-auto"
                     >
-                      <Play className="w-3 h-3 text-emerald-400" />
+                      <Play className="w-3 h-3 text-emerald-600" />
                       Verify Drill
                     </button>
                   </td>

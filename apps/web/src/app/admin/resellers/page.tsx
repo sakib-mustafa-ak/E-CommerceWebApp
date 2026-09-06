@@ -245,17 +245,17 @@ export default function AdminResellersPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
+            <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-500/20 text-indigo-600">
               <Store className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 Wholesaler Public Resellers Management
               </h1>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Admin review queue for public listings, commission rate controls, and monthly offline settlement.
               </p>
             </div>
@@ -265,21 +265,21 @@ export default function AdminResellersPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Pending Review Listings</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+            <Clock className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="text-2xl font-black text-amber-400 mt-2">
+          <div className="text-2xl font-black text-amber-600 mt-2">
             {pendingCount}
           </div>
           <div className="text-xs text-slate-500 mt-1">Requires staff judgment</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Reseller Gross Volume</span>
-            <TrendingUp className="w-4 h-4 text-sky-400" />
+            <TrendingUp className="w-4 h-4 text-sky-600" />
           </div>
           <div className="text-2xl font-black text-white mt-2">
             ৳{(ledgerSummary?.totalGrossVolume || 0).toLocaleString()}
@@ -287,23 +287,23 @@ export default function AdminResellersPage() {
           <div className="text-xs text-slate-500 mt-1">Public buyer purchases</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Platform Commission Accrued</span>
-            <Percent className="w-4 h-4 text-emerald-400" />
+            <Percent className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-black text-emerald-400 mt-2">
+          <div className="text-2xl font-black text-emerald-600 mt-2">
             ৳{(ledgerSummary?.totalPlatformCommission || 0).toLocaleString()}
           </div>
           <div className="text-xs text-slate-500 mt-1">Earned facilitation fees</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Net Wholesaler Owed</span>
-            <Receipt className="w-4 h-4 text-indigo-400" />
+            <Receipt className="w-4 h-4 text-indigo-600" />
           </div>
-          <div className="text-2xl font-black text-indigo-400 mt-2">
+          <div className="text-2xl font-black text-indigo-600 mt-2">
             ৳{(ledgerSummary?.totalNetWholesalerOwed || 0).toLocaleString()}
           </div>
           <div className="text-xs text-slate-500 mt-1">Pending offline payout</div>
@@ -311,13 +311,13 @@ export default function AdminResellersPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
         <button
           onClick={() => setActiveTab('queue')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'queue'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Clock className="w-4 h-4" />
@@ -327,8 +327,8 @@ export default function AdminResellersPage() {
           onClick={() => setActiveTab('ledger')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'ledger'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Receipt className="w-4 h-4" />
@@ -338,8 +338,8 @@ export default function AdminResellersPage() {
           onClick={() => setActiveTab('statements')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'statements'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <FileText className="w-4 h-4" />
@@ -349,8 +349,8 @@ export default function AdminResellersPage() {
           onClick={() => setActiveTab('settings')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'settings'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Settings className="w-4 h-4" />
@@ -360,20 +360,20 @@ export default function AdminResellersPage() {
 
       {/* TAB 1: REVIEW QUEUE */}
       {activeTab === 'queue' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h2 className="text-lg font-bold text-white">Public Resale Review Queue</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900">Public Resale Review Queue</h2>
+              <p className="text-xs text-slate-500">
                 Verify that pricing and stock quantities comply before publishing to the public storefront.
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs text-slate-400">Status:</span>
+              <span className="text-xs text-slate-500">Status:</span>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-semibold"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-semibold"
               >
                 <option value="PENDING_REVIEW">Pending Review</option>
                 <option value="APPROVED">Approved</option>
@@ -384,13 +384,13 @@ export default function AdminResellersPage() {
           </div>
 
           {listings.length === 0 ? (
-            <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-500 text-sm">
+            <div className="text-center py-12 border border-dashed border-slate-200 rounded-2xl text-slate-500 text-sm">
               No listings found matching filter.
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 rounded-l-xl">Wholesaler</th>
                     <th className="px-4 py-3">Product</th>
@@ -405,50 +405,50 @@ export default function AdminResellersPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
                   {listings.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-800/30 transition">
+                    <tr key={item.id} className="hover:bg-slate-100/30 transition">
                       <td className="px-4 py-3.5">
-                        <div className="font-bold text-white">{item.wholesalerShopName}</div>
+                        <div className="font-bold text-slate-900">{item.wholesalerShopName}</div>
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="font-semibold text-white">{item.productName}</div>
+                        <div className="font-semibold text-slate-900">{item.productName}</div>
                         <div className="text-xs text-slate-500">{item.productGenericName}</div>
                       </td>
-                      <td className="px-4 py-3.5 font-medium text-slate-200">
+                      <td className="px-4 py-3.5 font-medium text-slate-700">
                         ৳{item.wholesalerBasePrice.toFixed(2)}
                       </td>
-                      <td className="px-4 py-3.5 text-xs text-amber-400">
+                      <td className="px-4 py-3.5 text-xs text-amber-600">
                         +{item.commissionRate}% (৳{item.commissionAmount.toFixed(2)})
                       </td>
-                      <td className="px-4 py-3.5 font-bold text-emerald-400">
+                      <td className="px-4 py-3.5 font-bold text-emerald-600">
                         ৳{item.calculatedPublicPrice.toFixed(2)}
                       </td>
-                      <td className="px-4 py-3.5 font-semibold text-slate-200">
+                      <td className="px-4 py-3.5 font-semibold text-slate-700">
                         {item.stockQuantity} units
                       </td>
                       <td className="px-4 py-3.5 text-xs">
                         {item.brandingMode === ResellerBrandingMode.WHITE_LABEL ? (
-                          <span className="px-2.5 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                          <span className="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-500/20">
                             White-Label
                           </span>
                         ) : (
-                          <span className="px-2.5 py-1 rounded-full bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                          <span className="px-2.5 py-1 rounded-full bg-sky-50 text-sky-600 border border-sky-200">
                             Shop Brand
                           </span>
                         )}
                       </td>
                       <td className="px-4 py-3.5">
                         {item.status === 'APPROVED' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                             Approved
                           </span>
                         )}
                         {item.status === 'PENDING_REVIEW' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200">
                             Pending
                           </span>
                         )}
                         {item.status === 'REJECTED' && (
-                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-500/20">
                             Rejected
                           </span>
                         )}
@@ -477,24 +477,24 @@ export default function AdminResellersPage() {
 
       {/* TAB 2: PLATFORM COMMISSION LEDGER */}
       {activeTab === 'ledger' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white">Platform-Wide Reseller Commission Ledger</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900">Platform-Wide Reseller Commission Ledger</h2>
+              <p className="text-xs text-slate-500">
                 Unified audit trail of every sale commission credit and return reversal across all wholesalers.
               </p>
             </div>
           </div>
 
           {ledgerEntries.length === 0 ? (
-            <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-500 text-sm">
+            <div className="text-center py-12 border border-dashed border-slate-200 rounded-2xl text-slate-500 text-sm">
               No transactions recorded on the platform ledger yet.
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 rounded-l-xl">Entry #</th>
                     <th className="px-4 py-3">Date</th>
@@ -509,46 +509,46 @@ export default function AdminResellersPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
                   {ledgerEntries.map((entry) => (
-                    <tr key={entry.id} className="hover:bg-slate-800/30 transition">
-                      <td className="px-4 py-3.5 font-mono text-xs text-slate-400">
+                    <tr key={entry.id} className="hover:bg-slate-100/30 transition">
+                      <td className="px-4 py-3.5 font-mono text-xs text-slate-500">
                         {entry.entryNumber}
                       </td>
-                      <td className="px-4 py-3.5 text-xs text-slate-400">
+                      <td className="px-4 py-3.5 text-xs text-slate-500">
                         {new Date(entry.createdAt).toLocaleDateString('en-GB', {
                           day: '2-digit',
                           month: 'short',
                           year: 'numeric',
                         })}
                       </td>
-                      <td className="px-4 py-3.5 font-semibold text-white">
+                      <td className="px-4 py-3.5 font-semibold text-slate-900">
                         {entry.wholesalerShopName}
                       </td>
                       <td className="px-4 py-3.5">
                         {entry.entryType === 'SALE_COMMISSION' && (
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                             Sale Credit
                           </span>
                         )}
                         {entry.entryType === 'RETURN_COMMISSION_REVERSAL' && (
-                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                          <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-500/20">
                             Return Reversal
                           </span>
                         )}
                       </td>
                       <td className="px-4 py-3.5 text-xs">
-                        <div className="font-semibold text-white">{entry.productName || 'General Entry'}</div>
+                        <div className="font-semibold text-slate-900">{entry.productName || 'General Entry'}</div>
                         <div className="text-slate-500 text-[11px]">{entry.note}</div>
                       </td>
-                      <td className="px-4 py-3.5 text-slate-300 font-medium">
+                      <td className="px-4 py-3.5 text-slate-600 font-medium">
                         {entry.quantity}
                       </td>
-                      <td className="px-4 py-3.5 font-medium text-slate-200">
+                      <td className="px-4 py-3.5 font-medium text-slate-700">
                         {entry.grossAmount >= 0 ? `৳${entry.grossAmount.toFixed(2)}` : `-৳${Math.abs(entry.grossAmount).toFixed(2)}`}
                       </td>
-                      <td className="px-4 py-3.5 text-xs font-semibold text-amber-400">
+                      <td className="px-4 py-3.5 text-xs font-semibold text-amber-600">
                         {entry.platformCommission >= 0 ? `+৳${entry.platformCommission.toFixed(2)}` : `-৳${Math.abs(entry.platformCommission).toFixed(2)}`}
                       </td>
-                      <td className="px-4 py-3.5 font-bold text-emerald-400">
+                      <td className="px-4 py-3.5 font-bold text-emerald-600">
                         {entry.wholesalerBaseAmount >= 0 ? `+৳${entry.wholesalerBaseAmount.toFixed(2)}` : `-৳${Math.abs(entry.wholesalerBaseAmount).toFixed(2)}`}
                       </td>
                     </tr>
@@ -564,18 +564,18 @@ export default function AdminResellersPage() {
       {activeTab === 'statements' && (
         <div className="space-y-6">
           {/* Statement Generator Card */}
-          <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
-            <h2 className="text-lg font-bold text-white">Generate Monthly Settlement Statement</h2>
+          <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+            <h2 className="text-lg font-bold text-slate-900">Generate Monthly Settlement Statement</h2>
             <form onSubmit={handleGenerateStatement} className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Select Wholesaler
                 </label>
                 <select
                   value={selectedWholesalerForStmt}
                   onChange={(e) => setSelectedWholesalerForStmt(e.target.value)}
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                 >
                   <option value="">-- Choose Wholesaler --</option>
                   {wholesalersList.map((w) => (
@@ -587,7 +587,7 @@ export default function AdminResellersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Billing Year
                 </label>
                 <input
@@ -595,18 +595,18 @@ export default function AdminResellersPage() {
                   value={stmtYear}
                   onChange={(e) => setStmtYear(Number(e.target.value))}
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Billing Month
                 </label>
                 <select
                   value={stmtMonth}
                   onChange={(e) => setStmtMonth(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs"
                 >
                   {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => (
                     <option key={m} value={m}>
@@ -620,7 +620,7 @@ export default function AdminResellersPage() {
                 <button
                   type="submit"
                   disabled={stmtGenerating}
-                  className="w-full px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white font-bold text-xs shadow-lg shadow-indigo-500/25 disabled:opacity-50"
+                  className="w-full px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-500 to-sky-500 hover:from-indigo-600 hover:to-sky-600 text-white font-bold text-xs shadow-indigo-500/25 disabled:opacity-50"
                 >
                   {stmtGenerating ? 'Generating...' : 'Generate Statement'}
                 </button>
@@ -629,16 +629,16 @@ export default function AdminResellersPage() {
           </div>
 
           {/* Statements Table */}
-          <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
-            <h2 className="text-lg font-bold text-white">Generated Statements &amp; Offline Settlement</h2>
+          <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+            <h2 className="text-lg font-bold text-slate-900">Generated Statements &amp; Offline Settlement</h2>
             {statements.length === 0 ? (
-              <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-500 text-sm">
+              <div className="text-center py-12 border border-dashed border-slate-200 rounded-2xl text-slate-500 text-sm">
                 No statements generated yet. Use the form above to generate statements for wholesalers.
               </div>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-300">
-                  <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+                <table className="w-full text-left text-sm text-slate-600">
+                  <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                     <tr>
                       <th className="px-4 py-3 rounded-l-xl">Statement #</th>
                       <th className="px-4 py-3">Wholesaler</th>
@@ -652,43 +652,43 @@ export default function AdminResellersPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-800/60">
                     {statements.map((stmt) => (
-                      <tr key={stmt.id} className="hover:bg-slate-800/30 transition">
-                        <td className="px-4 py-3.5 font-mono text-xs text-indigo-400 font-bold">
+                      <tr key={stmt.id} className="hover:bg-slate-100/30 transition">
+                        <td className="px-4 py-3.5 font-mono text-xs text-indigo-600 font-bold">
                           {stmt.statementNumber}
                         </td>
-                        <td className="px-4 py-3.5 font-semibold text-white">
+                        <td className="px-4 py-3.5 font-semibold text-slate-900">
                           {stmt.wholesalerShopName}
                         </td>
-                        <td className="px-4 py-3.5 font-medium text-slate-200">
+                        <td className="px-4 py-3.5 font-medium text-slate-700">
                           {stmt.billingPeriodYear}-{String(stmt.billingPeriodMonth).padStart(2, '0')}
                         </td>
-                        <td className="px-4 py-3.5 font-medium text-slate-200">
+                        <td className="px-4 py-3.5 font-medium text-slate-700">
                           ৳{stmt.grossSalesVolume.toLocaleString()}
                         </td>
-                        <td className="px-4 py-3.5 text-xs text-amber-400 font-semibold">
+                        <td className="px-4 py-3.5 text-xs text-amber-600 font-semibold">
                           ৳{stmt.totalCommissionOwed.toFixed(2)}
                         </td>
-                        <td className="px-4 py-3.5 font-black text-emerald-400">
+                        <td className="px-4 py-3.5 font-black text-emerald-600">
                           ৳{stmt.closingBalance.toLocaleString()}
                         </td>
                         <td className="px-4 py-3.5">
                           {stmt.status === 'SETTLED' && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                               Settled
                             </span>
                           )}
                           {stmt.status === 'ACKNOWLEDGED_PAID' && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-sky-50 text-sky-600 border border-sky-200">
                               Acknowledged Paid
                             </span>
                           )}
                           {stmt.status === 'PENDING_RECONCILIATION' && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200">
                               Pending Wholesaler
                             </span>
                           )}
                           {stmt.status === 'DISPUTED' && (
-                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                            <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-600 border border-rose-500/20">
                               Disputed
                             </span>
                           )}
@@ -718,19 +718,19 @@ export default function AdminResellersPage() {
 
       {/* TAB 4: WHOLESALER RESELLER SETTINGS */}
       {activeTab === 'settings' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white">Wholesaler Reseller Configuration</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900">Wholesaler Reseller Configuration</h2>
+              <p className="text-xs text-slate-500">
                 Configure commission rates (e.g. 2.0%) and default branding modes per wholesaler.
               </p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                 <tr>
                   <th className="px-4 py-3 rounded-l-xl">Wholesaler Shop</th>
                   <th className="px-4 py-3">Owner</th>
@@ -742,19 +742,19 @@ export default function AdminResellersPage() {
               </thead>
               <tbody className="divide-y divide-slate-800/60">
                 {wholesalersList.map((w) => (
-                  <tr key={w.userId || w.id} className="hover:bg-slate-800/30 transition">
-                    <td className="px-4 py-3.5 font-bold text-white">
+                  <tr key={w.userId || w.id} className="hover:bg-slate-100/30 transition">
+                    <td className="px-4 py-3.5 font-bold text-slate-900">
                       {w.shopName || w.name}
                     </td>
-                    <td className="px-4 py-3.5 text-xs text-slate-400">
+                    <td className="px-4 py-3.5 text-xs text-slate-500">
                       {w.ownerName}
                     </td>
                     <td className="px-4 py-3.5">
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                         Enabled
                       </span>
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-amber-400 font-bold">
+                    <td className="px-4 py-3.5 font-mono text-amber-600 font-bold">
                       {w.resellerCommissionRate ?? 2.0}%
                     </td>
                     <td className="px-4 py-3.5 text-xs">
@@ -767,7 +767,7 @@ export default function AdminResellersPage() {
                           setEditCommissionRate(w.resellerCommissionRate ?? 2.0);
                           setEditDefaultBranding(w.resellerDefaultBranding || 'WHITE_LABEL');
                         }}
-                        className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-medium transition"
+                        className="px-3 py-1.5 bg-slate-100 hover:bg-slate-700 text-slate-700 rounded-lg text-xs font-medium transition"
                       >
                         Edit Settings
                       </button>
@@ -783,34 +783,34 @@ export default function AdminResellersPage() {
       {/* REVIEW LISTING MODAL */}
       {selectedListingForReview && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 bg-slate-900 max-w-lg w-full space-y-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white max-w-lg w-full space-y-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <div>
-                <h3 className="text-xl font-bold text-white">Review Public Listing</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h3 className="text-xl font-bold text-slate-900">Review Public Listing</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
                   Submitted by {selectedListingForReview.wholesalerShopName}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedListingForReview(null)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-500 hover:text-white p-1"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2">
-              <div className="text-sm font-bold text-white">
+            <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 space-y-2">
+              <div className="text-sm font-bold text-slate-900">
                 {selectedListingForReview.productName}
               </div>
-              <div className="text-xs text-slate-400">
+              <div className="text-xs text-slate-500">
                 {selectedListingForReview.productGenericName} • {selectedListingForReview.companyName}
               </div>
-              <div className="flex items-center justify-between text-xs text-slate-300 pt-2 border-t border-slate-700">
+              <div className="flex items-center justify-between text-xs text-slate-600 pt-2 border-t border-slate-200">
                 <span>Wholesaler Base Price:</span>
                 <span className="font-bold font-mono">৳{selectedListingForReview.wholesalerBasePrice.toFixed(2)}</span>
               </div>
-              <div className="flex items-center justify-between text-xs text-slate-300">
+              <div className="flex items-center justify-between text-xs text-slate-600">
                 <span>Stock Allocated:</span>
                 <span className="font-bold font-mono">{selectedListingForReview.stockQuantity} units</span>
               </div>
@@ -818,7 +818,7 @@ export default function AdminResellersPage() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Commission Rate (% Added on Top)
                 </label>
                 <input
@@ -827,18 +827,18 @@ export default function AdminResellersPage() {
                   min="0"
                   value={adjustedCommissionRate}
                   onChange={(e) => setAdjustedCommissionRate(Number(e.target.value))}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Branding Attribution Mode
                 </label>
                 <select
                   value={adjustedBrandingMode}
                   onChange={(e) => setAdjustedBrandingMode(e.target.value as ResellerBrandingMode)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                 >
                   <option value={ResellerBrandingMode.WHITE_LABEL}>
                     White-Label (&quot;Siam&apos;s Aqua Verified Store&quot;)
@@ -850,7 +850,7 @@ export default function AdminResellersPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Review Notes (Optional)
                 </label>
                 <textarea
@@ -858,7 +858,7 @@ export default function AdminResellersPage() {
                   value={reviewNotes}
                   onChange={(e) => setReviewNotes(e.target.value)}
                   placeholder="e.g. Verified stock inventory and pricing structure."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -875,7 +875,7 @@ export default function AdminResellersPage() {
                   type="button"
                   onClick={() => handleReviewAction('APPROVED')}
                   disabled={reviewActionSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg  disabled:opacity-50"
                 >
                   {reviewActionSubmitting ? 'Approving...' : 'Approve & Go Live'}
                 </button>
@@ -888,12 +888,12 @@ export default function AdminResellersPage() {
       {/* SETTLE OFFLINE MODAL */}
       {settleStatementId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 bg-slate-900 max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white">Settle Statement Offline</h3>
+          <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <h3 className="text-xl font-bold text-slate-900">Settle Statement Offline</h3>
               <button
                 onClick={() => setSettleStatementId(null)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-500 hover:text-white p-1"
               >
                 ✕
               </button>
@@ -901,7 +901,7 @@ export default function AdminResellersPage() {
 
             <form onSubmit={handleSettleStatement} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Settlement &amp; Bank Reference Note
                 </label>
                 <textarea
@@ -910,7 +910,7 @@ export default function AdminResellersPage() {
                   onChange={(e) => setSettleNote(e.target.value)}
                   placeholder="e.g. Bank wire TRX-99281 confirmed on 6th Sep by Accounts Desk."
                   required
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -918,14 +918,14 @@ export default function AdminResellersPage() {
                 <button
                   type="button"
                   onClick={() => setSettleStatementId(null)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300 hover:text-white text-xs font-semibold"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:text-white text-xs font-semibold"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={settleSubmitting}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg  disabled:opacity-50"
                 >
                   {settleSubmitting ? 'Settling...' : 'Confirm Offline Settlement'}
                 </button>

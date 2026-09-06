@@ -321,101 +321,102 @@ export default function PaikariPortalPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
-      {/* Top Banner & Shop Identity */}
-      <div className="border-b border-slate-800/80 bg-slate-900/50 backdrop-blur-md sticky top-16 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Store className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                Paikari Ordering Hub
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20 font-mono">
-                  {user?.tierName || 'Tier B (Standard Paikari)'}
+    <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-amber-50 via-white to-slate-50 border-b border-slate-200 pt-10 pb-16">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-100/50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-orange-100/50 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+                <Store className="w-4 h-4 text-amber-500" />
+                <span>{user?.tierName || 'Tier B (Standard Paikari)'}</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-500/20 ml-1">
+                  Stock Verified Manually
                 </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                Paikari Ordering Hub
               </h1>
-              <p className="text-[11px] text-slate-400">
-                Order full list &bull; Stock verified manually by staff before final billing
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+                Order full list &bull; Stock verified manually by staff before final billing &bull; Free delivery on orders over ৳{deliveryFeeThreshold.toLocaleString()}
               </p>
             </div>
-          </div>
 
-          <div className="flex items-center gap-3">
-            {/* Free Delivery Meter */}
-            <div className="bg-slate-800/80 border border-slate-700/60 rounded-xl px-3 py-1.5 flex items-center gap-2.5">
-              <Truck className="w-4 h-4 text-emerald-400" />
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-semibold text-slate-300">Free Delivery Goal</span>
-                  <span className="text-[10px] font-mono text-emerald-400">
-                    {preliminarySubtotal >= deliveryFeeThreshold
-                      ? 'FREE QUALIFIED!'
-                      : `Add ৳${amountNeededForFreeDelivery.toFixed(0)} more`}
-                  </span>
+            {/* Free Delivery Meter & Actions */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="px-5 py-3 rounded-2xl bg-white border border-slate-200">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Truck className="w-4 h-4 text-emerald-600" />
+                  <span className="text-[10px] font-bold text-slate-500 uppercase font-mono">Free Delivery Goal</span>
                 </div>
-                <div className="w-32 h-1.5 bg-slate-700 rounded-full overflow-hidden mt-0.5">
+                <div className="text-sm font-bold text-emerald-600 font-mono">
+                  {preliminarySubtotal >= deliveryFeeThreshold
+                    ? 'FREE QUALIFIED!'
+                    : `Add ৳${amountNeededForFreeDelivery.toFixed(0)} more`}
+                </div>
+                <div className="w-40 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1.5">
                   <div
-                    className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300"
+                    className="h-full bg-emerald-500 transition-all duration-300"
                     style={{ width: `${progressToFreeDelivery}%` }}
                   />
                 </div>
               </div>
+              <Link
+                href="/admin/orders/create-on-behalf"
+                className="px-5 py-3 rounded-2xl bg-white border border-slate-200 hover:bg-slate-50 text-sky-600 font-bold text-sm flex items-center justify-center gap-2 transition-all"
+              >
+                Order on behalf?
+              </Link>
             </div>
+          </div>
 
-            <Link
-              href="/admin/orders/create-on-behalf"
-              className="hidden lg:flex items-center gap-1 text-xs text-sky-400 hover:text-sky-300 font-medium px-2.5 py-1 rounded-lg bg-sky-500/10 border border-sky-500/20"
-            >
-              Order on behalf?
-            </Link>
+          {/* Search Bar */}
+          <div className="mt-8 relative">
+            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => handleSearch(e.target.value)}
+              placeholder="Search medicine brand (e.g. Napa, Maxpro, Ace) or Generic (Paracetamol)..."
+              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all text-sm"
+            />
+          </div>
+
+          {/* Frequently Ordered Chips */}
+          <div className="mt-4 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none text-xs">
+            <span className="text-slate-500 whitespace-nowrap text-[11px]">Frequently Ordered:</span>
+            {frequentlyOrdered.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => handleSearch(item.name)}
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap transition-all"
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
         </div>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* LEFT COLUMN: Medicine Search & Formulations (7 Cols) */}
           <div className="lg:col-span-7 space-y-6">
-            {/* Search Box */}
-            <div className="glass-panel p-4 rounded-2xl border border-slate-800/80 bg-slate-900/40">
-              <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  placeholder="Search medicine brand (e.g. Napa, Maxpro, Ace) or Generic (Paracetamol)..."
-                  className="w-full bg-slate-950 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition-colors"
-                />
-              </div>
-
-              {/* Frequently Ordered Chips */}
-              <div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1 text-xs">
-                <span className="text-slate-400 whitespace-nowrap text-[11px]">Frequently Ordered:</span>
-                {frequentlyOrdered.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => handleSearch(item.query)}
-                    className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/50 whitespace-nowrap transition-colors"
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
-            </div>
 
             {/* Search Results Catalog Grid */}
             <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-400 px-1">
+              <div className="flex items-center justify-between text-xs text-slate-500 px-1">
                 <span>Available Medicines ({searchResults.length})</span>
                 <span>Piece / Strip (পাতা) / Box</span>
               </div>
 
               {searchResults.length === 0 ? (
-                <div className="glass-panel p-8 rounded-2xl border border-slate-800/80 text-center text-slate-400">
-                  <Search className="w-8 h-8 mx-auto text-slate-600 mb-2" />
+                <div className="p-8 rounded-2xl border border-slate-200 text-center text-slate-500 bg-white">
+                  <Search className="w-8 h-8 mx-auto text-slate-500 mb-2" />
                   <p className="text-sm">No medicines found for "{searchQuery}".</p>
                   <p className="text-xs text-slate-500 mt-1">Try searching by generic name like "Paracetamol" or "Esomeprazole"</p>
                 </div>
@@ -425,32 +426,32 @@ export default function PaikariPortalPage() {
                   return (
                     <div
                       key={product.id}
-                      className={`glass-panel p-4 rounded-xl border transition-all duration-200 ${
+                      className={`p-4 rounded-xl border transition-all duration-200 ${
                         isOffer
-                          ? 'border-emerald-500/40 bg-emerald-950/20 shadow-lg shadow-emerald-950/30'
-                          : 'border-slate-800/80 bg-slate-900/30 hover:border-slate-700'
+                          ? 'border-emerald-200 bg-emerald-50'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
                       }`}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-semibold text-sm text-slate-100">{product.name}</span>
+                            <span className="font-semibold text-sm text-slate-900">{product.name}</span>
                             {isOffer && (
-                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 animate-pulse">
+                              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 animate-pulse">
                                 Offer Para (Live Stock: {product.offerParaStockQty})
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 text-xs text-slate-400">
-                            <span className="text-sky-400 font-medium">{product.genericName}</span>
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <span className="text-sky-600 font-medium">{product.genericName}</span>
                             <span>&bull;</span>
                             <span>{product.companyName}</span>
                             <span>&bull;</span>
                             <span>{product.strength} ({product.dosageForm})</span>
                           </div>
-                          <div className="text-xs font-semibold text-amber-400">
+                          <div className="text-xs font-semibold text-amber-600">
                             MRP: ৳{product.mrp.toFixed(2)}{' '}
-                            <span className="text-slate-400 text-[11px] font-normal">({product.unit || 'Strip'})</span>
+                            <span className="text-slate-500 text-[11px] font-normal">({product.unit || 'Strip'})</span>
                           </div>
                         </div>
 
@@ -458,23 +459,23 @@ export default function PaikariPortalPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleOpenAlternatives(product.id)}
-                            className="text-[11px] px-2.5 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition-colors flex items-center gap-1"
+                            className="text-[11px] px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 transition-colors flex items-center gap-1"
                           >
                             <Sparkles className="w-3 h-3" />
                             Alternatives
                           </button>
 
-                          <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-xl border border-slate-800">
+                          <div className="flex items-center gap-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
                             <button
                               onClick={() => addToCart(product, UnitType.STRIP)}
-                              className="px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors"
+                              className="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-700 text-xs font-medium transition-colors"
                               title="Add 1 Strip (পাতা)"
                             >
                               + Strip (পাতা)
                             </button>
                             <button
                               onClick={() => addToCart(product, UnitType.BOX)}
-                              className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors"
+                              className="px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium transition-colors"
                               title="Add 1 Box"
                             >
                               + Box
@@ -492,13 +493,13 @@ export default function PaikariPortalPage() {
           {/* RIGHT COLUMN: Order Cart & Fulfillment Setup (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
             {/* Preliminary Memo Box */}
-            <div className="glass-panel p-5 rounded-2xl border border-slate-800/80 bg-slate-900/60 sticky top-36">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <div className="p-5 rounded-2xl border border-slate-200 bg-white sticky top-36">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
                 <div className="flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-amber-400" />
-                  <h2 className="font-bold text-sm text-slate-100">Preliminary Order Memo</h2>
+                  <ShoppingBag className="w-5 h-5 text-amber-600" />
+                  <h2 className="font-bold text-sm text-slate-900">Preliminary Order Memo</h2>
                 </div>
-                <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 font-mono">
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-mono">
                   MRP Estimator
                 </span>
               </div>
@@ -513,46 +514,46 @@ export default function PaikariPortalPage() {
                   cart.map((item) => (
                     <div
                       key={`${item.productId}-${item.unitType}`}
-                      className="flex items-center justify-between p-2 rounded-xl bg-slate-950/70 border border-slate-800/60 text-xs"
+                      className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200 text-xs"
                     >
                       <div className="space-y-0.5">
-                        <div className="font-semibold text-slate-200 flex items-center gap-1.5">
+                        <div className="font-semibold text-slate-700 flex items-center gap-1.5">
                           {item.name}
                           {item.isOfferPara && (
-                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300">
+                            <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700">
                               Offer
                             </span>
                           )}
                         </div>
-                        <div className="text-[11px] text-slate-400">
+                        <div className="text-[11px] text-slate-500">
                           {item.unitType} &bull; MRP ৳{item.unitMrp.toFixed(2)}
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1 bg-slate-900 rounded-lg p-0.5 border border-slate-800">
+                        <div className="flex items-center gap-1 bg-white rounded-lg p-0.5 border border-slate-200">
                           <button
                             onClick={() => updateCartQty(item.productId, item.unitType, -1)}
-                            className="p-1 rounded text-slate-400 hover:text-white"
+                            className="p-1 rounded text-slate-500 hover:text-slate-900"
                           >
                             <Minus className="w-3 h-3" />
                           </button>
-                          <span className="w-7 text-center font-mono text-xs text-amber-400 font-semibold">
+                          <span className="w-7 text-center font-mono text-xs text-amber-600 font-semibold">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => updateCartQty(item.productId, item.unitType, 1)}
-                            className="p-1 rounded text-slate-400 hover:text-white"
+                            className="p-1 rounded text-slate-500 hover:text-slate-900"
                           >
                             <Plus className="w-3 h-3" />
                           </button>
                         </div>
-                        <span className="w-16 text-right font-mono font-bold text-slate-200">
+                        <span className="w-16 text-right font-mono font-bold text-slate-700">
                           ৳{(item.unitMrp * item.quantity).toFixed(2)}
                         </span>
                         <button
                           onClick={() => removeFromCart(item.productId, item.unitType)}
-                          className="p-1 text-red-400/70 hover:text-red-400"
+                          className="p-1 text-red-600 hover:text-red-600"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -563,18 +564,18 @@ export default function PaikariPortalPage() {
               </div>
 
               {/* Preliminary Pricing Breakdown */}
-              <div className="mt-4 pt-3 border-t border-slate-800 space-y-1.5 text-xs">
-                <div className="flex justify-between text-slate-400">
+              <div className="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-xs">
+                <div className="flex justify-between text-slate-500">
                   <span>Preliminary Subtotal (at MRP):</span>
-                  <span className="font-mono text-slate-200 font-semibold">৳{preliminarySubtotal.toFixed(2)}</span>
+                  <span className="font-mono text-slate-700 font-semibold">৳{preliminarySubtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-slate-400">
+                <div className="flex justify-between text-slate-500">
                   <span>Delivery Fee:</span>
-                  <span className="font-mono text-slate-200">
-                    {deliveryFee === 0 ? <span className="text-emerald-400 font-bold">FREE</span> : `৳${deliveryFee.toFixed(2)}`}
+                  <span className="font-mono text-slate-700">
+                    {deliveryFee === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : `৳${deliveryFee.toFixed(2)}`}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm font-bold text-amber-400 pt-1 border-t border-slate-800">
+                <div className="flex justify-between text-sm font-bold text-amber-600 pt-1 border-t border-slate-200">
                   <span>Preliminary Total Estimate:</span>
                   <span className="font-mono">৳{preliminaryTotal.toFixed(2)}</span>
                 </div>
@@ -584,8 +585,8 @@ export default function PaikariPortalPage() {
               </div>
 
               {/* Fulfillment Method Selector (Requirement 9 & 10) */}
-              <div className="mt-4 pt-3 border-t border-slate-800 space-y-2">
-                <label className="text-xs font-semibold text-slate-300">Fulfillment Method:</label>
+              <div className="mt-4 pt-3 border-t border-slate-200 space-y-2">
+                <label className="text-xs font-semibold text-slate-600">Fulfillment Method:</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { id: FulfillmentMethod.HOME_DELIVERY, label: 'Delivery' },
@@ -598,8 +599,8 @@ export default function PaikariPortalPage() {
                       onClick={() => setFulfillmentMethod(f.id)}
                       className={`py-2 px-1 rounded-xl text-xs font-medium border text-center transition-all ${
                         fulfillmentMethod === f.id
-                          ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'
+                          ? 'bg-amber-50 border-amber-300 text-amber-700'
+                          : 'bg-white border-slate-200 text-slate-500 hover:text-slate-700'
                       }`}
                     >
                       {f.label}
@@ -614,14 +615,14 @@ export default function PaikariPortalPage() {
                       placeholder="Collector Name"
                       value={pickupPersonName}
                       onChange={(e) => setPickupPersonName(e.target.value)}
-                      className="bg-slate-950 border border-slate-700/80 rounded-lg p-2 text-xs text-slate-100"
+                      className="bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-900"
                     />
                     <input
                       type="text"
                       placeholder="Collector Phone"
                       value={pickupPersonPhone}
                       onChange={(e) => setPickupPersonPhone(e.target.value)}
-                      className="bg-slate-950 border border-slate-700/80 rounded-lg p-2 text-xs text-slate-100"
+                      className="bg-white border border-slate-200 rounded-lg p-2 text-xs text-slate-900"
                     />
                   </div>
                 )}
@@ -629,7 +630,7 @@ export default function PaikariPortalPage() {
 
               {/* Payment Method Selector (Requirement 11) */}
               <div className="mt-3 space-y-2">
-                <label className="text-xs font-semibold text-slate-300">Payment Option:</label>
+                <label className="text-xs font-semibold text-slate-600">Payment Option:</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: PaymentMethod.COD, label: 'Cash on Delivery' },
@@ -646,8 +647,8 @@ export default function PaikariPortalPage() {
                       }}
                       className={`py-2 px-2 rounded-xl text-xs font-medium border text-center transition-all ${
                         paymentMethod === p.id
-                          ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
-                          : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'
+                          ? 'bg-sky-50 border-sky-300 text-sky-700'
+                          : 'bg-white border-slate-200 text-slate-500 hover:text-slate-700'
                       }`}
                     >
                       {p.label}
@@ -657,10 +658,10 @@ export default function PaikariPortalPage() {
               </div>
 
               {/* Voice Notes & Prescription Upload (Requirement 16 & 17) */}
-              <div className="mt-4 pt-3 border-t border-slate-800 space-y-2">
+              <div className="mt-4 pt-3 border-t border-slate-200 space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-300">Attach Voice Note or Prescription:</span>
-                  {isRecording && <span className="text-[10px] text-red-400 animate-pulse font-mono">● Recording audio...</span>}
+                  <span className="text-xs font-semibold text-slate-600">Attach Voice Note or Prescription:</span>
+                  {isRecording && <span className="text-[10px] text-red-600 animate-pulse font-mono">● Recording audio...</span>}
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -668,24 +669,24 @@ export default function PaikariPortalPage() {
                     <button
                       type="button"
                       onClick={startRecording}
-                      className="flex-1 py-1.5 px-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-300 flex items-center justify-center gap-1.5 transition-colors"
+                      className="flex-1 py-1.5 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-600 flex items-center justify-center gap-1.5 transition-colors"
                     >
-                      <Mic className="w-3.5 h-3.5 text-red-400" />
+                      <Mic className="w-3.5 h-3.5 text-red-600" />
                       Record Voice Note
                     </button>
                   ) : (
                     <button
                       type="button"
                       onClick={stopRecording}
-                      className="flex-1 py-1.5 px-3 rounded-xl bg-red-500/20 border border-red-500/40 text-xs font-bold text-red-300 flex items-center justify-center gap-1.5 transition-colors animate-pulse"
+                      className="flex-1 py-1.5 px-3 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 flex items-center justify-center gap-1.5 transition-colors animate-pulse"
                     >
                       <MicOff className="w-3.5 h-3.5" />
                       Stop & Save
                     </button>
                   )}
 
-                  <label className="flex-1 py-1.5 px-3 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-medium text-slate-300 flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
-                    <Upload className="w-3.5 h-3.5 text-sky-400" />
+                  <label className="flex-1 py-1.5 px-3 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-xs font-medium text-slate-600 flex items-center justify-center gap-1.5 cursor-pointer transition-colors">
+                    <Upload className="w-3.5 h-3.5 text-sky-600" />
                     Rx Image
                     <input
                       type="file"
@@ -701,11 +702,11 @@ export default function PaikariPortalPage() {
                 </div>
 
                 {voiceAudioUrl && (
-                  <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+                  <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                     <audio src={voiceAudioUrl} controls className="h-7 w-48" />
                     <button
                       onClick={() => setVoiceAudioUrl(null)}
-                      className="text-[10px] text-red-400 hover:underline"
+                      className="text-[10px] text-red-600 hover:underline"
                     >
                       Remove
                     </button>
@@ -713,7 +714,7 @@ export default function PaikariPortalPage() {
                 )}
 
                 {prescriptionUrl && (
-                  <div className="text-[11px] text-emerald-400 flex items-center gap-1 bg-emerald-950/20 p-1.5 rounded-lg border border-emerald-500/30">
+                  <div className="text-[11px] text-emerald-700 flex items-center gap-1 bg-emerald-50 p-1.5 rounded-lg border border-emerald-200">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     Prescription image attached
                   </div>
@@ -724,7 +725,7 @@ export default function PaikariPortalPage() {
               <button
                 onClick={handlePlaceOrder}
                 disabled={cart.length === 0 || isSubmitting}
-                className="mt-5 w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 disabled:opacity-50 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all flex items-center justify-center gap-2"
+                className="mt-5 w-full py-3 rounded-xl bg-[#0F5B78] hover:bg-[#0d4f69] disabled:opacity-50 text-white font-bold text-sm transition-all flex items-center justify-center gap-2"
               >
                 {isSubmitting ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -742,13 +743,13 @@ export default function PaikariPortalPage() {
         {/* RECENT ORDERS & LIVE STATUS BANNERS (Requirement 6 & 12) */}
         <div className="mt-12 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-bold text-lg text-slate-100 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-sky-400" />
+            <h3 className="font-bold text-lg text-slate-900 flex items-center gap-2">
+              <Clock className="w-5 h-5 text-sky-600" />
               Recent Paikari Orders & Live Fulfillment Tracking
             </h3>
             <button
               onClick={fetchRecentOrders}
-              className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1"
+              className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Refresh
@@ -760,45 +761,45 @@ export default function PaikariPortalPage() {
               <Link
                 key={ord.id}
                 href={`/paikari/orders/${ord.id}`}
-                className="glass-panel p-4 rounded-2xl border border-slate-800/80 bg-slate-900/40 hover:border-slate-700 transition-all group block space-y-3"
+                className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-slate-300 transition-all group block space-y-3"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-sky-400">{ord.orderNumber}</span>
+                  <span className="font-mono text-xs font-bold text-sky-600">{ord.orderNumber}</span>
                   <span
                     className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider ${
                       ord.fulfillmentStatus === 'DELIVERED'
-                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                         : ord.fulfillmentStatus === 'PACKED'
-                        ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30'
+                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
                         : ord.fulfillmentStatus === 'VERIFYING'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 animate-pulse'
+                        ? 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse'
                         : ord.fulfillmentStatus === 'CANCELLED'
-                        ? 'bg-red-500/20 text-red-300 border border-red-500/30'
-                        : 'bg-slate-800 text-slate-300'
+                        ? 'bg-red-50 text-red-700 border border-red-200'
+                        : 'bg-slate-100 text-slate-600'
                     }`}
                   >
                     {ord.fulfillmentStatus}
                   </span>
                 </div>
 
-                <div className="text-xs text-slate-300 space-y-1">
+                <div className="text-xs text-slate-600 space-y-1">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Items:</span>
                     <span>{ord.items.length} line items</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-500">Memo Mode:</span>
-                    <span className="font-semibold text-amber-300">{ord.memoState}</span>
+                    <span className="font-semibold text-amber-700">{ord.memoState}</span>
                   </div>
-                  <div className="flex justify-between font-bold text-slate-100 pt-1 border-t border-slate-800">
+                  <div className="flex justify-between font-bold text-slate-900 pt-1 border-t border-slate-200">
                     <span>Total Amount:</span>
-                    <span className="font-mono text-emerald-400">৳{ord.totalAmount.toFixed(2)}</span>
+                    <span className="font-mono text-emerald-600">৳{ord.totalAmount.toFixed(2)}</span>
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
                   <span>{new Date(ord.createdAt).toLocaleDateString()}</span>
-                  <span className="text-sky-400 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
+                  <span className="text-sky-600 group-hover:translate-x-1 transition-transform flex items-center gap-0.5">
                     Live Memo View <ChevronRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
@@ -810,22 +811,22 @@ export default function PaikariPortalPage() {
 
       {/* GENERIC ALTERNATIVES MODAL (Phase 0-A Integration) */}
       {activeAlternativeModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900 max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white max-w-xl w-full max-h-[85vh] overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-sky-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-sky-600" />
                   Generic Alternatives for {activeAlternativeModal.currentProduct.name}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Same active generic:{' '}
-                  <span className="text-sky-300 font-semibold">{activeAlternativeModal.currentProduct.genericName}</span>
+                  <span className="text-sky-600 font-semibold">{activeAlternativeModal.currentProduct.genericName}</span>
                 </p>
               </div>
               <button
                 onClick={() => setActiveAlternativeModal(null)}
-                className="text-slate-400 hover:text-white text-sm p-1"
+                className="text-slate-500 hover:text-slate-900 text-sm p-1"
               >
                 ✕
               </button>
@@ -833,24 +834,24 @@ export default function PaikariPortalPage() {
 
             <div className="space-y-3">
               {activeAlternativeModal.alternatives.length === 0 ? (
-                <div className="py-6 text-center text-xs text-slate-400">
+                <div className="py-6 text-center text-xs text-slate-500">
                   No direct alternatives found for this formulation.
                 </div>
               ) : (
                 activeAlternativeModal.alternatives.map((alt) => (
                   <div
                     key={alt.productId}
-                    className="p-3.5 rounded-xl bg-slate-950/70 border border-slate-800 flex items-center justify-between gap-3"
+                    className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3"
                   >
                     <div className="space-y-0.5">
-                      <div className="font-semibold text-sm text-slate-100">{alt.brandName}</div>
-                      <div className="text-xs text-slate-400">
+                      <div className="font-semibold text-sm text-slate-900">{alt.brandName}</div>
+                      <div className="text-xs text-slate-500">
                         {alt.companyName} &bull; {alt.strength}
                       </div>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="font-mono text-xs font-bold text-amber-400">৳{alt.mrp.toFixed(2)}</span>
+                        <span className="font-mono text-xs font-bold text-amber-600">৳{alt.mrp.toFixed(2)}</span>
                         {alt.isLowerPriced && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                             Save {alt.priceDifferencePercent.toFixed(0)}% (৳{alt.priceDifference.toFixed(2)} less)
                           </span>
                         )}
@@ -872,7 +873,7 @@ export default function PaikariPortalPage() {
                         );
                         setActiveAlternativeModal(null);
                       }}
-                      className="px-3 py-1.5 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 font-medium text-xs border border-sky-500/30 transition-colors"
+                      className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs border border-sky-200 transition-colors"
                     >
                       + Add Alternative
                     </button>
@@ -886,32 +887,32 @@ export default function PaikariPortalPage() {
 
       {/* BANK TRANSFER DETAILS MODAL (Requirement 11) */}
       {showBankModal && bankInfo && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900 max-w-md w-full space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <h3 className="font-bold text-base text-slate-100 flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-sky-400" />
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white max-w-md w-full space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-sky-600" />
                 Bank Transfer Information
               </h3>
-              <button onClick={() => setShowBankModal(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button onClick={() => setShowBankModal(false)} className="text-slate-500 hover:text-slate-900">✕</button>
             </div>
 
-            <div className="space-y-2 text-xs bg-slate-950 p-4 rounded-xl border border-slate-800">
+            <div className="space-y-2 text-xs bg-slate-50 p-4 rounded-xl border border-slate-200">
               <div>
                 <span className="text-slate-500">Bank Name:</span>
-                <p className="font-semibold text-slate-200">{bankInfo.bankName}</p>
+                <p className="font-semibold text-slate-700">{bankInfo.bankName}</p>
               </div>
               <div>
                 <span className="text-slate-500">Account Name:</span>
-                <p className="font-semibold text-slate-200">{bankInfo.accountName}</p>
+                <p className="font-semibold text-slate-700">{bankInfo.accountName}</p>
               </div>
               <div>
                 <span className="text-slate-500">Account Number:</span>
-                <p className="font-mono text-sky-400 font-bold text-sm">{bankInfo.accountNumber}</p>
+                <p className="font-mono text-sky-600 font-bold text-sm">{bankInfo.accountNumber}</p>
               </div>
               <div>
                 <span className="text-slate-500">Branch & Routing:</span>
-                <p className="text-slate-300">{bankInfo.branchName} (Routing: {bankInfo.routingNumber || 'N/A'})</p>
+                <p className="text-slate-600">{bankInfo.branchName} (Routing: {bankInfo.routingNumber || 'N/A'})</p>
               </div>
             </div>
 

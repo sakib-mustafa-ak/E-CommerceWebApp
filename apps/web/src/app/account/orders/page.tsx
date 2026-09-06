@@ -42,10 +42,10 @@ export default function CustomerOrderHistoryPage() {
   if (!user) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4">
-        <div className="glass-panel p-8 rounded-3xl border border-slate-800 text-center space-y-4 max-w-md">
-          <ShoppingBag className="w-12 h-12 text-sky-400 mx-auto" />
-          <h2 className="text-lg font-bold text-white">Login Required</h2>
-          <p className="text-xs text-slate-400">
+        <div className="p-8 rounded-3xl border border-slate-200 text-center space-y-4 max-w-md">
+          <ShoppingBag className="w-12 h-12 text-sky-600 mx-auto" />
+          <h2 className="text-lg font-bold text-slate-900">Login Required</h2>
+          <p className="text-xs text-slate-500">
             Please log in to view your physical order history, digital asset download tokens, and bookings.
           </p>
           <Link
@@ -66,26 +66,26 @@ export default function CustomerOrderHistoryPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <span className="text-xs font-bold text-sky-400 font-mono uppercase tracking-wider">
+          <span className="text-xs font-bold text-sky-600 font-mono uppercase tracking-wider">
             Customer Dashboard
           </span>
-          <h1 className="text-2xl font-bold text-white mt-1">My Orders & Purchases</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="text-2xl font-bold text-slate-900 mt-1">My Orders & Purchases</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
             Manage your physical deliveries, access instant digital file downloads, and view service bookings.
           </p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-800 pb-2">
+      <div className="flex gap-2 border-b border-slate-200 pb-2">
         <button
           onClick={() => setActiveTab('PHYSICAL')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'PHYSICAL'
-              ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20'
-              : 'text-slate-400 hover:text-white bg-slate-900/60'
+              ? 'bg-sky-500 text-white shadow-md '
+              : 'text-slate-500 hover:text-white bg-white'
           }`}
         >
           <Package className="w-4 h-4" /> Physical Orders ({physicalOrders.length})
@@ -95,7 +95,7 @@ export default function CustomerOrderHistoryPage() {
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'DIGITAL'
               ? 'bg-purple-600 text-white shadow-md shadow-purple-600/20'
-              : 'text-slate-400 hover:text-white bg-slate-900/60'
+              : 'text-slate-500 hover:text-white bg-white'
           }`}
         >
           <Download className="w-4 h-4" /> Digital Downloads ({digitalOrders.length})
@@ -105,7 +105,7 @@ export default function CustomerOrderHistoryPage() {
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
             activeTab === 'SERVICE'
               ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20'
-              : 'text-slate-400 hover:text-white bg-slate-900/60'
+              : 'text-slate-500 hover:text-white bg-white'
           }`}
         >
           <Calendar className="w-4 h-4" /> Service Bookings ({serviceBookings.length})
@@ -116,7 +116,7 @@ export default function CustomerOrderHistoryPage() {
       {activeTab === 'PHYSICAL' && (
         <div className="space-y-4">
           {physicalOrders.length === 0 && !loading && (
-            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-3xl">
+            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-200 rounded-3xl">
               No physical orders placed yet.
             </div>
           )}
@@ -125,23 +125,23 @@ export default function CustomerOrderHistoryPage() {
             {physicalOrders.map((order) => (
               <div
                 key={order.id}
-                className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/60 space-y-4"
+                className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4"
               >
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-800 pb-3">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-200 pb-3">
                   <div>
-                    <span className="font-mono text-xs font-bold text-sky-400">{order.orderNumber}</span>
-                    <div className="text-[11px] text-slate-400 mt-0.5">
+                    <span className="font-mono text-xs font-bold text-sky-600">{order.orderNumber}</span>
+                    <div className="text-[11px] text-slate-500 mt-0.5">
                       Placed on {new Date(order.createdAt).toLocaleDateString()}
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20 font-mono">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-sky-50 text-sky-600 border border-sky-200 font-mono">
                       {order.fulfillmentStatus}
                     </span>
                     <Link
                       href={`/orders/${order.id}/receipt`}
-                      className="px-3 py-1 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-bold flex items-center gap-1.5 transition-all"
+                      className="px-3 py-1 rounded-xl bg-slate-100 hover:bg-slate-700 text-xs text-slate-600 font-bold flex items-center gap-1.5 transition-all"
                     >
                       <Printer className="w-3.5 h-3.5" /> Memo
                     </Link>
@@ -152,19 +152,19 @@ export default function CustomerOrderHistoryPage() {
                   {order.items.map((item: any) => (
                     <div key={item.id} className="py-2.5 flex justify-between items-center">
                       <div>
-                        <div className="font-bold text-white">{item.productName}</div>
-                        <div className="text-[11px] text-slate-400 font-mono">
+                        <div className="font-bold text-slate-900">{item.productName}</div>
+                        <div className="text-[11px] text-slate-500 font-mono">
                           {item.quantity} x ৳{item.unitPrice.toFixed(2)}
                         </div>
                       </div>
-                      <div className="font-mono font-bold text-white">৳{item.totalPrice.toFixed(2)}</div>
+                      <div className="font-mono font-bold text-slate-900">৳{item.totalPrice.toFixed(2)}</div>
                     </div>
                   ))}
                 </div>
 
-                <div className="pt-2 border-t border-slate-800 flex justify-between items-center text-xs">
-                  <span className="text-slate-400">Total Amount:</span>
-                  <span className="font-bold text-emerald-400 font-mono text-sm">৳{order.totalAmount.toFixed(2)}</span>
+                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs">
+                  <span className="text-slate-500">Total Amount:</span>
+                  <span className="font-bold text-emerald-600 font-mono text-sm">৳{order.totalAmount.toFixed(2)}</span>
                 </div>
               </div>
             ))}
@@ -176,7 +176,7 @@ export default function CustomerOrderHistoryPage() {
       {activeTab === 'DIGITAL' && (
         <div className="space-y-4">
           {digitalOrders.length === 0 && !loading && (
-            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-3xl">
+            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-200 rounded-3xl">
               No digital product downloads available in your account.
             </div>
           )}
@@ -185,28 +185,28 @@ export default function CustomerOrderHistoryPage() {
             {digitalOrders.flatMap((o) => o.digitalDownloads || []).map((dt: any) => (
               <div
                 key={dt.token}
-                className="glass-panel p-6 rounded-3xl border border-purple-500/20 bg-slate-900/60 space-y-4"
+                className="p-6 rounded-3xl border border-purple-500/20 bg-white space-y-4"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                    <span className="text-[10px] font-bold font-mono px-2 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200">
                       Digital Asset Token
                     </span>
-                    <h3 className="text-base font-bold text-white mt-2">{dt.productName}</h3>
+                    <h3 className="text-base font-bold text-slate-900 mt-2">{dt.productName}</h3>
                   </div>
-                  <Download className="w-6 h-6 text-purple-400" />
+                  <Download className="w-6 h-6 text-purple-600" />
                 </div>
 
-                <div className="p-3 bg-slate-950 rounded-2xl border border-slate-800 text-xs space-y-1">
-                  <div className="flex justify-between text-slate-400">
+                <div className="p-3 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1">
+                  <div className="flex justify-between text-slate-500">
                     <span>Remaining Downloads:</span>
-                    <strong className="text-emerald-400 font-mono">
+                    <strong className="text-emerald-600 font-mono">
                       {dt.remainingDownloads} of {dt.maxDownloads} Left
                     </strong>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-slate-500">
                     <span>Expires At:</span>
-                    <span className="font-mono text-slate-300">
+                    <span className="font-mono text-slate-600">
                       {new Date(dt.expiresAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -216,7 +216,7 @@ export default function CustomerOrderHistoryPage() {
                   {dt.isExpired || dt.remainingDownloads <= 0 ? (
                     <button
                       disabled
-                      className="w-full py-2.5 rounded-xl bg-slate-800 text-slate-500 font-bold text-xs cursor-not-allowed"
+                      className="w-full py-2.5 rounded-xl bg-slate-100 text-slate-500 font-bold text-xs cursor-not-allowed"
                     >
                       Download Limit Reached / Expired
                     </button>
@@ -225,7 +225,7 @@ export default function CustomerOrderHistoryPage() {
                       href={dt.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition-all"
+                      className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-purple-600/30 transition-all"
                     >
                       <Download className="w-4 h-4" /> Download Secure File
                     </a>
@@ -239,10 +239,10 @@ export default function CustomerOrderHistoryPage() {
 
       {/* TAB 3: SERVICE BOOKINGS */}
       {activeTab === 'SERVICE' && (
-        <div className="glass-panel p-12 rounded-3xl border border-slate-800 text-center space-y-3">
-          <Calendar className="w-8 h-8 text-indigo-400 mx-auto" />
-          <h3 className="text-sm font-bold text-white">Service Booking Ledger</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <div className="p-12 rounded-3xl border border-slate-200 text-center space-y-3">
+          <Calendar className="w-8 h-8 text-indigo-600 mx-auto" />
+          <h3 className="text-sm font-bold text-slate-900">Service Booking Ledger</h3>
+          <p className="text-xs text-slate-500 max-w-md mx-auto">
             Bookings and telemedicine appointment schedules will appear here as services are released across platforms.
           </p>
         </div>

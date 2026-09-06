@@ -204,8 +204,8 @@ export default function PaikariLiveOrderMemoPage() {
 
   if (isLoading || !order) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
-        <RefreshCw className="w-6 h-6 animate-spin text-sky-400 mr-2" />
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500">
+        <RefreshCw className="w-6 h-6 animate-spin text-sky-600 mr-2" />
         Loading Live Memo...
       </div>
     );
@@ -215,21 +215,21 @@ export default function PaikariLiveOrderMemoPage() {
   const isDelivered = order.fulfillmentStatus === FulfillmentStatus.DELIVERED;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-24">
       {/* Top Bar */}
-      <div className="border-b border-slate-800 bg-slate-900/60 sticky top-16 z-30 backdrop-blur-md">
+      <div className="border-b border-slate-200 bg-white sticky top-16 z-30 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link
             href="/paikari"
-            className="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1.5 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1.5 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Paikari Hub
           </Link>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400 font-mono">Order:</span>
-            <span className="text-sm font-bold text-sky-400 font-mono">{order.orderNumber}</span>
+            <span className="text-xs text-slate-500 font-mono">Order:</span>
+            <span className="text-sm font-bold text-sky-600 font-mono">{order.orderNumber}</span>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping ml-1" title="Live Socket Connected" />
           </div>
         </div>
@@ -238,21 +238,21 @@ export default function PaikariLiveOrderMemoPage() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-8 space-y-6">
         {/* Success Alert Banner */}
         {returnSuccessMsg && (
-          <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-xs text-emerald-200 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+          <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-200 text-xs text-emerald-200 flex items-center gap-2">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span>{returnSuccessMsg}</span>
           </div>
         )}
 
         {/* Real-time Status Progress Banner */}
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800/80 bg-slate-900/40 space-y-4">
+        <div className="p-6 rounded-2xl border border-slate-200 bg-white space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <span className="text-xs text-slate-400">Fulfillment Status</span>
-              <h2 className="text-xl font-bold text-slate-100 capitalize flex items-center gap-2">
+              <span className="text-xs text-slate-500">Fulfillment Status</span>
+              <h2 className="text-xl font-bold text-slate-900 capitalize flex items-center gap-2">
                 {order.fulfillmentStatus.replace(/_/g, ' ')}
                 {order.isTodayDelivery && (
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">
                     ⚡ Today's Delivery
                   </span>
                 )}
@@ -264,7 +264,7 @@ export default function PaikariLiveOrderMemoPage() {
               {isDelivered && (
                 <button
                   onClick={() => setShowReturnModal(true)}
-                  className="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-500/30 text-amber-700 border border-amber-200 text-xs font-bold flex items-center gap-1.5 transition-colors"
                 >
                   <RotateCcw className="w-4 h-4" /> Request Partial / Full Return
                 </button>
@@ -275,14 +275,14 @@ export default function PaikariLiveOrderMemoPage() {
                 order.fulfillmentStatus !== FulfillmentStatus.REFUSED_DELIVERY && (
                   <div>
                     {order.cancellationState === CancellationState.REQUESTED ? (
-                      <div className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-semibold flex items-center gap-1.5">
+                      <div className="px-3 py-1.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold flex items-center gap-1.5">
                         <AlertTriangle className="w-4 h-4" />
                         Cancellation Requested (Pending Staff Review)
                       </div>
                     ) : (
                       <button
                         onClick={() => setShowCancelModal(true)}
-                        className="px-3 py-1.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 text-xs font-semibold transition-colors"
+                        className="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-50 text-red-600 border border-red-200 text-xs font-semibold transition-colors"
                       >
                         {order.fulfillmentStatus === FulfillmentStatus.PENDING
                           ? 'Cancel Order'
@@ -312,8 +312,8 @@ export default function PaikariLiveOrderMemoPage() {
                   key={step.status}
                   className={`p-2 rounded-xl border transition-all ${
                     isDone
-                      ? 'bg-sky-500/20 border-sky-500/50 text-sky-300'
-                      : 'bg-slate-950/40 border-slate-800 text-slate-500'
+                      ? 'bg-sky-50 border-sky-300 text-sky-700'
+                      : 'bg-white border-slate-200 text-slate-500'
                   }`}
                 >
                   {step.label}
@@ -324,16 +324,16 @@ export default function PaikariLiveOrderMemoPage() {
         </div>
 
         {/* MEMO CARD */}
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-6">
-          <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-800 gap-4">
+        <div className="p-6 rounded-2xl border border-slate-200 bg-white space-y-6">
+          <div className="flex flex-wrap items-center justify-between pb-4 border-b border-slate-200 gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <FileText className="w-5 h-5 text-amber-400" />
-                <h3 className="text-lg font-bold text-slate-100">
+                <FileText className="w-5 h-5 text-amber-600" />
+                <h3 className="text-lg font-bold text-slate-900">
                   {isFinal ? 'FINAL TIERED MEMO' : 'PRELIMINARY MEMO (Rough MRP Estimate)'}
                 </h3>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {isFinal
                   ? 'Official confirmed invoice with your store discount applied.'
                   : 'Live verification in progress. The items below update instantaneously as staff inspect physical stock.'}
@@ -344,8 +344,8 @@ export default function PaikariLiveOrderMemoPage() {
               <span
                 className={`text-xs px-3 py-1 rounded-full font-bold uppercase ${
                   isFinal
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-amber-50 text-amber-700 border border-amber-200 animate-pulse'
                 }`}
               >
                 {isFinal ? 'Final Memo Published' : 'Preliminary MRP Mode'}
@@ -360,25 +360,25 @@ export default function PaikariLiveOrderMemoPage() {
                 key={item.id}
                 className={`p-4 rounded-xl border transition-all ${
                   item.verificationStatus === LineVerificationStatus.FULL_STOCK
-                    ? 'bg-emerald-950/10 border-emerald-500/30'
+                    ? 'bg-emerald-950/10 border-emerald-200'
                     : item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK
-                    ? 'bg-amber-950/10 border-amber-500/30'
+                    ? 'bg-amber-950/10 border-amber-200'
                     : item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE
-                    ? 'bg-red-950/20 border-red-500/30 opacity-70'
-                    : 'bg-slate-950/50 border-slate-800'
+                    ? 'bg-red-950/20 border-red-200 opacity-70'
+                    : 'bg-slate-50/50 border-slate-200'
                 }`}
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-sm text-slate-100">{item.productName}</span>
+                      <span className="font-semibold text-sm text-slate-900">{item.productName}</span>
                       {item.isOfferPara && (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/20 text-emerald-300">
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-50 text-emerald-700">
                           Offer Para Live
                         </span>
                       )}
                     </div>
-                    <div className="text-xs text-slate-400">
+                    <div className="text-xs text-slate-500">
                       {item.genericName} &bull; {item.companyName} &bull; {item.unitType}
                     </div>
                   </div>
@@ -386,28 +386,28 @@ export default function PaikariLiveOrderMemoPage() {
                   {/* Verification Status Pill */}
                   <div className="flex items-center gap-3">
                     {item.verificationStatus === LineVerificationStatus.PENDING && (
-                      <span className="text-xs text-slate-400 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-amber-400 animate-spin" />
+                      <span className="text-xs text-slate-500 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5 text-amber-600 animate-spin" />
                         Checking stock...
                       </span>
                     )}
 
                     {item.verificationStatus === LineVerificationStatus.FULL_STOCK && (
-                      <span className="px-2 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center gap-1">
+                      <span className="px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         Full: {item.confirmedQuantity} {item.unitType}s
                       </span>
                     )}
 
                     {item.verificationStatus === LineVerificationStatus.PARTIAL_STOCK && (
-                      <span className="px-2 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-semibold flex items-center gap-1">
+                      <span className="px-2 py-1 rounded-lg bg-amber-50 text-amber-700 border border-amber-200 text-xs font-semibold flex items-center gap-1">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         Partial: {item.confirmedQuantity} of {item.requestedQuantity}
                       </span>
                     )}
 
                     {item.verificationStatus === LineVerificationStatus.NONE_AVAILABLE && (
-                      <span className="px-2 py-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/30 text-xs font-semibold flex items-center gap-1">
+                      <span className="px-2 py-1 rounded-lg bg-red-50 text-red-700 border border-red-200 text-xs font-semibold flex items-center gap-1">
                         <XCircle className="w-3.5 h-3.5" />
                         None Available
                       </span>
@@ -415,7 +415,7 @@ export default function PaikariLiveOrderMemoPage() {
 
                     {/* Pricing */}
                     <div className="text-right font-mono">
-                      <div className="text-xs font-bold text-slate-200">
+                      <div className="text-xs font-bold text-slate-700">
                         {isFinal
                           ? `৳${item.totalPrice.toFixed(2)}`
                           : `৳${(item.unitMrp * item.requestedQuantity).toFixed(2)}`}
@@ -431,30 +431,30 @@ export default function PaikariLiveOrderMemoPage() {
           </div>
 
           {/* Totals */}
-          <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-            <div className="text-xs text-slate-400 space-y-1">
+          <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div className="text-xs text-slate-500 space-y-1">
               <div>
-                Fulfillment: <span className="text-slate-200 font-semibold">{order.fulfillmentMethod}</span>
+                Fulfillment: <span className="text-slate-700 font-semibold">{order.fulfillmentMethod}</span>
               </div>
               <div>
-                Payment Method: <span className="text-slate-200 font-semibold">{order.paymentMethod}</span>
+                Payment Method: <span className="text-slate-700 font-semibold">{order.paymentMethod}</span>
               </div>
             </div>
 
             <div className="w-full sm:w-64 space-y-2 text-xs">
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-500">
                 <span>Subtotal:</span>
-                <span className="font-mono text-slate-200 font-semibold">
+                <span className="font-mono text-slate-700 font-semibold">
                   ৳{(isFinal ? order.finalSubtotal : order.preliminarySubtotal).toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-slate-500">
                 <span>Delivery Fee:</span>
-                <span className="font-mono text-slate-200">
-                  {order.deliveryFee === 0 ? <span className="text-emerald-400 font-bold">FREE</span> : `৳${order.deliveryFee.toFixed(2)}`}
+                <span className="font-mono text-slate-700">
+                  {order.deliveryFee === 0 ? <span className="text-emerald-600 font-bold">FREE</span> : `৳${order.deliveryFee.toFixed(2)}`}
                 </span>
               </div>
-              <div className="flex justify-between text-base font-bold text-amber-400 pt-2 border-t border-slate-800">
+              <div className="flex justify-between text-base font-bold text-amber-600 pt-2 border-t border-slate-200">
                 <span>{isFinal ? 'Final Total:' : 'Estimated Total:'}</span>
                 <span className="font-mono">৳{order.totalAmount.toFixed(2)}</span>
               </div>
@@ -465,24 +465,24 @@ export default function PaikariLiveOrderMemoPage() {
 
       {/* RETURN REQUEST DIALOG MODAL (Phase 2) */}
       {showReturnModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900 max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-5">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div className="fixed inset-0 z-50 bg-slate-50/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white max-w-xl w-full max-h-[90vh] overflow-y-auto space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>
-                <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                  <RotateCcw className="w-5 h-5 text-amber-400" />
+                <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                  <RotateCcw className="w-5 h-5 text-amber-600" />
                   Request Return for Order #{order.orderNumber}
                 </h3>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Approved returns are credited to your store account balance for your next memo.
                 </p>
               </div>
-              <button onClick={() => setShowReturnModal(false)} className="text-slate-400 hover:text-white">✕</button>
+              <button onClick={() => setShowReturnModal(false)} className="text-slate-500 hover:text-white">✕</button>
             </div>
 
             {/* Select items and partial quantities to return */}
             <div className="space-y-3">
-              <label className="text-xs font-semibold text-slate-300">Select Items & Quantities to Return:</label>
+              <label className="text-xs font-semibold text-slate-600">Select Items & Quantities to Return:</label>
               {order.items.map((item) => {
                 const maxQty = item.confirmedQuantity > 0 ? item.confirmedQuantity : item.requestedQuantity;
                 const currentQty = returnItems[item.id] || 0;
@@ -490,34 +490,34 @@ export default function PaikariLiveOrderMemoPage() {
                 return (
                   <div
                     key={item.id}
-                    className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3 text-xs"
+                    className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs"
                   >
                     <div>
-                      <div className="font-semibold text-slate-200">{item.productName}</div>
-                      <div className="text-[11px] text-slate-400">
+                      <div className="font-semibold text-slate-700">{item.productName}</div>
+                      <div className="text-[11px] text-slate-500">
                         Purchased: {maxQty} {item.unitType}s &bull; Unit Rate: ৳{item.finalUnitPrice.toFixed(2)}
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1 bg-slate-900 p-1 rounded-lg border border-slate-800">
+                      <div className="flex items-center gap-1 bg-white p-1 rounded-lg border border-slate-200">
                         <button
                           type="button"
                           onClick={() => setReturnItems({ ...returnItems, [item.id]: Math.max(0, currentQty - 1) })}
-                          className="px-2 py-0.5 text-slate-400 hover:text-white"
+                          className="px-2 py-0.5 text-slate-500 hover:text-white"
                         >
                           -
                         </button>
-                        <span className="w-8 text-center font-mono font-bold text-amber-400">{currentQty}</span>
+                        <span className="w-8 text-center font-mono font-bold text-amber-600">{currentQty}</span>
                         <button
                           type="button"
                           onClick={() => setReturnItems({ ...returnItems, [item.id]: Math.min(maxQty, currentQty + 1) })}
-                          className="px-2 py-0.5 text-slate-400 hover:text-white"
+                          className="px-2 py-0.5 text-slate-500 hover:text-white"
                         >
                           +
                         </button>
                       </div>
-                      <span className="w-16 text-right font-mono font-semibold text-emerald-400">
+                      <span className="w-16 text-right font-mono font-semibold text-emerald-600">
                         ৳{(currentQty * item.finalUnitPrice).toFixed(2)}
                       </span>
                     </div>
@@ -527,33 +527,33 @@ export default function PaikariLiveOrderMemoPage() {
             </div>
 
             {/* Reason & Voice Note */}
-            <div className="space-y-3 pt-2 border-t border-slate-800">
-              <label className="text-xs font-semibold text-slate-300">Reason for Return (Required):</label>
+            <div className="space-y-3 pt-2 border-t border-slate-200">
+              <label className="text-xs font-semibold text-slate-600">Reason for Return (Required):</label>
               <textarea
                 rows={2}
                 value={returnReason}
                 onChange={(e) => setReturnReason(e.target.value)}
                 placeholder="Reason (e.g. Expired, damaged blister pack, doctor altered prescription)..."
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-amber-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-amber-500"
               />
 
               {/* Voice Note Recorder for Return */}
               <div className="flex items-center justify-between pt-1">
-                <span className="text-xs text-slate-400">Optional Audio Voice Explanation:</span>
+                <span className="text-xs text-slate-500">Optional Audio Voice Explanation:</span>
                 {!isRecordingReturnVoice ? (
                   <button
                     type="button"
                     onClick={startReturnVoiceRecording}
-                    className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-slate-700 text-xs font-semibold text-slate-300 flex items-center gap-1.5"
+                    className="px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-200 text-xs font-semibold text-slate-600 flex items-center gap-1.5"
                   >
-                    <Mic className="w-3.5 h-3.5 text-red-400" />
+                    <Mic className="w-3.5 h-3.5 text-red-600" />
                     Record Voice Note
                   </button>
                 ) : (
                   <button
                     type="button"
                     onClick={stopReturnVoiceRecording}
-                    className="px-3 py-1.5 rounded-xl bg-red-500/20 border border-red-500/40 text-xs font-bold text-red-300 flex items-center gap-1.5 animate-pulse"
+                    className="px-3 py-1.5 rounded-xl bg-red-50 border border-red-200 text-xs font-bold text-red-700 flex items-center gap-1.5 animate-pulse"
                   >
                     <MicOff className="w-3.5 h-3.5" /> Stop & Save
                   </button>
@@ -561,9 +561,9 @@ export default function PaikariLiveOrderMemoPage() {
               </div>
 
               {returnVoiceAudioUrl && (
-                <div className="p-2 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between">
+                <div className="p-2 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-between">
                   <audio src={returnVoiceAudioUrl} controls className="h-7 w-48" />
-                  <button onClick={() => setReturnVoiceAudioUrl(null)} className="text-[10px] text-red-400 hover:underline">
+                  <button onClick={() => setReturnVoiceAudioUrl(null)} className="text-[10px] text-red-600 hover:underline">
                     Remove
                   </button>
                 </div>
@@ -571,11 +571,11 @@ export default function PaikariLiveOrderMemoPage() {
             </div>
 
             {/* Submit */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setShowReturnModal(false)}
-                className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs"
+                className="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs"
               >
                 Cancel
               </button>
@@ -583,7 +583,7 @@ export default function PaikariLiveOrderMemoPage() {
                 type="button"
                 onClick={handleSubmitReturn}
                 disabled={isSubmittingReturn}
-                className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md shadow-amber-500/20"
+                className="px-5 py-2 rounded-xl bg-[#0F5B78] hover:bg-[#0d4f69] text-slate-950 font-bold text-xs flex items-center gap-1.5 shadow-md"
               >
                 {isSubmittingReturn ? 'Submitting...' : 'Submit Return Request'}
               </button>
@@ -594,10 +594,10 @@ export default function PaikariLiveOrderMemoPage() {
 
       {/* CANCELLATION REQUEST MODAL */}
       {showCancelModal && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900 max-w-md w-full space-y-4">
-            <h3 className="font-bold text-base text-slate-100">Cancel Order Request</h3>
-            <p className="text-xs text-slate-400">
+        <div className="fixed inset-0 z-50 bg-white backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white max-w-md w-full space-y-4">
+            <h3 className="font-bold text-base text-slate-900">Cancel Order Request</h3>
+            <p className="text-xs text-slate-500">
               Please state why you need to cancel this order. If staff have already begun fulfillment, they will review your request immediately.
             </p>
 
@@ -606,14 +606,14 @@ export default function PaikariLiveOrderMemoPage() {
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               placeholder="Reason for cancellation..."
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-100 focus:outline-none focus:border-red-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs text-slate-900 focus:outline-none focus:border-red-500"
             />
 
             <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setShowCancelModal(false)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs"
               >
                 Keep Order
               </button>

@@ -215,17 +215,17 @@ export default function AdminGamingPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-indigo-500/10 rounded-2xl border border-indigo-500/20 text-indigo-400">
+            <div className="p-3 bg-indigo-50 rounded-2xl border border-indigo-500/20 text-indigo-600">
               <Gamepad2 className="w-8 h-8" />
             </div>
             <div>
-              <h1 className="text-3xl font-black text-white tracking-tight">
+              <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                 Gaming Top-Up &amp; Diamond Desk
               </h1>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-slate-500 mt-1">
                 Admin manual execution queue, game catalog manager, and package pricing configuration.
               </p>
             </div>
@@ -234,7 +234,7 @@ export default function AdminGamingPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setIsAddGameModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-500/20 transition"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-indigo-500/20 transition"
           >
             <PlusCircle className="w-4 h-4" /> Add New Game
           </button>
@@ -243,21 +243,21 @@ export default function AdminGamingPage() {
 
       {/* Metrics Row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Pending Manual Queue</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+            <Clock className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="text-2xl font-black text-amber-400 mt-2">
+          <div className="text-2xl font-black text-amber-600 mt-2">
             {pendingOrders.length}
           </div>
           <div className="text-xs text-slate-500 mt-1">Awaiting staff execution</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Active Games Catalog</span>
-            <Gamepad2 className="w-4 h-4 text-indigo-400" />
+            <Gamepad2 className="w-4 h-4 text-indigo-600" />
           </div>
           <div className="text-2xl font-black text-white mt-2">
             {gamesList.length}
@@ -265,23 +265,23 @@ export default function AdminGamingPage() {
           <div className="text-xs text-slate-500 mt-1">Free Fire, MLBB, PUBG &amp; more</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Total Top-Up Packages</span>
-            <Package className="w-4 h-4 text-sky-400" />
+            <Package className="w-4 h-4 text-sky-600" />
           </div>
-          <div className="text-2xl font-black text-sky-400 mt-2">
+          <div className="text-2xl font-black text-sky-600 mt-2">
             {gamesList.reduce((acc, g) => acc + (g.packages?.length || 0), 0)}
           </div>
           <div className="text-xs text-slate-500 mt-1">Configured denominations</div>
         </div>
 
-        <div className="glass-panel p-5 rounded-2xl border border-slate-800 bg-slate-900/60">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="p-5 rounded-2xl border border-slate-200 bg-white">
+          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider">
             <span>Fulfillment Mode</span>
-            <Zap className="w-4 h-4 text-emerald-400" />
+            <Zap className="w-4 h-4 text-emerald-600" />
           </div>
-          <div className="text-2xl font-black text-emerald-400 mt-2">
+          <div className="text-2xl font-black text-emerald-600 mt-2">
             Instant API
           </div>
           <div className="text-xs text-slate-500 mt-1">Automated + Manual backup</div>
@@ -289,13 +289,13 @@ export default function AdminGamingPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
         <button
           onClick={() => setActiveTab('queue')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'queue'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Clock className="w-4 h-4" />
@@ -305,8 +305,8 @@ export default function AdminGamingPage() {
           onClick={() => setActiveTab('games')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'games'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Gamepad2 className="w-4 h-4" />
@@ -316,8 +316,8 @@ export default function AdminGamingPage() {
           onClick={() => setActiveTab('packages')}
           className={`px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2 ${
             activeTab === 'packages'
-              ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-indigo-50 text-indigo-600 border border-indigo-200'
+              : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           <Package className="w-4 h-4" />
@@ -327,24 +327,24 @@ export default function AdminGamingPage() {
 
       {/* TAB 1: MANUAL QUEUE */}
       {activeTab === 'queue' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-bold text-white">Manual Staff Top-Up Execution Queue</h2>
-              <p className="text-xs text-slate-400">
+              <h2 className="text-lg font-bold text-slate-900">Manual Staff Top-Up Execution Queue</h2>
+              <p className="text-xs text-slate-500">
                 Orders for games configured with MANUAL_STAFF fulfillment mode.
               </p>
             </div>
           </div>
 
           {pendingOrders.length === 0 ? (
-            <div className="text-center py-12 border border-dashed border-slate-800 rounded-2xl text-slate-500 text-sm">
+            <div className="text-center py-12 border border-dashed border-slate-200 rounded-2xl text-slate-500 text-sm">
               No pending manual top-ups in the queue. All digital recharges are up to date!
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-300">
-                <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+              <table className="w-full text-left text-sm text-slate-600">
+                <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                   <tr>
                     <th className="px-4 py-3 rounded-l-xl">Order #</th>
                     <th className="px-4 py-3">Game</th>
@@ -357,25 +357,25 @@ export default function AdminGamingPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
                   {pendingOrders.map((ord) => (
-                    <tr key={ord.id} className="hover:bg-slate-800/30 transition">
-                      <td className="px-4 py-3.5 font-mono text-xs text-indigo-400 font-bold">
+                    <tr key={ord.id} className="hover:bg-slate-100/30 transition">
+                      <td className="px-4 py-3.5 font-mono text-xs text-indigo-600 font-bold">
                         {ord.orderNumber}
                       </td>
-                      <td className="px-4 py-3.5 font-semibold text-white">
+                      <td className="px-4 py-3.5 font-semibold text-slate-900">
                         {ord.gameName}
                       </td>
                       <td className="px-4 py-3.5">
-                        <div className="font-mono text-white font-bold">{ord.playerId}</div>
-                        {ord.zoneId && <div className="text-[11px] text-slate-400">Zone: {ord.zoneId}</div>}
-                        {ord.playerNickname && <div className="text-[11px] text-emerald-400">IGN: {ord.playerNickname}</div>}
+                        <div className="font-mono text-slate-900 font-bold">{ord.playerId}</div>
+                        {ord.zoneId && <div className="text-[11px] text-slate-500">Zone: {ord.zoneId}</div>}
+                        {ord.playerNickname && <div className="text-[11px] text-emerald-600">IGN: {ord.playerNickname}</div>}
                       </td>
-                      <td className="px-4 py-3.5 text-xs text-indigo-300 font-semibold">
+                      <td className="px-4 py-3.5 text-xs text-indigo-700 font-semibold">
                         {ord.packageName}
                       </td>
-                      <td className="px-4 py-3.5 font-black text-emerald-400 font-mono">
+                      <td className="px-4 py-3.5 font-black text-emerald-600 font-mono">
                         ৳{ord.priceBdt}
                       </td>
-                      <td className="px-4 py-3.5 text-xs font-semibold text-sky-400">
+                      <td className="px-4 py-3.5 text-xs font-semibold text-sky-600">
                         {ord.paymentMethod} (PAID)
                       </td>
                       <td className="px-4 py-3.5 text-right">
@@ -401,9 +401,9 @@ export default function AdminGamingPage() {
 
       {/* TAB 2: GAMES CATALOG */}
       {activeTab === 'games' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold text-white">Configured Games Catalog</h2>
+            <h2 className="text-lg font-bold text-slate-900">Configured Games Catalog</h2>
             <button
               onClick={() => setIsAddGameModalOpen(true)}
               className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5"
@@ -413,8 +413,8 @@ export default function AdminGamingPage() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-300">
-              <thead className="text-xs uppercase bg-slate-800/60 text-slate-400">
+            <table className="w-full text-left text-sm text-slate-600">
+              <thead className="text-xs uppercase bg-slate-100 text-slate-500">
                 <tr>
                   <th className="px-4 py-3 rounded-l-xl">Game Name</th>
                   <th className="px-4 py-3">Slug</th>
@@ -427,36 +427,36 @@ export default function AdminGamingPage() {
               </thead>
               <tbody className="divide-y divide-slate-800/60">
                 {gamesList.map((g) => (
-                  <tr key={g.id} className="hover:bg-slate-800/30 transition">
-                    <td className="px-4 py-3.5 font-bold text-white">
+                  <tr key={g.id} className="hover:bg-slate-100/30 transition">
+                    <td className="px-4 py-3.5 font-bold text-slate-900">
                       {g.name}
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-xs text-slate-400">
+                    <td className="px-4 py-3.5 font-mono text-xs text-slate-500">
                       {g.slug}
                     </td>
-                    <td className="px-4 py-3.5 text-xs text-sky-400 font-semibold">
+                    <td className="px-4 py-3.5 text-xs text-sky-600 font-semibold">
                       {g.publisher}
                     </td>
-                    <td className="px-4 py-3.5 text-xs text-slate-300">
+                    <td className="px-4 py-3.5 text-xs text-slate-600">
                       {g.category}
                     </td>
                     <td className="px-4 py-3.5 text-xs">
-                      {g.requiresZoneId && <span className="text-amber-400 font-semibold block">✓ Requires Zone ID</span>}
-                      {g.requiresServer && <span className="text-sky-400 font-semibold block">✓ Server Region</span>}
+                      {g.requiresZoneId && <span className="text-amber-600 font-semibold block">✓ Requires Zone ID</span>}
+                      {g.requiresServer && <span className="text-sky-600 font-semibold block">✓ Server Region</span>}
                       {!g.requiresZoneId && !g.requiresServer && <span className="text-slate-500">Direct ID</span>}
                     </td>
                     <td className="px-4 py-3.5">
                       {g.fulfillmentMode === 'AUTO_API' ? (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                           ⚡ Instant API
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-200">
                           Staff Manual
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3.5 font-mono text-slate-300">
+                    <td className="px-4 py-3.5 font-mono text-slate-600">
                       {g.packages?.length || 0} pkgs
                     </td>
                   </tr>
@@ -469,18 +469,18 @@ export default function AdminGamingPage() {
 
       {/* TAB 3: PACKAGES MANAGER */}
       {activeTab === 'packages' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-800 pb-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-4">
             <div>
-              <h2 className="text-lg font-bold text-white">Top-Up Packages Manager</h2>
-              <p className="text-xs text-slate-400">Select a game to manage diamond counts and BDT rates.</p>
+              <h2 className="text-lg font-bold text-slate-900">Top-Up Packages Manager</h2>
+              <p className="text-xs text-slate-500">Select a game to manage diamond counts and BDT rates.</p>
             </div>
 
             <div className="flex items-center gap-3">
               <select
                 value={selectedGameForPackages}
                 onChange={(e) => setSelectedGameForPackages(e.target.value)}
-                className="px-4 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-semibold focus:outline-none focus:border-indigo-500"
+                className="px-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-semibold focus:outline-none focus:border-indigo-500"
               >
                 {gamesList.map((g) => (
                   <option key={g.id} value={g.id}>
@@ -503,19 +503,19 @@ export default function AdminGamingPage() {
               {selectedGameObj.packages.map((pkg) => (
                 <div
                   key={pkg.id}
-                  className="p-4 rounded-2xl border border-slate-800 bg-slate-800/40 space-y-3 relative overflow-hidden"
+                  className="p-4 rounded-2xl border border-slate-200 bg-slate-100/40 space-y-3 relative overflow-hidden"
                 >
                   {pkg.badgeText && (
                     <span className="absolute top-2 right-2 px-2 py-0.5 rounded-full text-[9px] font-black bg-gradient-to-r from-amber-500 to-rose-500 text-white">
                       {pkg.badgeText}
                     </span>
                   )}
-                  <div className="font-bold text-white text-sm">{pkg.name}</div>
-                  <div className="text-xs text-indigo-300 font-mono">
+                  <div className="font-bold text-slate-900 text-sm">{pkg.name}</div>
+                  <div className="text-xs text-indigo-700 font-mono">
                     {pkg.diamondCount} Base + {pkg.bonusCount} Bonus = <strong>{pkg.totalDiamonds} Total</strong>
                   </div>
-                  <div className="pt-2 border-t border-slate-800 flex items-center justify-between">
-                    <span className="text-base font-black text-emerald-400 font-mono">৳{pkg.priceBdt}</span>
+                  <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
+                    <span className="text-base font-black text-emerald-600 font-mono">৳{pkg.priceBdt}</span>
                     <span className="text-[10px] text-slate-500">Order: {pkg.sortOrder}</span>
                   </div>
                 </div>
@@ -528,46 +528,46 @@ export default function AdminGamingPage() {
       {/* FULFILL MANUAL ORDER MODAL */}
       {selectedOrderToFulfill && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 bg-slate-900 max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+          <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
               <div>
-                <h3 className="text-xl font-bold text-white">Fulfill Manual Top-Up</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h3 className="text-xl font-bold text-slate-900">Fulfill Manual Top-Up</h3>
+                <p className="text-xs text-slate-500 mt-0.5">
                   Order #{selectedOrderToFulfill.orderNumber}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedOrderToFulfill(null)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-500 hover:text-white p-1"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-4 rounded-2xl bg-slate-800/60 border border-slate-700/60 space-y-2 text-xs">
+            <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-400">Game:</span>
-                <span className="font-bold text-white">{selectedOrderToFulfill.gameName}</span>
+                <span className="text-slate-500">Game:</span>
+                <span className="font-bold text-slate-900">{selectedOrderToFulfill.gameName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Player ID:</span>
-                <span className="font-bold font-mono text-emerald-400">{selectedOrderToFulfill.playerId}</span>
+                <span className="text-slate-500">Player ID:</span>
+                <span className="font-bold font-mono text-emerald-600">{selectedOrderToFulfill.playerId}</span>
               </div>
               {selectedOrderToFulfill.zoneId && (
                 <div className="flex justify-between">
-                  <span className="text-slate-400">Zone ID:</span>
+                  <span className="text-slate-500">Zone ID:</span>
                   <span className="font-mono text-white">{selectedOrderToFulfill.zoneId}</span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-slate-400">Package:</span>
-                <span className="font-semibold text-indigo-300">{selectedOrderToFulfill.packageName}</span>
+                <span className="text-slate-500">Package:</span>
+                <span className="font-semibold text-indigo-700">{selectedOrderToFulfill.packageName}</span>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Provider Transaction / Voucher Reference
                 </label>
                 <input
@@ -575,12 +575,12 @@ export default function AdminGamingPage() {
                   value={fulfillRef}
                   onChange={(e) => setFulfillRef(e.target.value)}
                   placeholder="e.g. MOONTON-VOUCHER-99214"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs font-mono focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs font-mono focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Staff Notes (Optional)
                 </label>
                 <textarea
@@ -588,7 +588,7 @@ export default function AdminGamingPage() {
                   value={fulfillNotes}
                   onChange={(e) => setFulfillNotes(e.target.value)}
                   placeholder="e.g. Recharge executed via official distributor terminal."
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-indigo-500"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 text-xs focus:outline-none focus:border-indigo-500"
                 />
               </div>
 
@@ -605,7 +605,7 @@ export default function AdminGamingPage() {
                   type="button"
                   onClick={() => handleFulfillOrder('DELIVERED')}
                   disabled={fulfilling}
-                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg shadow-emerald-500/20 disabled:opacity-50"
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg  disabled:opacity-50"
                 >
                   {fulfilling ? 'Fulfilling...' : 'Mark Delivered'}
                 </button>
@@ -618,12 +618,12 @@ export default function AdminGamingPage() {
       {/* ADD GAME MODAL */}
       {isAddGameModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 bg-slate-900 max-w-lg w-full space-y-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white">Add New Game</h3>
+          <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white max-w-lg w-full space-y-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <h3 className="text-xl font-bold text-slate-900">Add New Game</h3>
               <button
                 onClick={() => setIsAddGameModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-500 hover:text-white p-1"
               >
                 ✕
               </button>
@@ -632,7 +632,7 @@ export default function AdminGamingPage() {
             <form onSubmit={handleCreateGame} className="space-y-4 text-xs">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Game Name
                   </label>
                   <input
@@ -644,11 +644,11 @@ export default function AdminGamingPage() {
                     }}
                     placeholder="e.g. Call of Duty: Mobile"
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Slug
                   </label>
                   <input
@@ -657,14 +657,14 @@ export default function AdminGamingPage() {
                     onChange={(e) => setGameSlug(e.target.value)}
                     placeholder="e.g. call-of-duty-mobile"
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Publisher / Developer
                   </label>
                   <input
@@ -673,17 +673,17 @@ export default function AdminGamingPage() {
                     onChange={(e) => setGamePublisher(e.target.value)}
                     placeholder="e.g. Activision"
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Category
                   </label>
                   <select
                     value={gameCategory}
                     onChange={(e) => setGameCategory(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                   >
                     <option value="BATTLE_ROYALE">Battle Royale</option>
                     <option value="MOBA">MOBA</option>
@@ -700,7 +700,7 @@ export default function AdminGamingPage() {
                     type="checkbox"
                     checked={requiresZoneId}
                     onChange={(e) => setRequiresZoneId(e.target.checked)}
-                    className="rounded bg-slate-800 border-slate-700 text-indigo-600"
+                    className="rounded bg-slate-100 border-slate-200 text-indigo-600"
                   />
                   <span>Requires Zone ID (e.g. MLBB)</span>
                 </label>
@@ -710,20 +710,20 @@ export default function AdminGamingPage() {
                     type="checkbox"
                     checked={requiresServer}
                     onChange={(e) => setRequiresServer(e.target.checked)}
-                    className="rounded bg-slate-800 border-slate-700 text-indigo-600"
+                    className="rounded bg-slate-100 border-slate-200 text-indigo-600"
                   />
                   <span>Requires Server Region</span>
                 </label>
               </div>
 
               <div>
-                <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Fulfillment Mode
                 </label>
                 <select
                   value={fulfillmentMode}
                   onChange={(e) => setFulfillmentMode(e.target.value as any)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                 >
                   <option value={GameFulfillmentMode.AUTO_API}>⚡ AUTO_API (Instant Automated Handshake)</option>
                   <option value={GameFulfillmentMode.MANUAL_STAFF}>MANUAL_STAFF (Queues in Admin Fulfillment Desk)</option>
@@ -734,7 +734,7 @@ export default function AdminGamingPage() {
                 <button
                   type="button"
                   onClick={() => setIsAddGameModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600"
                 >
                   Cancel
                 </button>
@@ -754,12 +754,12 @@ export default function AdminGamingPage() {
       {/* ADD PACKAGE MODAL */}
       {isAddPkgModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 bg-slate-900 max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white">Add Diamond Package</h3>
+          <div className="p-6 sm:p-8 rounded-3xl border border-slate-200 bg-white max-w-md w-full space-y-6 shadow-2xl animate-fade-in">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4">
+              <h3 className="text-xl font-bold text-slate-900">Add Diamond Package</h3>
               <button
                 onClick={() => setIsAddPkgModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1"
+                className="text-slate-500 hover:text-white p-1"
               >
                 ✕
               </button>
@@ -767,7 +767,7 @@ export default function AdminGamingPage() {
 
             <form onSubmit={handleCreatePackage} className="space-y-4 text-xs">
               <div>
-                <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                   Package Name
                 </label>
                 <input
@@ -776,13 +776,13 @@ export default function AdminGamingPage() {
                   onChange={(e) => setPkgName(e.target.value)}
                   placeholder="e.g. 520 + 52 Diamonds"
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Diamond / Unit Count
                   </label>
                   <input
@@ -790,25 +790,25 @@ export default function AdminGamingPage() {
                     value={diamondCount}
                     onChange={(e) => setDiamondCount(e.target.value === '' ? '' : Number(e.target.value))}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Bonus Units
                   </label>
                   <input
                     type="number"
                     value={bonusCount}
                     onChange={(e) => setBonusCount(e.target.value === '' ? '' : Number(e.target.value))}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Price in BDT (৳)
                   </label>
                   <input
@@ -817,11 +817,11 @@ export default function AdminGamingPage() {
                     value={priceBdt}
                     onChange={(e) => setPriceBdt(e.target.value === '' ? '' : Number(e.target.value))}
                     required
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-slate-300 uppercase tracking-wider mb-2">
+                  <label className="block font-bold text-slate-600 uppercase tracking-wider mb-2">
                     Badge Text (Optional)
                   </label>
                   <input
@@ -829,7 +829,7 @@ export default function AdminGamingPage() {
                     value={badgeText}
                     onChange={(e) => setBadgeText(e.target.value)}
                     placeholder="HOT, BEST VALUE"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-900"
                   />
                 </div>
               </div>
@@ -838,7 +838,7 @@ export default function AdminGamingPage() {
                 <button
                   type="button"
                   onClick={() => setIsAddPkgModalOpen(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-700 text-slate-300"
+                  className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600"
                 >
                   Cancel
                 </button>

@@ -185,85 +185,100 @@ export default function GamingHubPage() {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
-      {/* High-Impact Hero Banner */}
-      <div className="relative rounded-3xl overflow-hidden border border-indigo-500/30 bg-gradient-to-r from-slate-950 via-indigo-950/70 to-slate-900 p-8 sm:p-12 shadow-2xl">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-        <div className="absolute bottom-0 left-1/3 w-80 h-80 bg-sky-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-violet-50 via-white to-slate-50 border-b border-slate-200 pt-10 pb-16">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-violet-100/50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-sky-100/50 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-500/20 border border-indigo-500/40 text-indigo-300 text-xs font-bold uppercase tracking-wider">
-            <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
-            Instant In-Game Delivery in 30 Seconds
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 border border-violet-200 text-violet-700 text-xs font-semibold">
+                <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
+                <span>Instant In-Game Delivery in 30 Seconds</span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                Official Gaming Top-Up & Diamond Recharge
+              </h1>
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+                Direct player ID recharge for Free Fire, Mobile Legends, PUBG Mobile, Genshin Impact & more. Instant, 100% ban-free, and powered by secure bKash, Nagad & Card checkout.
+              </p>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <ShieldCheck className="w-4 h-4 text-emerald-500" /> 100% Official Partner
+                </div>
+              </div>
+              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Clock className="w-4 h-4 text-sky-500" /> Instant Recharge
+                </div>
+              </div>
+              <div className="px-4 py-2.5 rounded-2xl bg-white border border-slate-200 text-center">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                  <Award className="w-4 h-4 text-amber-500" /> Zero Account Risk
+                </div>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-none">
-            Official Gaming Top-Up &amp; Diamond Recharge
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-            Direct player ID recharge for Free Fire, Mobile Legends, PUBG Mobile, Genshin Impact &amp; more. Instant, 100% ban-free, and powered by secure bKash, Nagad &amp; Card checkout.
-          </p>
-
-          <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-300">
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800">
-              <ShieldCheck className="w-4 h-4 text-emerald-400" /> 100% Official Partner
-            </span>
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800">
-              <Clock className="w-4 h-4 text-sky-400" /> Instant Recharge
-            </span>
-            <span className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900/80 border border-slate-800">
-              <Award className="w-4 h-4 text-amber-400" /> Zero Account Risk
-            </span>
+          {/* Search & Category Filter */}
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-2 relative">
+              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search games like Free Fire, MLBB, PUBG..."
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-2xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-100 transition-all text-sm"
+              />
+            </div>
+            <div className="flex items-center text-xs text-slate-500 bg-white border border-slate-200 rounded-2xl px-4 justify-center">
+              <Gamepad2 className="w-4 h-4 text-violet-500 mr-2" />
+              {games.length} Games Available
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Live Recharges Ticker Simulation */}
-      <div className="p-3.5 rounded-2xl border border-slate-800 bg-slate-900/60 flex items-center justify-between gap-4 overflow-hidden">
-        <div className="flex items-center gap-2 text-xs font-bold text-indigo-400 shrink-0 uppercase tracking-wider">
-          <Radio className="w-4 h-4 text-emerald-400 animate-pulse" /> Live Recharges:
-        </div>
-        <div className="text-xs text-slate-400 truncate flex items-center gap-6">
-          <span>🎮 Tanvir*** recharged <strong className="text-white">100 Diamonds</strong> (Free Fire) • 1m ago</span>
-          <span>⚡ Sadia*** purchased <strong className="text-white">Weekly Pass</strong> (MLBB) • 3m ago</span>
-          <span>🎯 ProGamer*** recharged <strong className="text-white">660 UC</strong> (PUBG Mobile) • 5m ago</span>
-        </div>
-      </div>
-
-      {/* Search & Category Filter Bar */}
-      <div className="space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          {/* Category Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 scrollbar-none">
+          {/* Category Pills */}
+          <div className="mt-5 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
             {CATEGORIES.map((cat) => (
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-indigo-500 to-sky-500 text-white shadow-lg shadow-indigo-500/25'
-                    : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800 hover:border-slate-700'
+                    ? 'bg-[#0F5B78] text-white shadow-md shadow-[#0F5B78]/20'
+                    : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
                 }`}
               >
                 {cat.label}
               </button>
             ))}
           </div>
+        </div>
+      </div>
 
-          {/* Search Input */}
-          <div className="relative w-full sm:w-72">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search game e.g. Free Fire..."
-              className="w-full pl-10 pr-4 py-2 rounded-xl bg-slate-900/90 border border-slate-800 text-white text-xs placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-            />
+      {/* Live Recharges Ticker */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-6 relative z-10">
+        <div className="p-3.5 rounded-2xl border border-slate-200 bg-white flex items-center justify-between gap-4 overflow-hidden shadow-sm">
+          <div className="flex items-center gap-2 text-xs font-bold text-violet-700 shrink-0 uppercase tracking-wider">
+            <Radio className="w-4 h-4 text-emerald-500 animate-pulse" /> Live Recharges:
+          </div>
+          <div className="text-xs text-slate-500 truncate flex items-center gap-6">
+            <span>Tanvir*** recharged <strong className="text-slate-900">100 Diamonds</strong> (Free Fire) • 1m ago</span>
+            <span>Sadia*** purchased <strong className="text-slate-900">Weekly Pass</strong> (MLBB) • 3m ago</span>
+            <span>ProGamer*** recharged <strong className="text-slate-900">660 UC</strong> (PUBG Mobile) • 5m ago</span>
           </div>
         </div>
       </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-10">
 
       {/* Game Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -271,18 +286,18 @@ export default function GamingHubPage() {
           <Link
             key={game.id}
             href={`/gaming/${game.slug}`}
-            className="group glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 hover:border-indigo-500/50 hover:bg-slate-900 transition-all duration-300 flex flex-col justify-between relative overflow-hidden shadow-xl"
+            className="group p-6 rounded-3xl border border-slate-200 bg-white hover:border-indigo-400 hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
           >
             {/* Top accent glow */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all pointer-events-none" />
+            <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/5 rounded-full blur-2xl group-hover:bg-indigo-50 transition-all pointer-events-none" />
 
             <div className="space-y-4">
               <div className="flex items-start justify-between">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-500/20 to-sky-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 group-hover:scale-110 transition-transform">
+                <div className="w-14 h-14 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 group-hover:scale-110 transition-transform">
                   <Gamepad2 className="w-8 h-8" />
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
                     ⚡ Instant Top-Up
                   </span>
                   <span className="text-[10px] font-mono text-slate-500">
@@ -292,19 +307,19 @@ export default function GamingHubPage() {
               </div>
 
               <div>
-                <span className="text-[11px] font-bold text-sky-400 uppercase tracking-wider block">
+                <span className="text-[11px] font-bold text-sky-600 uppercase tracking-wider block">
                   {game.publisher}
                 </span>
-                <h3 className="text-xl font-black text-white group-hover:text-indigo-300 transition-colors mt-0.5">
+                <h3 className="text-xl font-black text-slate-900 group-hover:text-indigo-700 transition-colors mt-0.5">
                   {game.name}
                 </h3>
               </div>
 
               {/* Sample packages preview pills */}
-              <div className="space-y-2 pt-1 border-t border-slate-800/80">
-                <div className="text-[11px] text-slate-400 flex items-center justify-between">
+              <div className="space-y-2 pt-1 border-t border-slate-100">
+                <div className="text-[11px] text-slate-500 flex items-center justify-between">
                   <span>Starting from:</span>
-                  <span className="font-bold text-emerald-400 font-mono">
+                  <span className="font-bold text-emerald-600 font-mono">
                     ৳{game.packages && game.packages.length > 0 ? Math.min(...game.packages.map((p) => p.priceBdt)) : 85} BDT
                   </span>
                 </div>
@@ -313,7 +328,7 @@ export default function GamingHubPage() {
                   {game.packages?.slice(0, 3).map((pkg) => (
                     <span
                       key={pkg.id}
-                      className="px-2 py-0.5 rounded-lg bg-slate-800 text-[10px] text-slate-300 font-mono"
+                      className="px-2 py-0.5 rounded-lg bg-slate-100 text-[10px] text-slate-600 font-mono"
                     >
                       {pkg.name}
                     </span>
@@ -322,11 +337,11 @@ export default function GamingHubPage() {
               </div>
             </div>
 
-            <div className="pt-5 mt-4 border-t border-slate-800 flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-400 group-hover:text-white transition-colors">
+            <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between">
+              <span className="text-xs font-semibold text-slate-500 group-hover:text-slate-900 transition-colors">
                 Recharge Now
               </span>
-              <div className="w-8 h-8 rounded-xl bg-indigo-500/20 group-hover:bg-indigo-600 text-indigo-300 group-hover:text-white flex items-center justify-center transition-all">
+              <div className="w-8 h-8 rounded-xl bg-indigo-50 group-hover:bg-[#0F5B78] text-indigo-600 group-hover:text-white flex items-center justify-center transition-all">
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
               </div>
             </div>
@@ -335,42 +350,43 @@ export default function GamingHubPage() {
       </div>
 
       {/* Trust & Guarantee Section */}
-      <div className="glass-panel p-8 rounded-3xl border border-slate-800 bg-slate-900/60 grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="p-8 rounded-3xl border border-slate-200 bg-white grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0">
+          <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 shrink-0">
             <Zap className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">Direct Game Handshake</h4>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            <h4 className="text-sm font-bold text-slate-900">Direct Game Handshake</h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Diamonds and in-game currencies credit straight to your account UID without needing passwords.
             </p>
           </div>
         </div>
 
         <div className="flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/20 text-sky-400 shrink-0">
+          <div className="p-3 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 shrink-0">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">100% Official Channels</h4>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            <h4 className="text-sm font-bold text-slate-900">100% Official Channels</h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Legitimate developer partner top-ups. Zero ban risk, zero unauthorized card charges.
             </p>
           </div>
         </div>
 
         <div className="flex items-start gap-4">
-          <div className="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 shrink-0">
+          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 shrink-0">
             <Award className="w-6 h-6" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">Instant Payment Confirmation</h4>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+            <h4 className="text-sm font-bold text-slate-900">Instant Payment Confirmation</h4>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
               Seamless checkout with bKash, Nagad, and Cards with instant digital receipt &amp; tracking.
             </p>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

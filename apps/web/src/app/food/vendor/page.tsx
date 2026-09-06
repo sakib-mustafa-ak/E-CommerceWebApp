@@ -375,46 +375,46 @@ export default function FoodVendorDashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rose-500" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen pb-24 bg-slate-950 text-slate-100">
+    <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
       {/* Top Vendor Bar */}
-      <div className="bg-slate-900/80 border-b border-slate-800 py-6">
+      <div className="bg-white border-b border-slate-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-rose-500/20 border border-rose-500/40 text-rose-400 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center">
               <ChefHat className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-bold text-white">{restaurant?.name}</h1>
-                <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-mono font-semibold">
+                <h1 className="text-xl font-bold text-slate-900">{restaurant?.name}</h1>
+                <span className="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-xs font-mono font-semibold">
                   Kitchen Portal
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-semibold flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   Live
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 {restaurant?.area} Area • Commission Rate: {(restaurant?.commissionRate || 0.15) * 100}%
               </p>
             </div>
           </div>
 
           {/* Tab Navigation */}
-          <div className="flex items-center gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs">
+          <div className="flex items-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-200 text-xs">
             <button
               onClick={() => setActiveTab('KITCHEN')}
               className={`px-4 py-2 rounded-xl font-bold transition-all ${
                 activeTab === 'KITCHEN'
                   ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               Kitchen Orders ({orders.filter((o) => o.orderStatus !== FoodOrderStatus.DELIVERED).length})
@@ -424,7 +424,7 @@ export default function FoodVendorDashboardPage() {
               className={`px-4 py-2 rounded-xl font-bold transition-all ${
                 activeTab === 'MENU'
                   ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               Menu & 86'd Control
@@ -434,7 +434,7 @@ export default function FoodVendorDashboardPage() {
               className={`px-4 py-2 rounded-xl font-bold transition-all ${
                 activeTab === 'LEDGER'
                   ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-white'
+                  : 'text-slate-500 hover:text-slate-700'
               }`}
             >
               Financial Ledger
@@ -446,8 +446,8 @@ export default function FoodVendorDashboardPage() {
       {/* Notification Toast */}
       {statusMessage && (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-          <div className="p-3 rounded-2xl bg-emerald-950/80 border border-emerald-800 text-emerald-300 text-xs flex items-center gap-2 shadow-lg">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-800 text-emerald-700 text-xs flex items-center gap-2 shadow-lg">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
             <span>{statusMessage}</span>
           </div>
         </div>
@@ -459,18 +459,18 @@ export default function FoodVendorDashboardPage() {
           <div className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Utensils className="w-5 h-5 text-rose-400" />
+                <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Utensils className="w-5 h-5 text-rose-600" />
                   Live Kitchen Orders Queue
                 </h2>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-slate-500">
                   Update live order status & cooking countdown timers for diners and couriers
                 </p>
               </div>
             </div>
 
             {orders.length === 0 ? (
-              <div className="p-12 rounded-3xl border border-slate-800 bg-slate-900/40 text-center text-slate-500">
+              <div className="p-12 rounded-3xl border border-slate-200 bg-white text-center text-slate-500">
                 No orders currently in queue.
               </div>
             ) : (
@@ -478,23 +478,23 @@ export default function FoodVendorDashboardPage() {
                 {orders.map((order) => (
                   <div
                     key={order.id}
-                    className="p-5 rounded-3xl border border-slate-800 bg-slate-900/90 shadow-xl space-y-4"
+                    className="p-5 rounded-3xl border border-slate-200 bg-white shadow-xl space-y-4"
                   >
                     {/* Order Top Bar */}
-                    <div className="flex justify-between items-start pb-3 border-b border-slate-800">
+                    <div className="flex justify-between items-start pb-3 border-b border-slate-200">
                       <div>
-                        <span className="text-xs font-mono font-bold text-rose-400">
+                        <span className="text-xs font-mono font-bold text-rose-600">
                           {order.orderNumber}
                         </span>
-                        <h3 className="font-bold text-sm text-white">{order.customerName}</h3>
-                        <p className="text-[11px] text-slate-400 font-mono">{order.customerPhone}</p>
+                        <h3 className="font-bold text-sm text-slate-900">{order.customerName}</h3>
+                        <p className="text-[11px] text-slate-500 font-mono">{order.customerPhone}</p>
                       </div>
 
                       <div className="text-right space-y-1">
-                        <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 block">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-bold bg-rose-50 text-rose-700 border border-rose-200 block">
                           {order.orderStatus}
                         </span>
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[10px] text-slate-500 block">
                           {order.fulfillmentType === FoodFulfillmentType.HOME_DELIVERY
                             ? 'Home Delivery'
                             : 'Eat-in / Pickup'}
@@ -505,25 +505,25 @@ export default function FoodVendorDashboardPage() {
                     {/* Ordered Items List */}
                     <div className="space-y-1.5 text-xs">
                       {order.items.map((item) => (
-                        <div key={item.id} className="flex justify-between text-slate-300">
+                        <div key={item.id} className="flex justify-between text-slate-600">
                           <span>
-                            <strong className="text-rose-400">{item.quantity}x</strong> {item.itemName}
+                            <strong className="text-rose-600">{item.quantity}x</strong> {item.itemName}
                           </span>
-                          <span className="font-mono text-slate-400">৳{item.totalPriceBdt}</span>
+                          <span className="font-mono text-slate-500">৳{item.totalPriceBdt}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Financial Summary Line */}
-                    <div className="pt-2 border-t border-slate-800/80 flex justify-between text-xs font-mono">
-                      <span className="text-slate-400">Subtotal: ৳{order.subtotalBdt}</span>
-                      <span className="text-emerald-400 font-bold">
+                    <div className="pt-2 border-t border-slate-200 flex justify-between text-xs font-mono">
+                      <span className="text-slate-500">Subtotal: ৳{order.subtotalBdt}</span>
+                      <span className="text-emerald-600 font-bold">
                         Net Payout: ৳{order.netVendorEarningsBdt}
                       </span>
                     </div>
 
                     {/* Action Buttons based on lifecycle */}
-                    <div className="pt-3 border-t border-slate-800 flex flex-wrap items-center gap-2">
+                    <div className="pt-3 border-t border-slate-200 flex flex-wrap items-center gap-2">
                       {order.orderStatus === FoodOrderStatus.PENDING && (
                         <button
                           onClick={() => handleUpdateStatus(order.id, FoodOrderStatus.CONFIRMED)}
@@ -547,9 +547,9 @@ export default function FoodVendorDashboardPage() {
                                 [order.id]: Number(e.target.value),
                               })
                             }
-                            className="w-16 px-2 py-1 bg-slate-950 border border-slate-700 rounded-lg text-white text-xs text-center"
+                            className="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs text-center"
                           />
-                          <span className="text-[10px] text-slate-400">min</span>
+                          <span className="text-[10px] text-slate-500">min</span>
                           <button
                             onClick={() => handleUpdateStatus(order.id, FoodOrderStatus.COOKING)}
                             className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-600 to-rose-600 text-white font-semibold text-xs flex items-center gap-1"
@@ -599,7 +599,7 @@ export default function FoodVendorDashboardPage() {
 
                       <Link
                         href={`/food/orders/${order.orderNumber}`}
-                        className="ml-auto px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium text-xs transition-colors"
+                        className="ml-auto px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-700 text-slate-600 font-medium text-xs transition-colors"
                       >
                         View Memo
                       </Link>
@@ -618,8 +618,8 @@ export default function FoodVendorDashboardPage() {
             <div className="lg:col-span-2 space-y-6">
               <div className="flex justify-between items-center">
                 <div>
-                  <h2 className="text-lg font-bold text-white">Menu Item Availability (86'd Control)</h2>
-                  <p className="text-xs text-slate-400">
+                  <h2 className="text-lg font-bold text-slate-900">Menu Item Availability (86'd Control)</h2>
+                  <p className="text-xs text-slate-500">
                     Toggle items off instantly when sold out in your kitchen.
                   </p>
                 </div>
@@ -628,9 +628,9 @@ export default function FoodVendorDashboardPage() {
               {restaurant?.categories.map((category) => (
                 <div
                   key={category.id}
-                  className="p-5 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4"
+                  className="p-5 rounded-3xl border border-slate-200 bg-white space-y-4"
                 >
-                  <h3 className="text-base font-bold text-rose-400 border-b border-slate-800 pb-2">
+                  <h3 className="text-base font-bold text-rose-600 border-b border-slate-200 pb-2">
                     {category.name}
                   </h3>
 
@@ -640,21 +640,21 @@ export default function FoodVendorDashboardPage() {
                         key={item.id}
                         className={`p-3.5 rounded-2xl border flex items-center justify-between gap-4 transition-all ${
                           item.isAvailable
-                            ? 'bg-slate-950/70 border-slate-800'
+                            ? 'bg-slate-50 border-slate-200'
                             : 'bg-rose-950/20 border-rose-900/40 opacity-75'
                         }`}
                       >
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-sm text-white">{item.name}</span>
+                            <span className="font-bold text-sm text-slate-900">{item.name}</span>
                             {!item.isAvailable && (
-                              <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-400 text-[10px] font-bold border border-rose-800">
+                              <span className="px-2 py-0.5 rounded bg-rose-950 text-rose-600 text-[10px] font-bold border border-rose-800">
                                 86'd / Sold Out
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-slate-400 line-clamp-1">{item.description}</p>
-                          <div className="text-xs font-mono text-rose-400 mt-1">
+                          <p className="text-xs text-slate-500 line-clamp-1">{item.description}</p>
+                          <div className="text-xs font-mono text-rose-600 mt-1">
                             ৳{item.priceBdt} • Prep: {item.preparationTimeMinutes} min
                           </div>
                         </div>
@@ -664,18 +664,18 @@ export default function FoodVendorDashboardPage() {
                           onClick={() => handleToggle86(item.id, item.isAvailable)}
                           className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors ${
                             item.isAvailable
-                              ? 'bg-emerald-950 text-emerald-300 border border-emerald-800 hover:bg-rose-950 hover:text-rose-300 hover:border-rose-800'
-                              : 'bg-rose-950 text-rose-300 border border-rose-800 hover:bg-emerald-950 hover:text-emerald-300 hover:border-emerald-800'
+                              ? 'bg-emerald-950 text-emerald-700 border border-emerald-800 hover:bg-rose-950 hover:text-rose-700 hover:border-rose-800'
+                              : 'bg-rose-950 text-rose-700 border border-rose-800 hover:bg-emerald-950 hover:text-emerald-700 hover:border-emerald-800'
                           }`}
                         >
                           {item.isAvailable ? (
                             <>
-                              <ToggleRight className="w-4 h-4 text-emerald-400" />
+                              <ToggleRight className="w-4 h-4 text-emerald-600" />
                               <span>In Stock</span>
                             </>
                           ) : (
                             <>
-                              <ToggleLeft className="w-4 h-4 text-rose-400" />
+                              <ToggleLeft className="w-4 h-4 text-rose-600" />
                               <span>86'd</span>
                             </>
                           )}
@@ -690,9 +690,9 @@ export default function FoodVendorDashboardPage() {
             {/* Add Category & Item Sidebar (1 col) */}
             <div className="lg:col-span-1 space-y-6">
               {/* Add Category Form */}
-              <div className="p-5 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
-                <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
-                  <Plus className="w-4 h-4 text-rose-400" />
+              <div className="p-5 rounded-3xl border border-slate-200 bg-white space-y-4">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                  <Plus className="w-4 h-4 text-rose-600" />
                   Add Menu Category
                 </h3>
                 <form onSubmit={handleCreateCategory} className="space-y-3">
@@ -702,7 +702,7 @@ export default function FoodVendorDashboardPage() {
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
                     placeholder="e.g. Starters, Desserts, Beverages"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                   />
                   <button
                     type="submit"
@@ -714,19 +714,19 @@ export default function FoodVendorDashboardPage() {
               </div>
 
               {/* Add Item Form */}
-              <div className="p-5 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
-                <h3 className="font-bold text-sm text-white flex items-center gap-1.5">
-                  <Plus className="w-4 h-4 text-rose-400" />
+              <div className="p-5 rounded-3xl border border-slate-200 bg-white space-y-4">
+                <h3 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                  <Plus className="w-4 h-4 text-rose-600" />
                   Add New Menu Item
                 </h3>
                 <form onSubmit={handleCreateMenuItem} className="space-y-3 text-xs">
                   <div>
-                    <label className="text-slate-400 block mb-1">Select Category</label>
+                    <label className="text-slate-500 block mb-1">Select Category</label>
                     <select
                       required
                       value={selectedCatId}
                       onChange={(e) => setSelectedCatId(e.target.value)}
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                     >
                       <option value="">-- Choose Category --</option>
                       {restaurant?.categories.map((c) => (
@@ -738,54 +738,54 @@ export default function FoodVendorDashboardPage() {
                   </div>
 
                   <div>
-                    <label className="text-slate-400 block mb-1">Item Name</label>
+                    <label className="text-slate-500 block mb-1">Item Name</label>
                     <input
                       type="text"
                       required
                       value={newItemName}
                       onChange={(e) => setNewItemName(e.target.value)}
                       placeholder="e.g. Garlic Butter Naan"
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label className="text-slate-400 block mb-1">Description</label>
+                    <label className="text-slate-500 block mb-1">Description</label>
                     <textarea
                       rows={2}
                       value={newItemDesc}
                       onChange={(e) => setNewItemDesc(e.target.value)}
                       placeholder="Ingredients & cooking style..."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
                     <div>
-                      <label className="text-slate-400 block mb-1">Price (৳ BDT)</label>
+                      <label className="text-slate-500 block mb-1">Price (৳ BDT)</label>
                       <input
                         type="number"
                         required
                         value={newItemPrice}
                         onChange={(e) => setNewItemPrice(Number(e.target.value))}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-slate-400 block mb-1">Prep Time (min)</label>
+                      <label className="text-slate-500 block mb-1">Prep Time (min)</label>
                       <input
                         type="number"
                         required
                         value={newItemPrepTime}
                         onChange={(e) => setNewItemPrepTime(Number(e.target.value))}
-                        className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs focus:border-rose-500 focus:outline-none"
+                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs focus:border-rose-500 focus:outline-none"
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-950 transition-colors"
+                    className="w-full py-2.5 bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-500 hover:to-amber-500 text-white font-bold text-xs rounded-xl shadow-rose-950 transition-colors"
                   >
                     Publish to Storefront
                   </button>
@@ -799,44 +799,44 @@ export default function FoodVendorDashboardPage() {
         {activeTab === 'LEDGER' && ledger && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400">Delivered Orders</span>
+              <div className="p-5 rounded-3xl bg-white border border-slate-200 space-y-1">
+                <span className="text-xs text-slate-500">Delivered Orders</span>
                 <div className="text-2xl font-black font-mono text-white">
                   {ledger.deliveredOrdersCount}
                 </div>
               </div>
 
-              <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400">Gross Sales</span>
+              <div className="p-5 rounded-3xl bg-white border border-slate-200 space-y-1">
+                <span className="text-xs text-slate-500">Gross Sales</span>
                 <div className="text-2xl font-black font-mono text-white">
                   ৳{ledger.grossSalesBdt}
                 </div>
               </div>
 
-              <div className="p-5 rounded-3xl bg-slate-900/80 border border-slate-800 space-y-1">
-                <span className="text-xs text-slate-400">
+              <div className="p-5 rounded-3xl bg-white border border-slate-200 space-y-1">
+                <span className="text-xs text-slate-500">
                   Platform Commission ({(ledger.commissionRate * 100).toFixed(0)}%)
                 </span>
-                <div className="text-2xl font-black font-mono text-rose-400">
+                <div className="text-2xl font-black font-mono text-rose-600">
                   ৳{ledger.platformCommissionBdt}
                 </div>
               </div>
 
               <div className="p-5 rounded-3xl bg-gradient-to-br from-emerald-950/60 to-slate-900 border border-emerald-800/60 space-y-1">
-                <span className="text-xs text-emerald-300 font-semibold">Net Vendor Payout</span>
-                <div className="text-2xl font-black font-mono text-emerald-400">
+                <span className="text-xs text-emerald-700 font-semibold">Net Vendor Payout</span>
+                <div className="text-2xl font-black font-mono text-emerald-600">
                   ৳{ledger.netVendorPayoutBdt}
                 </div>
               </div>
             </div>
 
             {/* Recent Orders Breakdown Table */}
-            <div className="p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4">
-              <h3 className="font-bold text-sm text-white">Recent Vendor Invoicing History</h3>
+            <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+              <h3 className="font-bold text-sm text-slate-900">Recent Vendor Invoicing History</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead>
-                    <tr className="border-b border-slate-800 text-slate-400 uppercase text-[10px]">
+                    <tr className="border-b border-slate-200 text-slate-500 uppercase text-[10px]">
                       <th className="py-2.5">Order #</th>
                       <th className="py-2.5">Customer</th>
                       <th className="py-2.5">Gross Subtotal</th>
@@ -847,14 +847,14 @@ export default function FoodVendorDashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-800 font-mono">
                     {ledger.recentOrders.map((o) => (
-                      <tr key={o.id} className="text-slate-300">
-                        <td className="py-3 text-rose-400 font-bold">{o.orderNumber}</td>
+                      <tr key={o.id} className="text-slate-600">
+                        <td className="py-3 text-rose-600 font-bold">{o.orderNumber}</td>
                         <td className="py-3 font-sans">{o.customerName}</td>
                         <td className="py-3">৳{o.subtotalBdt}</td>
-                        <td className="py-3 text-rose-400">৳{o.commissionAmountBdt}</td>
-                        <td className="py-3 text-emerald-400 font-bold">৳{o.netVendorEarningsBdt}</td>
+                        <td className="py-3 text-rose-600">৳{o.commissionAmountBdt}</td>
+                        <td className="py-3 text-emerald-600 font-bold">৳{o.netVendorEarningsBdt}</td>
                         <td className="py-3">
-                          <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300 text-[10px]">
+                          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px]">
                             {o.orderStatus}
                           </span>
                         </td>

@@ -7,6 +7,7 @@ import { JwtModule } from '@nestjs/jwt';
 @Module({
   imports: [
     JwtModule.register({
+      global: true,
       secret: process.env.JWT_SECRET || 'siam-aqua-super-secure-secret-key-2026',
       signOptions: { expiresIn: '7d' },
     }),

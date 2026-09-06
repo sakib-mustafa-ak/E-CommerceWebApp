@@ -156,23 +156,23 @@ export default function SecurityAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-white">Platform Security & Access Control</h1>
-        <p className="text-xs text-slate-400">
+        <h1 className="text-xl font-bold text-slate-900">Platform Security & Access Control</h1>
+        <p className="text-xs text-slate-500">
           Enforce IP blocking, two-state account suspension (indefinite or auto-expiring), and 2FA authentication.
         </p>
       </div>
 
       {message && (
-        <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-xs text-sky-300 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-sky-400" />
+        <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-700 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-sky-600" />
           <span>{message}</span>
         </div>
       )}
 
       {/* IP Control Section */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <Shield className="w-4 h-4 text-sky-400" />
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <Shield className="w-4 h-4 text-sky-600" />
           IP Allow / Block Rule List
         </h2>
 
@@ -184,14 +184,14 @@ export default function SecurityAdminPage() {
               value={newIp}
               onChange={(e) => setNewIp(e.target.value)}
               placeholder="IP Address (e.g. 192.168.1.50)"
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono"
             />
           </div>
           <div>
             <select
               value={newIpType}
               onChange={(e) => setNewIpType(e.target.value as IpRuleType)}
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900"
             >
               <option value={IpRuleType.BLOCK}>BLOCK IP Address</option>
               <option value={IpRuleType.ALLOW}>ALLOW (Whitelist)</option>
@@ -204,7 +204,7 @@ export default function SecurityAdminPage() {
               value={newIpReason}
               onChange={(e) => setNewIpReason(e.target.value)}
               placeholder="Reason for rule..."
-              className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900"
             />
           </div>
           <div>
@@ -220,7 +220,7 @@ export default function SecurityAdminPage() {
 
         <div className="overflow-x-auto pt-2">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
               <tr>
                 <th className="p-2.5">IP Address</th>
                 <th className="p-2.5">Rule Type</th>
@@ -232,22 +232,22 @@ export default function SecurityAdminPage() {
             <tbody className="divide-y divide-slate-800/60">
               {ipRules.map((rule) => (
                 <tr key={rule.id}>
-                  <td className="p-2.5 font-mono text-slate-200">{rule.ipAddress}</td>
+                  <td className="p-2.5 font-mono text-slate-700">{rule.ipAddress}</td>
                   <td className="p-2.5">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-                        rule.type === 'BLOCK' ? 'bg-red-500/20 text-red-300' : 'bg-emerald-500/20 text-emerald-300'
+                        rule.type === 'BLOCK' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'
                       }`}
                     >
                       {rule.type}
                     </span>
                   </td>
-                  <td className="p-2.5 text-slate-400">{rule.reason}</td>
+                  <td className="p-2.5 text-slate-500">{rule.reason}</td>
                   <td className="p-2.5 text-slate-500 font-mono text-[11px]">{rule.createdBy || 'Admin'}</td>
                   <td className="p-2.5 text-right">
                     <button
                       onClick={() => handleDeleteIpRule(rule.id)}
-                      className="p-1 text-slate-400 hover:text-red-400"
+                      className="p-1 text-slate-500 hover:text-red-600"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -260,15 +260,15 @@ export default function SecurityAdminPage() {
       </div>
 
       {/* Account Suspensions & 2FA Status */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <UserX className="w-4 h-4 text-red-400" />
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <UserX className="w-4 h-4 text-red-600" />
           Two-State Account Suspension Controls (Indefinite vs Auto-Expiring)
         </h2>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
               <tr>
                 <th className="p-2.5">Account / Email</th>
                 <th className="p-2.5">Account Type</th>
@@ -281,14 +281,14 @@ export default function SecurityAdminPage() {
               {users.map((u) => (
                 <tr key={u.id}>
                   <td className="p-2.5">
-                    <div className="font-bold text-slate-200">{u.name}</div>
-                    <div className="text-[11px] text-slate-400">{u.email}</div>
+                    <div className="font-bold text-slate-700">{u.name}</div>
+                    <div className="text-[11px] text-slate-500">{u.email}</div>
                   </td>
-                  <td className="p-2.5 font-mono text-[11px] text-slate-300">{u.accountType}</td>
+                  <td className="p-2.5 font-mono text-[11px] text-slate-600">{u.accountType}</td>
                   <td className="p-2.5">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-mono ${
-                        u.is2FAEnabled ? 'bg-emerald-500/20 text-emerald-300 font-bold' : 'bg-slate-800 text-slate-400'
+                        u.is2FAEnabled ? 'bg-emerald-50 text-emerald-700 font-bold' : 'bg-slate-100 text-slate-500'
                       }`}
                     >
                       {u.is2FAEnabled ? '2FA Enabled' : 'Disabled'}
@@ -296,9 +296,9 @@ export default function SecurityAdminPage() {
                   </td>
                   <td className="p-2.5">
                     {u.suspensionType === 'NONE' ? (
-                      <span className="text-emerald-400 font-mono text-[11px]">Active</span>
+                      <span className="text-emerald-600 font-mono text-[11px]">Active</span>
                     ) : (
-                      <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-300 font-mono font-bold text-[10px]">
+                      <span className="px-2 py-0.5 rounded bg-red-50 text-red-700 font-mono font-bold text-[10px]">
                         {u.suspensionType} ({u.suspensionReason})
                       </span>
                     )}
@@ -307,14 +307,14 @@ export default function SecurityAdminPage() {
                     {u.suspensionType === 'NONE' ? (
                       <button
                         onClick={() => setSelectedUser(u)}
-                        className="px-2.5 py-1 rounded bg-red-500/20 hover:bg-red-500/30 text-red-300 text-[11px] font-semibold transition-colors"
+                        className="px-2.5 py-1 rounded bg-red-50 hover:bg-red-500/30 text-red-700 text-[11px] font-semibold transition-colors"
                       >
                         Suspend Account
                       </button>
                     ) : (
                       <button
                         onClick={() => handleReactivate(u.id)}
-                        className="px-2.5 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold transition-colors"
+                        className="px-2.5 py-1 rounded bg-emerald-50 hover:bg-emerald-500/30 text-emerald-700 text-[11px] font-semibold transition-colors"
                       >
                         Reactivate
                       </button>
@@ -329,18 +329,18 @@ export default function SecurityAdminPage() {
 
       {/* Suspension Modal */}
       {selectedUser && (
-        <div className="glass-panel p-6 rounded-3xl border border-red-500/40 bg-slate-900/95 space-y-4">
-          <h2 className="text-sm font-bold text-red-300">
+        <div className="p-6 rounded-3xl border border-red-200 bg-white/95 space-y-4">
+          <h2 className="text-sm font-bold text-red-700">
             Suspend Account: {selectedUser.name} ({selectedUser.email})
           </h2>
           <form onSubmit={handleSuspend} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs text-slate-300 mb-1">Suspension Mode:</label>
+                <label className="block text-xs text-slate-600 mb-1">Suspension Mode:</label>
                 <select
                   value={suspensionType}
                   onChange={(e) => setSuspensionType(e.target.value as SuspensionType)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900"
                 >
                   <option value={SuspensionType.INDEFINITE}>Indefinite Suspension</option>
                   <option value={SuspensionType.TEMPORARY}>Temporary (Auto-Expiring)</option>
@@ -348,33 +348,33 @@ export default function SecurityAdminPage() {
               </div>
               {suspensionType === SuspensionType.TEMPORARY && (
                 <div>
-                  <label className="block text-xs text-slate-300 mb-1">Duration (Days):</label>
+                  <label className="block text-xs text-slate-600 mb-1">Duration (Days):</label>
                   <input
                     type="number"
                     min="1"
                     value={suspensionDays}
                     onChange={(e) => setSuspensionDays(parseInt(e.target.value) || 1)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white font-mono"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono"
                   />
                 </div>
               )}
             </div>
             <div>
-              <label className="block text-xs text-slate-300 mb-1">Mandatory Suspension Reason *</label>
+              <label className="block text-xs text-slate-600 mb-1">Mandatory Suspension Reason *</label>
               <textarea
                 required
                 rows={2}
                 value={suspensionReason}
                 onChange={(e) => setSuspensionReason(e.target.value)}
                 placeholder="e.g. Repeated payment default or policy violation"
-                className="w-full px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900"
               />
             </div>
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setSelectedUser(null)}
-                className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 text-xs"
+                className="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-600 text-xs"
               >
                 Cancel
               </button>

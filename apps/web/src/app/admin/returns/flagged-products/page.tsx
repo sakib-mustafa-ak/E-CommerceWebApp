@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   ArrowLeft,
   RefreshCw,
-  Package,
   CheckCircle2,
   XCircle,
 } from 'lucide-react';
@@ -23,8 +22,8 @@ export default function HighReturnProductsPage() {
   const fetchFlaggedProducts = async () => {
     try {
       setIsLoading(true);
-      const token = localStorage.getItem('token');
-      const res = await fetch('http://localhost:4000/api/returns/products/flagged', {
+      const token = localStorage.getItem('siamaqua_token') || localStorage.getItem('token');
+      const res = await fetch('http://localhost:3001/api/returns/products/flagged', {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (res.ok) {
@@ -39,99 +38,107 @@ export default function HighReturnProductsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
-      <div className="border-b border-slate-800 bg-slate-900/60 sticky top-16 z-30 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/admin/returns"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <div>
-              <h1 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
-                High-Return-Rate Flagged Medicines
-              </h1>
-              <p className="text-xs text-slate-400">
-                Products automatically flagged for procurement & quality review based on return frequency
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={fetchFlaggedProducts}
-            className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-white border border-[#E2E8F0] rounded-lg p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/returns"
+            className="p-1.5 rounded border border-[#CBD5E1] bg-white hover:bg-[#F8F9FA] text-[#475569] transition-colors"
           >
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
-          </button>
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight text-[#0F172A] flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-red-600" />
+              High-Return-Rate Flagged Medicines
+            </h1>
+            <p className="text-xs text-[#64748B] mt-0.5">
+              Automated procurement &amp; batch quality alerts triggered by return frequency thresholds
+            </p>
+          </div>
         </div>
+
+        <button
+          onClick={fetchFlaggedProducts}
+          className="px-3 py-1.5 rounded border border-[#CBD5E1] bg-white hover:bg-[#F8F9FA] text-[#334155] text-xs font-semibold flex items-center gap-1.5 transition-colors"
+        >
+          <RefreshCw className="w-3.5 h-3.5" /> Refresh
+        </button>
       </div>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
-        <div className="glass-panel rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-semibold">
+      {/* Flagged Products Ledger Table */}
+      <div className="bg-white border border-[#E2E8F0] rounded-lg shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
+            <thead className="bg-[#F8F9FA] border-b border-[#E2E8F0] text-[#475569] font-medium">
+              <tr>
+                <th className="p-3">Medicine Brand</th>
+                <th className="p-3">Generic Formulation</th>
+                <th className="p-3">Manufacturer</th>
+                <th className="p-3">Return Incidents</th>
+                <th className="p-3">Total Units</th>
+                <th className="p-3">Return Policy</th>
+                <th className="p-3">Threshold Flag Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#E2E8F0]">
+              {isLoading ? (
                 <tr>
-                  <th className="p-4">Medicine Brand</th>
-                  <th className="p-4">Generic Tag</th>
-                  <th className="p-4">Manufacturer</th>
-                  <th className="p-4">Return Cases</th>
-                  <th className="p-4">Total Units Returned</th>
-                  <th className="p-4">Returnable Flag</th>
-                  <th className="p-4">Flag Reason / Alert</th>
+                  <td colSpan={7} className="p-8 text-center text-[#64748B]">
+                    Loading flagged items...
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/60">
-                {products.length === 0 ? (
-                  <tr>
-                    <td colSpan={7} className="p-8 text-center text-slate-500">
-                      No products flagged with high return rates.
+              ) : products.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="p-8 text-center text-[#64748B]">
+                    No medicines currently exceeding return rate threshold.
+                  </td>
+                </tr>
+              ) : (
+                products.map((prod) => (
+                  <tr
+                    key={prod.productId}
+                    className={`hover:bg-[#F8F9FA] transition-colors ${
+                      prod.isHighReturnRate ? 'bg-red-50/40' : ''
+                    }`}
+                  >
+                    <td className="p-3 font-semibold text-[#0F172A]">{prod.name}</td>
+                    <td className="p-3 text-[#0F5B78] font-mono text-[11px]">{prod.genericName}</td>
+                    <td className="p-3 text-[#475569]">{prod.companyName}</td>
+                    <td className="p-3 font-mono font-bold text-red-700 tabular-nums">
+                      {prod.returnCount} cases
+                    </td>
+                    <td className="p-3 font-mono text-[#0F172A] tabular-nums">
+                      {prod.totalUnitsReturned} units
+                    </td>
+                    <td className="p-3">
+                      {prod.isReturnable ? (
+                        <span className="text-emerald-700 font-medium flex items-center gap-1">
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Returnable
+                        </span>
+                      ) : (
+                        <span className="text-red-700 font-medium flex items-center gap-1">
+                          <XCircle className="w-3.5 h-3.5" /> Non-Returnable
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3">
+                      {prod.isHighReturnRate ? (
+                        <span className="px-2 py-0.5 rounded bg-red-50 text-red-800 border border-red-200 text-[10px] font-bold">
+                          {prod.highReturnFlagReason || 'Threshold Exceeded'}
+                        </span>
+                      ) : (
+                        <span className="text-[#64748B] font-mono text-[11px]">Normal Baseline</span>
+                      )}
                     </td>
                   </tr>
-                ) : (
-                  products.map((prod) => (
-                    <tr
-                      key={prod.productId}
-                      className={`hover:bg-slate-800/30 transition-colors ${
-                        prod.isHighReturnRate ? 'bg-red-950/20' : ''
-                      }`}
-                    >
-                      <td className="p-4 font-semibold text-slate-100">{prod.name}</td>
-                      <td className="p-4 text-sky-400">{prod.genericName}</td>
-                      <td className="p-4 text-slate-300">{prod.companyName}</td>
-                      <td className="p-4 font-mono font-bold text-red-400">{prod.returnCount} returns</td>
-                      <td className="p-4 font-mono text-slate-200">{prod.totalUnitsReturned} units</td>
-                      <td className="p-4">
-                        {prod.isReturnable ? (
-                          <span className="text-emerald-400 font-semibold flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Returnable
-                          </span>
-                        ) : (
-                          <span className="text-red-400 font-semibold flex items-center gap-1">
-                            <XCircle className="w-3.5 h-3.5" /> Non-Returnable
-                          </span>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        {prod.isHighReturnRate ? (
-                          <span className="px-2.5 py-1 rounded-lg bg-red-500/20 text-red-300 border border-red-500/40 text-[11px] font-bold">
-                            {prod.highReturnFlagReason || 'High return threshold exceeded'}
-                          </span>
-                        ) : (
-                          <span className="text-slate-500 font-mono">Normal</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

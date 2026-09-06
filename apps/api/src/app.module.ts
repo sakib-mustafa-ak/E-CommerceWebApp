@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PrismaService } from './common/services/prisma.service';
+import { PrismaModule } from './common/modules/prisma.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { SecurityModule } from './modules/security/security.module';
 import { RbacModule } from './modules/rbac/rbac.module';
@@ -33,6 +33,7 @@ import { BulkOrderModule } from './modules/bulk-order/bulk-order.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    PrismaModule,
     AuditModule,
     SecurityModule,
     RbacModule,
@@ -62,7 +63,5 @@ import { BulkOrderModule } from './modules/bulk-order/bulk-order.module';
     TicketsModule,
     BulkOrderModule,
   ],
-  providers: [PrismaService],
-  exports: [PrismaService],
 })
 export class AppModule {}

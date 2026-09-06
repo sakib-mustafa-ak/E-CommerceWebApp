@@ -197,7 +197,7 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center text-slate-400 text-xs">
+      <div className="min-h-[60vh] flex items-center justify-center text-slate-500 text-xs">
         Loading product details...
       </div>
     );
@@ -208,13 +208,13 @@ export default function ProductDetailPage() {
       <div className="min-h-[60vh] flex items-center justify-center p-4">
         <div className="text-center space-y-4 max-w-md">
           <div className="text-6xl font-extrabold text-slate-700 font-mono">404</div>
-          <h1 className="text-xl font-bold text-white">Product Not Found</h1>
-          <p className="text-xs text-slate-400">
+          <h1 className="text-xl font-bold text-slate-900">Product Not Found</h1>
+          <p className="text-xs text-slate-500">
             This product is either unavailable or restricted to authorized commercial distributors.
           </p>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-300 font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 text-xs text-slate-600 font-medium"
           >
             Back to Home
           </Link>
@@ -236,8 +236,8 @@ export default function ProductDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
         {/* Left: Product Visuals & Badges */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="glass-panel p-8 rounded-3xl border border-slate-800 bg-slate-900/90 aspect-square flex flex-col items-center justify-center text-center relative overflow-hidden group">
-            <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold text-4xl mb-4 group-hover:scale-105 transition-transform">
+          <div className="p-8 rounded-3xl border border-slate-200 bg-white aspect-square flex flex-col items-center justify-center text-center relative overflow-hidden group">
+            <div className="w-32 h-32 rounded-3xl bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-200 flex items-center justify-center text-sky-600 font-bold text-4xl mb-4 group-hover:scale-105 transition-transform">
               {product.productType === 'DIGITAL' ? <Download className="w-16 h-16" /> : <ShieldCheck className="w-16 h-16" />}
             </div>
 
@@ -245,19 +245,19 @@ export default function ProductDetailPage() {
               <span
                 className={`px-3 py-1 rounded-full text-[10px] font-bold font-mono ${
                   product.productType === 'DIGITAL'
-                    ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
-                    : 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                    ? 'bg-purple-50 text-purple-700 border border-purple-200'
+                    : 'bg-sky-50 text-sky-700 border border-sky-200'
                 }`}
               >
                 {product.productType === 'DIGITAL' ? '⚡ Instant Digital Download' : '📦 Physical Delivery'}
               </span>
 
               {product.isCodAvailable ? (
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold font-mono bg-emerald-50 text-emerald-600 border border-emerald-500/20">
                   ✓ COD Available
                 </span>
               ) : (
-                <span className="px-3 py-1 rounded-full text-[10px] font-bold font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <span className="px-3 py-1 rounded-full text-[10px] font-bold font-mono bg-amber-50 text-amber-600 border border-amber-200">
                   Pre-Payment Only
                 </span>
               )}
@@ -269,7 +269,7 @@ export default function ProductDetailPage() {
         <div className="lg:col-span-7 space-y-6">
           <div>
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-sky-400 font-mono uppercase tracking-wider">
+              <span className="text-xs font-bold text-sky-600 font-mono uppercase tracking-wider">
                 {product.companyName}
               </span>
               <div className="flex items-center gap-2">
@@ -277,8 +277,8 @@ export default function ProductDetailPage() {
                   onClick={handleToggleWishlist}
                   className={`p-2 rounded-xl border transition-all ${
                     isInWishlist
-                      ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
-                      : 'bg-slate-800/60 border-slate-700 text-slate-400 hover:text-white'
+                      ? 'bg-rose-50 border-rose-200 text-rose-600'
+                      : 'bg-slate-100/60 border-slate-200 text-slate-500 hover:text-slate-700'
                   }`}
                   title="Save to Wishlist"
                 >
@@ -286,7 +286,7 @@ export default function ProductDetailPage() {
                 </button>
                 <button
                   onClick={handleShare}
-                  className="p-2 rounded-xl bg-slate-800/60 border border-slate-700 text-slate-400 hover:text-white transition-all"
+                  className="p-2 rounded-xl bg-slate-100/60 border border-slate-200 text-slate-500 hover:text-white transition-all"
                   title="Share Deep Link"
                 >
                   <Share2 className="w-4 h-4" />
@@ -295,13 +295,13 @@ export default function ProductDetailPage() {
             </div>
 
             <h1 className="text-3xl font-extrabold text-white mt-1">{product.name}</h1>
-            <div className="text-sm text-slate-400 font-mono mt-1">
+            <div className="text-sm text-slate-500 font-mono mt-1">
               {product.genericName} • {product.dosageForm} ({product.strength})
             </div>
 
             {/* Ratings Summary */}
             <div className="flex items-center gap-2 mt-3 text-xs">
-              <div className="flex text-amber-400">
+              <div className="flex text-amber-600">
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
@@ -311,24 +311,24 @@ export default function ProductDetailPage() {
                   />
                 ))}
               </div>
-              <span className="font-bold text-white font-mono">{product.averageRating || '5.0'}</span>
+              <span className="font-bold text-slate-900 font-mono">{product.averageRating || '5.0'}</span>
               <span className="text-slate-500">({product.totalReviewsCount || reviews.length} verified reviews)</span>
             </div>
 
             {/* Verified Seller Attribution */}
             {resellerListing && (
-              <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/25 shadow-sm">
-                <Store className="w-4 h-4 text-indigo-400" />
+              <div className="mt-3 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-500/25 shadow-sm">
+                <Store className="w-4 h-4 text-indigo-600" />
                 <span>Verified Seller: <strong className="text-white">{resellerListing.sellerDisplayName}</strong></span>
               </div>
             )}
           </div>
 
           {/* Pricing Box with Quantity Discount Stepper */}
-          <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-5">
+          <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-5">
             <div className="flex justify-between items-baseline">
               <div>
-                <span className="text-xs text-slate-400">Public Retail Price</span>
+                <span className="text-xs text-slate-500">Public Retail Price</span>
                 <div className="flex items-baseline gap-3 mt-0.5">
                   <span className="text-3xl font-extrabold text-white font-mono">
                     ৳{pricing.unitPrice.toFixed(2)}
@@ -338,21 +338,21 @@ export default function ProductDetailPage() {
                       <span className="text-sm text-slate-500 line-through font-mono">
                         ৳{product.mrp.toFixed(2)}
                       </span>
-                      <span className="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-bold font-mono bg-emerald-50 text-emerald-700 border border-emerald-200">
                         {pricing.discountPercent}% OFF Tier
                       </span>
                     </>
                   )}
                 </div>
               </div>
-              <span className="text-xs text-slate-400 font-mono">{product.unit}</span>
+              <span className="text-xs text-slate-500 font-mono">{product.unit}</span>
             </div>
 
             {/* Quantity Stepper Table Directly on Product Page */}
             {product.quantityDiscountTiers && product.quantityDiscountTiers.length > 0 && (
-              <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
-                <div className="flex items-center gap-1.5 font-bold text-slate-300">
-                  <Tag className="w-3.5 h-3.5 text-sky-400" />
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+                <div className="flex items-center gap-1.5 font-bold text-slate-600">
+                  <Tag className="w-3.5 h-3.5 text-sky-600" />
                   <span>Quantity Volume Discount Stepper:</span>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
@@ -362,12 +362,12 @@ export default function ProductDetailPage() {
                       onClick={() => setQuantity(tier.minQty)}
                       className={`p-2.5 rounded-xl border text-center cursor-pointer transition-all ${
                         quantity >= tier.minQty
-                          ? 'bg-sky-500/20 border-sky-500 text-sky-300 font-bold'
-                          : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                          ? 'bg-sky-50 border-sky-500 text-sky-700 font-bold'
+                          : 'bg-white border-slate-200 text-slate-500 hover:border-slate-200'
                       }`}
                     >
                       <div className="font-mono">{tier.minQty}+ Units</div>
-                      <div className="text-[11px] text-emerald-400 font-bold">{tier.discountPercent}% Savings</div>
+                      <div className="text-[11px] text-emerald-600 font-bold">{tier.discountPercent}% Savings</div>
                     </div>
                   ))}
                 </div>
@@ -376,11 +376,11 @@ export default function ProductDetailPage() {
 
             {/* Quantity Selector */}
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs font-bold text-slate-300">Select Quantity:</span>
-              <div className="flex items-center gap-3 bg-slate-950 p-1 rounded-2xl border border-slate-800">
+              <span className="text-xs font-bold text-slate-600">Select Quantity:</span>
+              <div className="flex items-center gap-3 bg-slate-50 p-1 rounded-2xl border border-slate-200">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center font-bold"
+                  className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-700 text-white flex items-center justify-center font-bold"
                 >
                   <Minus className="w-3.5 h-3.5" />
                 </button>
@@ -389,7 +389,7 @@ export default function ProductDetailPage() {
                 </span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 text-white flex items-center justify-center font-bold"
+                  className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-700 text-white flex items-center justify-center font-bold"
                 >
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -397,13 +397,13 @@ export default function ProductDetailPage() {
             </div>
 
             {/* Total and Checkout Action */}
-            <div className="pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div>
-                <span className="text-[11px] text-slate-400">Total Calculated</span>
-                <div className="text-xl font-bold text-emerald-400 font-mono">
+                <span className="text-[11px] text-slate-500">Total Calculated</span>
+                <div className="text-xl font-bold text-emerald-600 font-mono">
                   ৳{pricing.totalPrice.toFixed(2)}
                   {pricing.savings > 0 && (
-                    <span className="text-xs text-emerald-300 font-normal ml-2">
+                    <span className="text-xs text-emerald-700 font-normal ml-2">
                       (Saved ৳{pricing.savings.toFixed(2)})
                     </span>
                   )}
@@ -424,22 +424,22 @@ export default function ProductDetailPage() {
 
       {/* Customer Reviews & Video Uploads Section */}
       <div className="space-y-6">
-        <div className="flex justify-between items-center border-b border-slate-800 pb-4">
+        <div className="flex justify-between items-center border-b border-slate-200 pb-4">
           <div>
-            <h2 className="text-xl font-bold text-white">Customer Reviews & Experiences</h2>
-            <p className="text-xs text-slate-400">Real verified customer feedback with photos and unboxing videos.</p>
+            <h2 className="text-xl font-bold text-slate-900">Customer Reviews & Experiences</h2>
+            <p className="text-xs text-slate-500">Real verified customer feedback with photos and unboxing videos.</p>
           </div>
 
           <button
             onClick={() => setShowReviewModal(true)}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 font-bold text-xs border border-slate-700 transition-all flex items-center gap-1.5"
+            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-700 text-sky-600 font-bold text-xs border border-slate-200 transition-all flex items-center gap-1.5"
           >
             <Plus className="w-3.5 h-3.5" /> Write a Review
           </button>
         </div>
 
         {reviews.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-3xl">
+          <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-200 rounded-3xl">
             No reviews submitted yet. Be the first verified customer to share your feedback!
           </div>
         ) : (
@@ -447,19 +447,19 @@ export default function ProductDetailPage() {
             {reviews.map((rev) => (
               <div
                 key={rev.id}
-                className="glass-panel p-5 rounded-3xl border border-slate-800 bg-slate-900/60 space-y-3"
+                className="p-5 rounded-3xl border border-slate-200 bg-white space-y-3"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="font-bold text-white flex items-center gap-2 text-xs">
+                    <div className="font-bold text-slate-900 flex items-center gap-2 text-xs">
                       {rev.reviewerName}
                       {rev.isVerifiedPurchase && (
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-500/20">
                           ✓ Verified Purchase
                         </span>
                       )}
                     </div>
-                    <div className="flex text-amber-400 mt-1">
+                    <div className="flex text-amber-600 mt-1">
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
@@ -475,10 +475,10 @@ export default function ProductDetailPage() {
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed">{rev.comment}</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{rev.comment}</p>
 
                 {rev.videoUrl && (
-                  <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs flex items-center gap-2 text-sky-400">
+                  <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs flex items-center gap-2 text-sky-600">
                     <Video className="w-4 h-4" />
                     <a
                       href={rev.videoUrl}
@@ -498,47 +498,47 @@ export default function ProductDetailPage() {
 
       {/* Frequently Bought Together Bundle */}
       {frequentlyBought && frequentlyBought.bundledProducts && frequentlyBought.bundledProducts.length > 0 && (
-        <div className="glass-panel p-6 rounded-3xl border border-indigo-500/30 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-950 space-y-4 shadow-xl">
+        <div className="p-6 rounded-3xl border border-indigo-200 bg-gradient-to-r from-indigo-950/40 via-slate-900 to-slate-950 space-y-4 shadow-xl">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
             <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 font-mono uppercase tracking-wider">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 font-mono uppercase tracking-wider">
                 <Sparkles className="w-4 h-4" />
                 <span>Frequently Bought Together</span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Customers who ordered this medicine commonly bundle these items. Save 5% automatically!
               </p>
             </div>
-            <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold border border-emerald-500/40">
+            <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-mono text-xs font-bold border border-emerald-200">
               5% COMBO SAVINGS
             </span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
             {/* Main Product */}
-            <div className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
-              <span className="text-[10px] font-mono text-indigo-400 font-bold uppercase">Main Selection</span>
-              <div className="font-bold text-white text-xs truncate">{frequentlyBought.mainProduct.name}</div>
-              <div className="text-xs font-mono font-bold text-sky-400">৳{frequentlyBought.mainProduct.priceBdt}</div>
+            <div className="p-3.5 rounded-2xl bg-white border border-slate-200 space-y-1">
+              <span className="text-[10px] font-mono text-indigo-600 font-bold uppercase">Main Selection</span>
+              <div className="font-bold text-slate-900 text-xs truncate">{frequentlyBought.mainProduct.name}</div>
+              <div className="text-xs font-mono font-bold text-sky-600">৳{frequentlyBought.mainProduct.priceBdt}</div>
             </div>
 
             {/* Bundled Complementary Items */}
             {frequentlyBought.bundledProducts.map((bundleItem: any) => (
-              <div key={bundleItem.id} className="p-3.5 rounded-2xl bg-slate-950/80 border border-slate-800 space-y-1">
-                <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">+ Complementary</span>
-                <div className="font-bold text-white text-xs truncate">{bundleItem.name}</div>
-                <div className="text-xs font-mono font-bold text-sky-400">৳{bundleItem.priceBdt}</div>
+              <div key={bundleItem.id} className="p-3.5 rounded-2xl bg-white border border-slate-200 space-y-1">
+                <span className="text-[10px] font-mono text-emerald-600 font-bold uppercase">+ Complementary</span>
+                <div className="font-bold text-slate-900 text-xs truncate">{bundleItem.name}</div>
+                <div className="text-xs font-mono font-bold text-sky-600">৳{bundleItem.priceBdt}</div>
               </div>
             ))}
           </div>
 
-          <div className="pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
+          <div className="pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
             <div className="flex items-center gap-3">
-              <span className="text-slate-400">
+              <span className="text-slate-500">
                 Combo Price: <span className="line-through text-slate-500">৳{frequentlyBought.bundleOriginalPriceBdt}</span>{' '}
-                <strong className="text-emerald-400 text-sm">৳{frequentlyBought.bundleTotalPriceBdt}</strong>
+                <strong className="text-emerald-600 text-sm">৳{frequentlyBought.bundleTotalPriceBdt}</strong>
               </span>
-              <span className="text-emerald-400 font-semibold">(Save ৳{frequentlyBought.bundleDiscountSavingsBdt})</span>
+              <span className="text-emerald-600 font-semibold">(Save ৳{frequentlyBought.bundleDiscountSavingsBdt})</span>
             </div>
 
             <button
@@ -560,11 +560,11 @@ export default function ProductDetailPage() {
         <div className="space-y-4 pt-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Layers className="w-4 h-4 text-emerald-400" />
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-emerald-600" />
                 Generic Equivalents & Alternative Brands ({product?.genericName})
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Exact active chemical formula from verified Bangladesh DGDA-approved manufacturers
               </p>
             </div>
@@ -575,25 +575,25 @@ export default function ProductDetailPage() {
               <Link
                 key={sub.id}
                 href={`/products/${sub.slug}`}
-                className="p-4 rounded-2xl border border-slate-800 bg-slate-900/70 hover:border-emerald-500/40 transition-all group space-y-2 flex flex-col justify-between"
+                className="p-4 rounded-2xl border border-slate-200 bg-white/70 hover:border-emerald-200 transition-all group space-y-2 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex justify-between items-start gap-2">
-                    <span className="font-bold text-xs text-white group-hover:text-emerald-300 transition-colors">
+                    <span className="font-bold text-xs text-white group-hover:text-emerald-700 transition-colors">
                       {sub.name}
                     </span>
                     {sub.discountPercentage && sub.discountPercentage > 0 && (
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/40">
+                      <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-mono text-[10px] font-bold border border-emerald-200">
                         Save {sub.discountPercentage}%
                       </span>
                     )}
                   </div>
-                  <div className="text-[11px] text-slate-400 mt-1">{sub.companyName}</div>
+                  <div className="text-[11px] text-slate-500 mt-1">{sub.companyName}</div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-800/80 flex justify-between items-center text-xs font-mono">
-                  <span className="font-bold text-emerald-400">৳{sub.priceBdt}</span>
-                  <span className="text-[10px] text-slate-500 group-hover:text-slate-300 flex items-center gap-1">
+                <div className="pt-2 border-t border-slate-200 flex justify-between items-center text-xs font-mono">
+                  <span className="font-bold text-emerald-600">৳{sub.priceBdt}</span>
+                  <span className="text-[10px] text-slate-500 group-hover:text-slate-600 flex items-center gap-1">
                     Compare <ArrowRight className="w-3 h-3" />
                   </span>
                 </div>
@@ -605,9 +605,9 @@ export default function ProductDetailPage() {
 
       {/* "Recommended for You" Personalized Carousel */}
       {recommendations.length > 0 && (
-        <div className="space-y-4 pt-6 border-t border-slate-800">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 font-mono uppercase tracking-wider">
-            <Sparkles className="w-4 h-4 text-sky-400" />
+        <div className="space-y-4 pt-6 border-t border-slate-200">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-500 font-mono uppercase tracking-wider">
+            <Sparkles className="w-4 h-4 text-sky-600" />
             <span>Recommended For You</span>
           </div>
 
@@ -616,13 +616,13 @@ export default function ProductDetailPage() {
               <Link
                 key={rec.id}
                 href={`/products/${rec.slug}`}
-                className="glass-panel p-4 rounded-2xl border border-slate-800 bg-slate-900/60 hover:border-sky-500/40 transition-all group space-y-2"
+                className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-sky-200 transition-all group space-y-2"
               >
-                <div className="font-bold text-white text-xs group-hover:text-sky-300 transition-colors">
+                <div className="font-bold text-slate-900 text-xs group-hover:text-sky-700 transition-colors">
                   {rec.name}
                 </div>
-                <div className="text-[11px] text-slate-400 font-mono">{rec.genericName}</div>
-                <div className="flex justify-between items-center pt-2 text-xs font-mono font-bold text-sky-400">
+                <div className="text-[11px] text-slate-500 font-mono">{rec.genericName}</div>
+                <div className="flex justify-between items-center pt-2 text-xs font-mono font-bold text-sky-600">
                   <span>৳{rec.priceBdt || rec.mrp}</span>
                   <span className="text-[10px] text-slate-500">{rec.companyName}</span>
                 </div>
@@ -637,14 +637,14 @@ export default function ProductDetailPage() {
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <form
             onSubmit={handleSubmitReview}
-            className="glass-panel max-w-md w-full p-6 rounded-3xl border border-slate-700 bg-slate-900 space-y-4 shadow-2xl"
+            className="max-w-md w-full p-6 rounded-3xl border border-slate-200 bg-white space-y-4 shadow-2xl"
           >
-            <div className="flex justify-between items-center border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white">Write a Product Review</h3>
+            <div className="flex justify-between items-center border-b border-slate-200 pb-3">
+              <h3 className="text-base font-bold text-slate-900">Write a Product Review</h3>
               <button
                 type="button"
                 onClick={() => setShowReviewModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-500 hover:text-white"
               >
                 ✕
               </button>
@@ -652,7 +652,7 @@ export default function ProductDetailPage() {
 
             <div className="space-y-3 text-xs">
               <div>
-                <label className="text-slate-300 font-bold block mb-1">Your Rating</label>
+                <label className="text-slate-600 font-bold block mb-1">Your Rating</label>
                 <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
@@ -661,8 +661,8 @@ export default function ProductDetailPage() {
                       onClick={() => setReviewRating(star)}
                       className={`p-2 rounded-xl border ${
                         reviewRating >= star
-                          ? 'bg-amber-500/20 border-amber-500 text-amber-400'
-                          : 'bg-slate-800 border-slate-700 text-slate-500'
+                          ? 'bg-amber-50 border-amber-500 text-amber-600'
+                          : 'bg-slate-100 border-slate-200 text-slate-500'
                       }`}
                     >
                       <Star className="w-5 h-5 fill-current" />
@@ -673,54 +673,54 @@ export default function ProductDetailPage() {
 
               {!user && (
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Your Name</label>
+                  <label className="text-slate-600 font-bold block mb-1">Your Name</label>
                   <input
                     type="text"
                     required
                     value={guestReviewerName}
                     onChange={(e) => setGuestReviewerName(e.target.value)}
                     placeholder="e.g. Asif Rahman"
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-sans"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-sans"
                   />
                 </div>
               )}
 
               <div>
-                <label className="text-slate-300 font-bold block mb-1">Your Feedback</label>
+                <label className="text-slate-600 font-bold block mb-1">Your Feedback</label>
                 <textarea
                   rows={3}
                   required
                   value={reviewComment}
                   onChange={(e) => setReviewComment(e.target.value)}
                   placeholder="Share details of your experience, effectiveness, packaging..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white resize-none"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 resize-none"
                 />
               </div>
 
               <div>
-                <label className="text-slate-300 font-bold block mb-1">Video Review URL (Optional)</label>
+                <label className="text-slate-600 font-bold block mb-1">Video Review URL (Optional)</label>
                 <input
                   type="url"
                   value={reviewVideoUrl}
                   onChange={(e) => setReviewVideoUrl(e.target.value)}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-800">
+            <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 type="button"
                 onClick={() => setShowReviewModal(false)}
-                className="px-4 py-2 rounded-xl text-slate-400 hover:text-white font-bold text-xs"
+                className="px-4 py-2 rounded-xl text-slate-500 hover:text-white font-bold text-xs"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={submittingReview}
-                className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-lg shadow-sky-500/20 disabled:opacity-50"
+                className="px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-lg disabled:opacity-50"
               >
                 {submittingReview ? 'Publishing...' : 'Submit Review'}
               </button>

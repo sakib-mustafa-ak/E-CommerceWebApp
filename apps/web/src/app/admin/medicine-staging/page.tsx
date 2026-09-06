@@ -135,23 +135,23 @@ export default function MedicineStagingAdminPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl font-bold text-white">MedEx Medicine Import & Staging Review Pipeline</h1>
-        <p className="text-xs text-slate-400">
+        <h1 className="text-xl font-bold text-slate-900">MedEx Medicine Import & Staging Review Pipeline</h1>
+        <p className="text-xs text-slate-500">
           Stage bulk medicine batches, inspect de-duplication warnings and generic link health, and safely publish to production.
         </p>
       </div>
 
       {message && (
-        <div className="p-3.5 rounded-xl bg-sky-500/10 border border-sky-500/30 text-xs text-sky-300 flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-sky-400" />
+        <div className="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-xs text-sky-700 flex items-center gap-2">
+          <CheckCircle2 className="w-4 h-4 text-sky-600" />
           <span>{message}</span>
         </div>
       )}
 
       {/* Upload & Staging Form */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <UploadCloud className="w-4 h-4 text-sky-400" />
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <UploadCloud className="w-4 h-4 text-sky-600" />
           Stage New Medicine Batch (CSV Stream)
         </h2>
 
@@ -163,7 +163,7 @@ export default function MedicineStagingAdminPage() {
               value={fileName}
               onChange={(e) => setFileName(e.target.value)}
               placeholder="Batch File Name (e.g. square_catalog_2026.csv)"
-              className="flex-1 px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white"
+              className="flex-1 px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900"
             />
           </div>
 
@@ -172,13 +172,13 @@ export default function MedicineStagingAdminPage() {
             rows={5}
             value={csvContent}
             onChange={(e) => setCsvContent(e.target.value)}
-            className="w-full p-3.5 bg-slate-950 border border-slate-700/80 rounded-2xl text-xs font-mono text-slate-200 focus:outline-none focus:border-sky-500"
+            className="w-full p-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-mono text-slate-700 focus:outline-none focus:border-sky-500"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="py-2.5 px-5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-md shadow-sky-500/20 transition-all flex items-center gap-2"
+            className="py-2.5 px-5 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs shadow-md  transition-all flex items-center gap-2"
           >
             <Layers className="w-4 h-4" />
             <span>{loading ? 'Analyzing & De-duplicating...' : 'Stage Batch & Run De-duplication Check'}</span>
@@ -187,15 +187,15 @@ export default function MedicineStagingAdminPage() {
       </div>
 
       {/* Staging Batches List */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 space-y-4">
-        <h2 className="text-base font-bold text-white flex items-center gap-2">
-          <FileSpreadsheet className="w-4 h-4 text-amber-400" />
+      <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+        <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <FileSpreadsheet className="w-4 h-4 text-amber-600" />
           Staged Batches in Review Queue
         </h2>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
               <tr>
                 <th className="p-3">Batch Number</th>
                 <th className="p-3">File Name</th>
@@ -208,18 +208,18 @@ export default function MedicineStagingAdminPage() {
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-medium">
               {batches.map((b) => (
-                <tr key={b.id} className="hover:bg-slate-800/30">
-                  <td className="p-3 font-mono font-bold text-sky-400">{b.batchNumber}</td>
-                  <td className="p-3 text-slate-200">{b.fileName}</td>
+                <tr key={b.id} className="hover:bg-slate-100/30">
+                  <td className="p-3 font-mono font-bold text-sky-600">{b.batchNumber}</td>
+                  <td className="p-3 text-slate-700">{b.fileName}</td>
                   <td className="p-3 text-center font-mono">{b.totalRows}</td>
-                  <td className="p-3 text-center font-mono text-emerald-400 font-bold">{b.validRows}</td>
-                  <td className="p-3 text-center font-mono text-amber-400 font-bold">{b.duplicateRows}</td>
+                  <td className="p-3 text-center font-mono text-emerald-600 font-bold">{b.validRows}</td>
+                  <td className="p-3 text-center font-mono text-amber-600 font-bold">{b.duplicateRows}</td>
                   <td className="p-3">
                     <span
                       className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                         b.status === 'PUBLISHED'
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : 'bg-amber-500/20 text-amber-300'
+                          ? 'bg-emerald-50 text-emerald-700'
+                          : 'bg-amber-50 text-amber-700'
                       }`}
                     >
                       {b.status}
@@ -228,7 +228,7 @@ export default function MedicineStagingAdminPage() {
                   <td className="p-3 text-right">
                     <button
                       onClick={() => fetchBatchDetails(b.id)}
-                      className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-700 text-xs font-semibold transition-colors"
                     >
                       Inspect Items
                     </button>
@@ -242,14 +242,14 @@ export default function MedicineStagingAdminPage() {
 
       {/* Selected Batch Items Detail Inspector */}
       {selectedBatch && (
-        <div className="glass-panel p-6 rounded-3xl border border-sky-500/40 bg-slate-900/95 space-y-4">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-800">
+        <div className="p-6 rounded-3xl border border-sky-200 bg-white/95 space-y-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 pb-3 border-b border-slate-200">
             <div>
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <span>Batch Inspector: {selectedBatch.batchNumber}</span>
-                <span className="text-xs text-slate-400">({selectedBatch.fileName})</span>
+                <span className="text-xs text-slate-500">({selectedBatch.fileName})</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 mt-0.5">
                 Review flagged duplicate products and individual approval status before publishing.
               </p>
             </div>
@@ -268,7 +268,7 @@ export default function MedicineStagingAdminPage() {
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-mono text-[10px] border-b border-slate-800">
+              <thead className="bg-slate-50 text-slate-500 uppercase font-mono text-[10px] border-b border-slate-200">
                 <tr>
                   <th className="p-2.5">Brand Name</th>
                   <th className="p-2.5">Generic Tag</th>
@@ -282,21 +282,21 @@ export default function MedicineStagingAdminPage() {
               </thead>
               <tbody className="divide-y divide-slate-800/60 font-medium">
                 {selectedBatch.items?.map((item: any) => (
-                  <tr key={item.id} className="hover:bg-slate-800/30">
-                    <td className="p-2.5 font-bold text-slate-100">{item.brandName}</td>
-                    <td className="p-2.5 text-sky-400 font-mono">{item.genericName}</td>
-                    <td className="p-2.5 text-slate-300">{item.companyName}</td>
-                    <td className="p-2.5 text-slate-400">
+                  <tr key={item.id} className="hover:bg-slate-100/30">
+                    <td className="p-2.5 font-bold text-slate-900">{item.brandName}</td>
+                    <td className="p-2.5 text-sky-600 font-mono">{item.genericName}</td>
+                    <td className="p-2.5 text-slate-600">{item.companyName}</td>
+                    <td className="p-2.5 text-slate-500">
                       {item.dosageForm} ({item.strength})
                     </td>
                     <td className="p-2.5 font-mono text-white">৳{item.mrp.toFixed(2)}</td>
                     <td className="p-2.5">
                       {item.isDuplicate ? (
-                        <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
+                        <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
                           <AlertTriangle className="w-3 h-3" /> Duplicate in DB
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
+                        <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-mono text-[10px] font-bold flex items-center gap-1 w-fit">
                           <CheckCircle2 className="w-3 h-3" /> New Formulation
                         </span>
                       )}
@@ -305,10 +305,10 @@ export default function MedicineStagingAdminPage() {
                       <span
                         className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
                           item.status === 'APPROVED'
-                            ? 'bg-emerald-500/20 text-emerald-300'
+                            ? 'bg-emerald-50 text-emerald-700'
                             : item.status === 'PUBLISHED'
-                            ? 'bg-sky-500/20 text-sky-300'
-                            : 'bg-red-500/20 text-red-300'
+                            ? 'bg-sky-50 text-sky-700'
+                            : 'bg-red-50 text-red-700'
                         }`}
                       >
                         {item.status}
@@ -320,14 +320,14 @@ export default function MedicineStagingAdminPage() {
                           {item.status !== 'APPROVED' ? (
                             <button
                               onClick={() => handleToggleItemStatus(item.id, 'APPROVED')}
-                              className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 text-[10px] font-semibold transition-colors"
+                              className="px-2 py-1 rounded bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-700 text-[10px] font-semibold transition-colors"
                             >
                               Approve
                             </button>
                           ) : (
                             <button
                               onClick={() => handleToggleItemStatus(item.id, 'REJECTED')}
-                              className="px-2 py-1 rounded bg-red-600/20 hover:bg-red-600/30 text-red-300 text-[10px] font-semibold transition-colors"
+                              className="px-2 py-1 rounded bg-red-600/20 hover:bg-red-600/30 text-red-700 text-[10px] font-semibold transition-colors"
                             >
                               Reject
                             </button>

@@ -133,53 +133,89 @@ export default function MpoPortalPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      {/* Header Profile Card */}
-      <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/90 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-xl">
-            <Shield className="w-7 h-7" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold font-mono text-amber-400 uppercase tracking-wider">
-                Anonymous Identity Protection Active
-              </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                Verified Rep
-              </span>
-            </div>
-            <h1 className="text-2xl font-bold text-white mt-1">
-              {profile?.anonymousLabel || 'MPO Representative Portal'}
-            </h1>
-            <div className="text-xs text-slate-400 mt-1 flex items-center gap-3">
-              <span>Territory: <strong className="text-sky-300">{profile?.territory || 'Assigned Zone'}</strong></span>
-              <span>•</span>
-              <span>Catalog Subset: <strong className="text-white">{catalog.length} Products</strong></span>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
+      {/* Hero Banner */}
+      <div className="relative overflow-hidden bg-gradient-to-b from-amber-50 via-white to-slate-50 border-b border-slate-200 pt-10 pb-16">
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-100/50 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-orange-100/50 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Stats */}
-        <div className="flex gap-4 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
-          <div className="text-right">
-            <div className="text-[10px] uppercase font-bold text-slate-400 font-mono">Target Sales Volume</div>
-            <div className="text-xl font-bold text-emerald-400 font-mono">
-              ৳{profile?.totalSalesVolume?.toLocaleString() || 0}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-700 text-xs font-semibold">
+                <Shield className="w-4 h-4 text-amber-500" />
+                <span>Anonymous Identity Protection Active</span>
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-500/20 ml-1">
+                  Verified Rep
+                </span>
+              </div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight">
+                {profile?.anonymousLabel || 'MPO Representative Portal'}
+              </h1>
+              <p className="text-slate-500 text-sm sm:text-base leading-relaxed">
+                Territory: <strong className="text-sky-700">{profile?.territory || 'Assigned Zone'}</strong> • Catalog Subset: <strong className="text-slate-700">{catalog.length} Products</strong>
+              </p>
             </div>
-            <div className="text-[10px] text-slate-500">
-              {profile?.totalSalesCount || 0} Deals Fulfilled
+
+            {/* Stats */}
+            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+              <div className="px-5 py-3 rounded-2xl bg-white border border-slate-200 text-right">
+                <div className="text-[10px] uppercase font-bold text-slate-500 font-mono">Target Sales Volume</div>
+                <div className="text-xl font-bold text-emerald-600 font-mono">
+                  ৳{profile?.totalSalesVolume?.toLocaleString() || 0}
+                </div>
+                <div className="text-[10px] text-slate-500">
+                  {profile?.totalSalesCount || 0} Deals Fulfilled
+                </div>
+              </div>
             </div>
+          </div>
+
+          {/* Tabs */}
+          <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            <button
+              onClick={() => setActiveTab('listings')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'listings'
+                  ? 'bg-[#0F5B78] text-white shadow-md shadow-[#0F5B78]/20'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" /> My Listings ({listings.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('new-listing')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'new-listing'
+                  ? 'bg-[#0F5B78] text-white shadow-md shadow-[#0F5B78]/20'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+              }`}
+            >
+              <Plus className="w-3.5 h-3.5" /> Submit Stock
+            </button>
+            <button
+              onClick={() => setActiveTab('catalog')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                activeTab === 'catalog'
+                  ? 'bg-[#0F5B78] text-white shadow-md shadow-[#0F5B78]/20'
+                  : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200'
+              }`}
+            >
+              <Search className="w-3.5 h-3.5" /> My Catalog ({catalog.length})
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-6">
 
       {message && (
         <div
           className={`p-4 rounded-2xl text-xs font-semibold flex items-center gap-2 ${
             message.type === 'success'
-              ? 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20'
-              : 'bg-rose-500/10 text-rose-300 border border-rose-500/20'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-500/20'
+              : 'bg-rose-50 text-rose-700 border border-rose-500/20'
           }`}
         >
           {message.type === 'success' ? <CheckCircle2 className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
@@ -187,45 +223,11 @@ export default function MpoPortalPage() {
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-slate-800 pb-2">
-        <button
-          onClick={() => setActiveTab('listings')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'listings'
-              ? 'bg-slate-800 text-sky-400 border border-slate-700'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Layers className="w-4 h-4" /> My Listings & Incoming Bids ({listings.length})
-        </button>
-        <button
-          onClick={() => setActiveTab('new-listing')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'new-listing'
-              ? 'bg-slate-800 text-sky-400 border border-slate-700'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Plus className="w-4 h-4" /> Submit Stock for Target
-        </button>
-        <button
-          onClick={() => setActiveTab('catalog')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'catalog'
-              ? 'bg-slate-800 text-sky-400 border border-slate-700'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Search className="w-4 h-4" /> My Product Subset ({catalog.length})
-        </button>
-      </div>
-
       {/* TAB 1: My Listings & Bids */}
       {activeTab === 'listings' && (
         <div className="space-y-4">
           {listings.length === 0 && !loading && (
-            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-800 rounded-3xl space-y-3">
+            <div className="p-12 text-center text-slate-500 text-xs border border-dashed border-slate-200 rounded-3xl space-y-3">
               <div>No stock listings submitted yet.</div>
               <button
                 onClick={() => setActiveTab('new-listing')}
@@ -240,37 +242,37 @@ export default function MpoPortalPage() {
             {listings.map((item) => (
               <div
                 key={item.id}
-                className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/60 space-y-4"
+                className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4"
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-sky-400 font-bold">{item.listingNumber}</span>
-                      <span className="text-slate-400">•</span>
-                      <h3 className="text-base font-bold text-white">{item.productName}</h3>
-                      <span className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded-full font-mono">
+                      <span className="font-mono text-xs text-sky-600 font-bold">{item.listingNumber}</span>
+                      <span className="text-slate-500">•</span>
+                      <h3 className="text-base font-bold text-slate-900">{item.productName}</h3>
+                      <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-mono">
                         {item.genericName}
                       </span>
                     </div>
-                    <div className="text-xs text-slate-400 mt-1 flex gap-4">
-                      <span>Offered: <strong className="text-white font-mono">{item.offeredQuantity} units</strong></span>
+                    <div className="text-xs text-slate-500 mt-1 flex gap-4">
+                      <span>Offered: <strong className="text-slate-700 font-mono">{item.offeredQuantity} units</strong></span>
                       {item.bonusQuantity > 0 && (
-                        <span className="text-emerald-400 font-bold">
+                        <span className="text-emerald-600 font-bold">
                           Bonus: +{item.bonusQuantity} free ({item.bonusRatio || 'Promo'})
                         </span>
                       )}
-                      <span>MRP: <strong className="text-slate-300 font-mono">৳{item.unitMrp}</strong></span>
-                      <span>Your Target Net: <strong className="text-amber-300 font-mono">৳{item.mpoTargetPrice}</strong></span>
+                      <span>MRP: <strong className="text-slate-600 font-mono">৳{item.unitMrp}</strong></span>
+                      <span>Your Target Net: <strong className="text-amber-700 font-mono">৳{item.mpoTargetPrice}</strong></span>
                     </div>
                   </div>
 
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-bold ${
                       item.status === 'BID_ACCEPTED'
-                        ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                        ? 'bg-emerald-50 text-emerald-600 border border-emerald-500/20'
                         : item.status === 'APPROVED'
-                        ? 'bg-sky-500/10 text-sky-400 border border-sky-500/20'
-                        : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
+                        ? 'bg-sky-50 text-sky-600 border border-sky-200'
+                        : 'bg-amber-50 text-amber-600 border border-amber-200'
                     }`}
                   >
                     {item.status === 'BID_ACCEPTED'
@@ -283,8 +285,8 @@ export default function MpoPortalPage() {
 
                 {/* Incoming Bids Section */}
                 {item.bids && item.bids.length > 0 && (
-                  <div className="pt-3 border-t border-slate-800/80 space-y-2">
-                    <div className="text-xs font-bold text-slate-300 flex items-center justify-between">
+                  <div className="pt-3 border-t border-slate-200 space-y-2">
+                    <div className="text-xs font-bold text-slate-600 flex items-center justify-between">
                       <span>Incoming Wholesaler Bids ({item.bids.length})</span>
                       <span className="text-[10px] text-slate-500 italic">
                         You hold final bid acceptance authority
@@ -295,33 +297,33 @@ export default function MpoPortalPage() {
                       {item.bids.map((bid: any) => (
                         <div
                           key={bid.id}
-                          className="p-3 bg-slate-800/50 rounded-2xl flex justify-between items-center text-xs"
+                          className="p-3 bg-slate-100/50 rounded-2xl flex justify-between items-center text-xs"
                         >
                           <div>
-                            <div className="font-bold text-white flex items-center gap-2">
+                            <div className="font-bold text-slate-900 flex items-center gap-2">
                               <span>{bid.wholesalerName}</span>
                               <span
                                 className={`text-[10px] px-2 py-0.5 rounded font-bold ${
                                   bid.status === 'ACCEPTED'
-                                    ? 'bg-emerald-500/20 text-emerald-300'
+                                    ? 'bg-emerald-50 text-emerald-700'
                                     : bid.status === 'REJECTED'
-                                    ? 'bg-rose-500/20 text-rose-300'
-                                    : 'bg-amber-500/20 text-amber-300'
+                                    ? 'bg-rose-50 text-rose-700'
+                                    : 'bg-amber-50 text-amber-700'
                                 }`}
                               >
                                 {bid.status}
                               </span>
                             </div>
-                            <div className="text-slate-400 text-[11px] mt-0.5">
-                              Quantity: <strong className="text-slate-200">{bid.bidQuantity} units</strong> • Bid Price:{' '}
-                              <strong className="text-emerald-400 font-mono">৳{bid.bidUnitPrice} / unit</strong>
+                            <div className="text-slate-500 text-[11px] mt-0.5">
+                              Quantity: <strong className="text-slate-700">{bid.bidQuantity} units</strong> • Bid Price:{' '}
+                              <strong className="text-emerald-600 font-mono">৳{bid.bidUnitPrice} / unit</strong>
                             </div>
                           </div>
 
                           {item.status === 'APPROVED' && bid.status === 'PENDING' && (
                             <button
                               onClick={() => handleAcceptBid(item.id, bid.id)}
-                              className="px-3 py-1.5 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-400 transition-all shadow-md shadow-emerald-500/20"
+                              className="px-3 py-1.5 rounded-xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-400 transition-all shadow-md "
                             >
                               Accept Winning Bid
                             </button>
@@ -342,16 +344,16 @@ export default function MpoPortalPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Product Picker */}
           <div className="lg:col-span-6 space-y-4">
-            <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/60 space-y-4">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Search className="w-4 h-4 text-sky-400" /> Select From Your Hand-Picked Products
+            <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Search className="w-4 h-4 text-sky-600" /> Select From Your Hand-Picked Products
               </h3>
               <input
                 type="text"
                 value={catalogSearch}
                 onChange={(e) => setCatalogSearch(e.target.value)}
                 placeholder="Filter brand or generic..."
-                className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-900 placeholder-slate-500 focus:outline-none focus:border-sky-500"
               />
 
               <div className="max-h-96 overflow-y-auto space-y-2 pr-1">
@@ -361,15 +363,15 @@ export default function MpoPortalPage() {
                     onClick={() => handleSelectProduct(product)}
                     className={`p-3 rounded-2xl text-xs cursor-pointer transition-all border ${
                       selectedProduct?.id === product.id
-                        ? 'bg-sky-500/20 border-sky-500 text-white'
-                        : 'bg-slate-800/40 border-slate-800 hover:bg-slate-800 text-slate-300'
+                        ? 'bg-sky-50 border-sky-500 text-sky-700'
+                        : 'bg-slate-100/40 border-slate-200 hover:bg-slate-100 text-slate-600'
                     }`}
                   >
                     <div className="font-bold">{product.name}</div>
-                    <div className="text-[11px] text-slate-400">
+                    <div className="text-[11px] text-slate-500">
                       {product.genericName} • {product.companyName}
                     </div>
-                    <div className="text-[11px] text-sky-300 font-mono mt-1">
+                    <div className="text-[11px] text-sky-700 font-mono mt-1">
                       MRP: ৳{product.mrp} • {product.unit}
                     </div>
                   </div>
@@ -382,73 +384,73 @@ export default function MpoPortalPage() {
           <div className="lg:col-span-6">
             <form
               onSubmit={handleSubmitListing}
-              className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/80 space-y-4"
+              className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4"
             >
-              <h3 className="text-sm font-bold text-white">Configure Quota Offer Details</h3>
-              <p className="text-xs text-slate-400">
+              <h3 className="text-sm font-bold text-slate-900">Configure Quota Offer Details</h3>
+              <p className="text-xs text-slate-500">
                 Goods physically route through Siam&apos;s Aqua. Payment is settled offline upon receipt.
               </p>
 
               {selectedProduct ? (
-                <div className="p-3 bg-sky-500/10 border border-sky-500/20 rounded-2xl text-xs">
-                  <div className="font-bold text-white">{selectedProduct.name}</div>
-                  <div className="text-slate-400">
+                <div className="p-3 bg-sky-50 border border-sky-200 rounded-2xl text-xs">
+                  <div className="font-bold text-slate-900">{selectedProduct.name}</div>
+                  <div className="text-slate-500">
                     {selectedProduct.genericName} • MRP: ৳{selectedProduct.mrp}
                   </div>
                 </div>
               ) : (
-                <div className="p-3 bg-slate-800/40 border border-dashed border-slate-700 rounded-2xl text-xs text-slate-500">
+                <div className="p-3 bg-slate-100/40 border border-dashed border-slate-200 rounded-2xl text-xs text-slate-500">
                   Select a product from the left to configure.
                 </div>
               )}
 
               <div className="space-y-3 text-xs">
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Offered Quantity (Boxes/Strips)</label>
+                  <label className="text-slate-600 font-bold block mb-1">Offered Quantity (Boxes/Strips)</label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={offeredQty}
                     onChange={(e) => setOfferedQty(parseInt(e.target.value, 10) || 0)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Bonus Ratio (e.g. 10+2, 20+5)</label>
+                  <label className="text-slate-600 font-bold block mb-1">Bonus Ratio (e.g. 10+2, 20+5)</label>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={bonusRatio}
                       onChange={(e) => setBonusRatio(e.target.value)}
                       placeholder="10+2"
-                      className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                      className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                     />
-                    <div className="px-3 py-2 rounded-xl bg-slate-800 text-emerald-400 font-mono font-bold whitespace-nowrap">
+                    <div className="px-3 py-2 rounded-xl bg-slate-100 text-emerald-600 font-mono font-bold whitespace-nowrap">
                       +{calculateBonusCount()} Free
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-slate-300 font-bold block mb-1">Your Target Net Unit Price (BDT)</label>
+                  <label className="text-slate-600 font-bold block mb-1">Your Target Net Unit Price (BDT)</label>
                   <input
                     type="number"
                     step="0.1"
                     required
                     value={targetPrice}
                     onChange={(e) => setTargetPrice(parseFloat(e.target.value) || 0)}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-white font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-900 font-mono"
                   />
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800">
+              <div className="pt-4 border-t border-slate-200">
                 <button
                   type="submit"
                   disabled={!selectedProduct || submitting}
-                  className="w-full py-2.5 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg shadow-sky-500/20"
+                  className="w-full py-2.5 rounded-xl bg-sky-500 text-white font-bold text-xs hover:bg-sky-400 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg "
                 >
                   <Send className="w-4 h-4" /> {submitting ? 'Submitting...' : 'Submit Quota Stock to Siam\'s Aqua'}
                 </button>
@@ -460,29 +462,30 @@ export default function MpoPortalPage() {
 
       {/* TAB 3: Catalog Subset */}
       {activeTab === 'catalog' && (
-        <div className="glass-panel p-6 rounded-3xl border border-slate-800 bg-slate-900/60 space-y-4">
+        <div className="p-6 rounded-3xl border border-slate-200 bg-white space-y-4">
           <div className="flex justify-between items-center">
-            <h3 className="text-sm font-bold text-white">Your Assigned Product Catalog (~900-1,000 Subset)</h3>
-            <span className="text-xs text-slate-400 font-mono">{catalog.length} Available</span>
+            <h3 className="text-sm font-bold text-slate-900">Your Assigned Product Catalog (~900-1,000 Subset)</h3>
+            <span className="text-xs text-slate-500 font-mono">{catalog.length} Available</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {catalog.map((product) => (
               <div
                 key={product.id}
-                className="p-4 bg-slate-800/40 border border-slate-800 rounded-2xl text-xs space-y-1"
+                className="p-4 bg-slate-100/40 border border-slate-200 rounded-2xl text-xs space-y-1"
               >
-                <div className="font-bold text-white">{product.name}</div>
-                <div className="text-[11px] text-slate-400">{product.genericName}</div>
-                <div className="flex justify-between items-center pt-2 text-slate-400 text-[11px]">
+                <div className="font-bold text-slate-900">{product.name}</div>
+                <div className="text-[11px] text-slate-500">{product.genericName}</div>
+                <div className="flex justify-between items-center pt-2 text-slate-500 text-[11px]">
                   <span>{product.companyName}</span>
-                  <span className="font-mono text-sky-400 font-bold">MRP: ৳{product.mrp}</span>
+                  <span className="font-mono text-sky-600 font-bold">MRP: ৳{product.mrp}</span>
                 </div>
               </div>
             ))}
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }

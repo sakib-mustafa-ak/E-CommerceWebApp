@@ -70,22 +70,22 @@ export default function PharmaTrackShortListPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
-      <div className="border-b border-slate-800 bg-slate-900/60 sticky top-16 z-30 backdrop-blur-md">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-24">
+      <div className="border-b border-slate-200 bg-white sticky top-16 z-30 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <Link
               href="/admin"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-700 text-slate-600 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div>
-              <h1 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                <FileSpreadsheet className="w-5 h-5 text-red-400" />
+              <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <FileSpreadsheet className="w-5 h-5 text-red-600" />
                 PharmaTrack Short List (Demand Log)
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Running ledger of medicines marked 'None Available' during staff fulfillment
               </p>
             </div>
@@ -93,7 +93,7 @@ export default function PharmaTrackShortListPage() {
 
           <button
             onClick={handleExportCsv}
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition-all"
+            className="px-4 py-2 rounded-xl bg-[#0F5B78] hover:bg-[#0d4f69] text-white text-xs font-bold flex items-center gap-1.5 shadow-md transition-all"
           >
             <Download className="w-4 h-4" /> Export CSV for Procurement
           </button>
@@ -102,7 +102,7 @@ export default function PharmaTrackShortListPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 space-y-6">
         {/* Filters */}
-        <div className="glass-panel p-4 rounded-2xl border border-slate-800 bg-slate-900/40 flex flex-wrap items-center justify-between gap-4">
+        <div className="p-4 rounded-2xl border border-slate-200 bg-white flex flex-wrap items-center justify-between gap-4">
           <div className="relative flex-1 min-w-[240px]">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input
@@ -111,7 +111,7 @@ export default function PharmaTrackShortListPage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && fetchShortList()}
-              className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-100 focus:outline-none focus:border-sky-500"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
             />
           </div>
 
@@ -119,7 +119,7 @@ export default function PharmaTrackShortListPage() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-sky-500"
+              className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-600 focus:outline-none focus:border-sky-500"
             >
               <option value="">All Statuses</option>
               <option value="OPEN">OPEN Demand</option>
@@ -129,7 +129,7 @@ export default function PharmaTrackShortListPage() {
 
             <button
               onClick={fetchShortList}
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-700 text-slate-600"
               title="Refresh"
             >
               <RefreshCw className="w-4 h-4" />
@@ -138,10 +138,10 @@ export default function PharmaTrackShortListPage() {
         </div>
 
         {/* Short List Table */}
-        <div className="glass-panel rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-semibold">
+              <thead className="bg-white border-b border-slate-200 text-slate-500 font-semibold">
                 <tr>
                   <th className="p-4">Product Name</th>
                   <th className="p-4">Generic Tag</th>
@@ -162,32 +162,32 @@ export default function PharmaTrackShortListPage() {
                   </tr>
                 ) : (
                   items.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-800/30 transition-colors">
-                      <td className="p-4 font-semibold text-slate-100">{item.productName}</td>
-                      <td className="p-4 text-sky-400">{item.genericName}</td>
-                      <td className="p-4 text-slate-300">{item.companyName}</td>
-                      <td className="p-4 font-mono font-bold text-red-400">
+                    <tr key={item.id} className="hover:bg-slate-100/30 transition-colors">
+                      <td className="p-4 font-semibold text-slate-900">{item.productName}</td>
+                      <td className="p-4 text-sky-600">{item.genericName}</td>
+                      <td className="p-4 text-slate-600">{item.companyName}</td>
+                      <td className="p-4 font-mono font-bold text-red-600">
                         {item.requestedQuantity} {item.unitType}s
                       </td>
                       <td className="p-4">
-                        <div className="font-medium text-slate-200">{item.shopName}</div>
+                        <div className="font-medium text-slate-700">{item.shopName}</div>
                         <div className="text-[10px] text-slate-500">{item.shopPhone || item.orderNumber}</div>
                       </td>
-                      <td className="p-4 text-slate-400">{item.reportedByStaffName || 'Staff'}</td>
+                      <td className="p-4 text-slate-500">{item.reportedByStaffName || 'Staff'}</td>
                       <td className="p-4">
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                             item.status === 'OPEN'
-                              ? 'bg-red-500/20 text-red-300 border border-red-500/30'
+                              ? 'bg-red-50 text-red-700 border border-red-200'
                               : item.status === 'ORDERED'
-                              ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
-                              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           }`}
                         >
                           {item.status}
                         </span>
                       </td>
-                      <td className="p-4 text-slate-400">{new Date(item.createdAt).toLocaleString()}</td>
+                      <td className="p-4 text-slate-500">{new Date(item.createdAt).toLocaleString()}</td>
                     </tr>
                   ))
                 )}

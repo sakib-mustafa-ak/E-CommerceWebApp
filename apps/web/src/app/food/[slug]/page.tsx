@@ -267,7 +267,7 @@ export default function RestaurantStorefrontPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center text-slate-500">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-rose-500" />
       </div>
     );
@@ -275,10 +275,10 @@ export default function RestaurantStorefrontPage() {
 
   if (!restaurant) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4 text-center">
         <Utensils className="w-16 h-16 text-slate-700 mb-4" />
-        <h2 className="text-xl font-bold text-white mb-2">Restaurant Not Found</h2>
-        <Link href="/food" className="text-rose-400 hover:underline text-sm">
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Restaurant Not Found</h2>
+        <Link href="/food" className="text-rose-600 hover:underline text-sm">
           Return to Food Marketplace
         </Link>
       </div>
@@ -292,9 +292,9 @@ export default function RestaurantStorefrontPage() {
       : restaurant.categories.find((c) => c.id === selectedCategory)?.menuItems || [];
 
   return (
-    <div className="min-h-screen pb-24 bg-slate-950 text-slate-100">
+    <div className="min-h-screen pb-24 bg-slate-50 text-slate-900">
       {/* Top Banner Header */}
-      <div className="relative h-64 sm:h-80 w-full bg-slate-900 overflow-hidden border-b border-slate-800">
+      <div className="relative h-64 sm:h-80 w-full bg-white overflow-hidden border-b border-slate-200">
         <img
           src={restaurant.bannerImageUrl || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1200&auto=format&fit=crop&q=80'}
           alt={restaurant.name}
@@ -305,7 +305,7 @@ export default function RestaurantStorefrontPage() {
         <div className="absolute top-6 left-4 sm:left-8 z-10">
           <Link
             href="/food"
-            className="px-3.5 py-2 rounded-xl bg-slate-950/80 backdrop-blur-md border border-slate-800 text-white text-xs font-semibold flex items-center gap-2 hover:bg-slate-900 transition-colors"
+            className="px-3.5 py-2 rounded-xl bg-white backdrop-blur-md border border-slate-200 text-white text-xs font-semibold flex items-center gap-2 hover:bg-white transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Marketplace
@@ -316,25 +316,25 @@ export default function RestaurantStorefrontPage() {
         <div className="absolute bottom-6 left-4 sm:left-8 right-4 sm:right-8 z-10 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="px-2.5 py-0.5 rounded-full bg-rose-500/20 border border-rose-500/40 text-rose-300 text-xs font-semibold">
+              <span className="px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold">
                 {restaurant.area}
               </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Kitchen Open
               </span>
             </div>
             <h1 className="text-2xl sm:text-4xl font-black text-white">{restaurant.name}</h1>
-            <p className="text-slate-300 text-xs sm:text-sm mt-1 max-w-xl">
+            <p className="text-slate-600 text-xs sm:text-sm mt-1 max-w-xl">
               {restaurant.description}
             </p>
-            <div className="flex items-center gap-4 text-xs text-slate-400 mt-2">
+            <div className="flex items-center gap-4 text-xs text-slate-500 mt-2">
               <span className="flex items-center gap-1">
-                <MapPin className="w-3.5 h-3.5 text-rose-400" />
+                <MapPin className="w-3.5 h-3.5 text-rose-600" />
                 {restaurant.address}
               </span>
               <span className="flex items-center gap-1">
-                <Bike className="w-3.5 h-3.5 text-amber-400" />
+                <Bike className="w-3.5 h-3.5 text-amber-600" />
                 Delivery: ৳{restaurant.deliveryFee}
               </span>
             </div>
@@ -348,13 +348,13 @@ export default function RestaurantStorefrontPage() {
           {/* Menu Catalog (2 cols) */}
           <div className="lg:col-span-2 space-y-6">
             {/* Category Nav Tabs */}
-            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-slate-800">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none border-b border-slate-200">
               <button
                 onClick={() => setSelectedCategory('ALL')}
                 className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedCategory === 'ALL'
                     ? 'bg-rose-600 text-white'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                    : 'bg-white text-slate-500 hover:text-slate-700'
                 }`}
               >
                 All Items ({allItems.length})
@@ -366,7 +366,7 @@ export default function RestaurantStorefrontPage() {
                   className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                     selectedCategory === c.id
                       ? 'bg-rose-600 text-white'
-                      : 'bg-slate-900 text-slate-400 hover:text-slate-200'
+                      : 'bg-white text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   {c.name} ({c.menuItems.length})
@@ -385,29 +385,29 @@ export default function RestaurantStorefrontPage() {
                     key={item.id}
                     className={`rounded-2xl border p-4 flex flex-col justify-between transition-all duration-200 ${
                       item.isAvailable
-                        ? 'bg-slate-900/80 border-slate-800 hover:border-slate-700'
-                        : 'bg-slate-950/60 border-slate-900 opacity-60'
+                        ? 'bg-white border-slate-200 hover:border-slate-200'
+                        : 'bg-slate-50 border-slate-900 opacity-60'
                     }`}
                   >
                     <div className="space-y-2">
                       <div className="flex justify-between items-start gap-2">
-                        <h3 className="font-bold text-sm text-white">{item.name}</h3>
-                        <span className="font-mono font-bold text-sm text-rose-400 shrink-0">
+                        <h3 className="font-bold text-sm text-slate-900">{item.name}</h3>
+                        <span className="font-mono font-bold text-sm text-rose-600 shrink-0">
                           ৳{item.priceBdt}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 line-clamp-2">{item.description}</p>
+                      <p className="text-xs text-slate-500 line-clamp-2">{item.description}</p>
                       <div className="flex items-center gap-2 pt-1">
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">
+                        <span className="text-[10px] px-2 py-0.5 rounded bg-slate-100 text-slate-500 font-mono">
                           Prep: ~{item.preparationTimeMinutes} min
                         </span>
                         {item.isVegetarian && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-400 font-semibold border border-emerald-800">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-600 font-semibold border border-emerald-800">
                             VEG
                           </span>
                         )}
                         {!item.isAvailable && (
-                          <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-400 font-bold border border-rose-800">
+                          <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-600 font-bold border border-rose-800">
                             86'd / Sold Out
                           </span>
                         )}
@@ -417,10 +417,10 @@ export default function RestaurantStorefrontPage() {
                     <div className="pt-4 mt-auto">
                       {item.isAvailable ? (
                         isItemInCart ? (
-                          <div className="flex items-center justify-between bg-slate-950 p-1.5 rounded-xl border border-rose-500/40">
+                          <div className="flex items-center justify-between bg-slate-50 p-1.5 rounded-xl border border-rose-200">
                             <button
                               onClick={() => updateQuantity(item.id, -1)}
-                              className="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-white"
+                              className="p-1 rounded-lg bg-slate-100 hover:bg-slate-700 text-white"
                             >
                               <Minus className="w-3.5 h-3.5" />
                             </button>
@@ -437,7 +437,7 @@ export default function RestaurantStorefrontPage() {
                         ) : (
                           <button
                             onClick={() => addToCart(item)}
-                            className="w-full py-2 px-3 rounded-xl bg-slate-800 hover:bg-rose-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
+                            className="w-full py-2 px-3 rounded-xl bg-slate-100 hover:bg-rose-600 text-white font-semibold text-xs transition-colors flex items-center justify-center gap-1.5"
                           >
                             <Plus className="w-3.5 h-3.5" />
                             Add to Cart
@@ -446,7 +446,7 @@ export default function RestaurantStorefrontPage() {
                       ) : (
                         <button
                           disabled
-                          className="w-full py-2 px-3 rounded-xl bg-slate-900 text-slate-600 font-semibold text-xs cursor-not-allowed border border-slate-800"
+                          className="w-full py-2 px-3 rounded-xl bg-white text-slate-600 font-semibold text-xs cursor-not-allowed border border-slate-200"
                         >
                           Currently Unavailable
                         </button>
@@ -460,26 +460,26 @@ export default function RestaurantStorefrontPage() {
 
           {/* Sticky Cart & Checkout Sidebar (1 col) */}
           <div className="lg:col-span-1 sticky top-8">
-            <div className="rounded-3xl border border-slate-800 bg-slate-900/90 p-5 shadow-2xl backdrop-blur-md space-y-5">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <h2 className="font-bold text-base text-white flex items-center gap-2">
-                  <ShoppingBag className="w-5 h-5 text-rose-400" />
+            <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-2xl backdrop-blur-md space-y-5">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+                <h2 className="font-bold text-base text-slate-900 flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-rose-600" />
                   Your Order Cart
                 </h2>
-                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
+                <span className="text-xs font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
                   {cart.reduce((sum, i) => sum + i.quantity, 0)} items
                 </span>
               </div>
 
               {/* Fulfillment Switch: Delivery vs Pickup */}
-              <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800">
+              <div className="grid grid-cols-2 gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-200">
                 <button
                   type="button"
                   onClick={() => setFulfillmentType(FoodFulfillmentType.HOME_DELIVERY)}
                   className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                     fulfillmentType === FoodFulfillmentType.HOME_DELIVERY
                       ? 'bg-rose-600 text-white shadow-md shadow-rose-950'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   <Bike className="w-3.5 h-3.5" />
@@ -491,7 +491,7 @@ export default function RestaurantStorefrontPage() {
                   className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
                     fulfillmentType === FoodFulfillmentType.PICKUP
                       ? 'bg-rose-600 text-white shadow-md shadow-rose-950'
-                      : 'text-slate-400 hover:text-white'
+                      : 'text-slate-500 hover:text-slate-700'
                   }`}
                 >
                   <Store className="w-3.5 h-3.5" />
@@ -510,13 +510,13 @@ export default function RestaurantStorefrontPage() {
                   {cart.map((item) => (
                     <div
                       key={item.menuItem.id}
-                      className="p-3 rounded-xl bg-slate-950/70 border border-slate-800/80 flex items-center justify-between gap-3 text-xs"
+                      className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3 text-xs"
                     >
                       <div className="flex-1 min-w-0">
                         <div className="font-semibold text-white truncate">
                           {item.menuItem.name}
                         </div>
-                        <div className="text-slate-400 font-mono">
+                        <div className="text-slate-500 font-mono">
                           ৳{item.menuItem.priceBdt} x {item.quantity} = ৳
                           {item.menuItem.priceBdt * item.quantity}
                         </div>
@@ -524,7 +524,7 @@ export default function RestaurantStorefrontPage() {
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => updateQuantity(item.menuItem.id, -1)}
-                          className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
+                          className="p-1 rounded bg-slate-100 hover:bg-slate-700 text-slate-600"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
@@ -533,13 +533,13 @@ export default function RestaurantStorefrontPage() {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.menuItem.id, 1)}
-                          className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300"
+                          className="p-1 rounded bg-slate-100 hover:bg-slate-700 text-slate-600"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                         <button
                           onClick={() => removeFromCart(item.menuItem.id)}
-                          className="p-1 ml-1 rounded hover:bg-rose-950 text-slate-500 hover:text-rose-400"
+                          className="p-1 ml-1 rounded hover:bg-rose-950 text-slate-500 hover:text-rose-600"
                         >
                           <Trash2 className="w-3 h-3" />
                         </button>
@@ -551,9 +551,9 @@ export default function RestaurantStorefrontPage() {
 
               {/* Large Order Deposit Notice */}
               {isLargeOrder && (
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-300 space-y-1">
+                <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 space-y-1">
                   <div className="flex items-center gap-1.5 font-bold text-xs">
-                    <ShieldAlert className="w-4 h-4 text-amber-400" />
+                    <ShieldAlert className="w-4 h-4 text-amber-600" />
                     Large Order Advance Deposit
                   </div>
                   <p className="text-[11px] text-amber-200/90 leading-tight">
@@ -565,32 +565,32 @@ export default function RestaurantStorefrontPage() {
               {/* Checkout Form */}
               <form onSubmit={handleCheckout} className="space-y-3 pt-2">
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400">Your Full Name</label>
+                  <label className="text-[11px] font-medium text-slate-500">Your Full Name</label>
                   <input
                     type="text"
                     required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="e.g. Tanvir Ahmed"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs mt-1 focus:border-rose-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs mt-1 focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400">Phone Number</label>
+                  <label className="text-[11px] font-medium text-slate-500">Phone Number</label>
                   <input
                     type="tel"
                     required
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="017xxxxxxxx"
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs mt-1 focus:border-rose-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs mt-1 focus:border-rose-500 focus:outline-none"
                   />
                 </div>
 
                 {fulfillmentType === FoodFulfillmentType.HOME_DELIVERY && (
                   <div>
-                    <label className="text-[11px] font-medium text-slate-400">
+                    <label className="text-[11px] font-medium text-slate-500">
                       Delivery Address ({restaurant.area})
                     </label>
                     <textarea
@@ -599,19 +599,19 @@ export default function RestaurantStorefrontPage() {
                       value={deliveryAddress}
                       onChange={(e) => setDeliveryAddress(e.target.value)}
                       placeholder="House, Road, Apartment details..."
-                      className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs mt-1 focus:border-rose-500 focus:outline-none"
+                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs mt-1 focus:border-rose-500 focus:outline-none"
                     />
                   </div>
                 )}
 
                 <div>
-                  <label className="text-[11px] font-medium text-slate-400">
+                  <label className="text-[11px] font-medium text-slate-500">
                     Payment Option
                   </label>
                   <select
                     value={paymentMethod}
                     onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white text-xs mt-1 focus:border-rose-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 text-xs mt-1 focus:border-rose-500 focus:outline-none"
                   >
                     <option value="CASH_ON_DELIVERY">Cash on Delivery (COD)</option>
                     <option value="BKASH">bKash Online Payment</option>
@@ -621,12 +621,12 @@ export default function RestaurantStorefrontPage() {
                 </div>
 
                 {/* Price Breakdown */}
-                <div className="pt-3 border-t border-slate-800 space-y-1.5 text-xs">
-                  <div className="flex justify-between text-slate-400">
+                <div className="pt-3 border-t border-slate-200 space-y-1.5 text-xs">
+                  <div className="flex justify-between text-slate-500">
                     <span>Subtotal:</span>
                     <span className="font-mono text-white">৳{subtotal}</span>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-slate-500">
                     <span>
                       {fulfillmentType === FoodFulfillmentType.HOME_DELIVERY
                         ? 'Delivery Fee:'
@@ -634,14 +634,14 @@ export default function RestaurantStorefrontPage() {
                     </span>
                     <span className="font-mono text-white">৳{deliveryFee}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-slate-800">
+                  <div className="flex justify-between text-sm font-bold text-white pt-2 border-t border-slate-200">
                     <span>Grand Total:</span>
-                    <span className="font-mono text-rose-400">৳{totalAmount}</span>
+                    <span className="font-mono text-rose-600">৳{totalAmount}</span>
                   </div>
                 </div>
 
                 {errorMessage && (
-                  <div className="p-2.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs flex items-center gap-2">
+                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 text-xs flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 shrink-0" />
                     <span>{errorMessage}</span>
                   </div>

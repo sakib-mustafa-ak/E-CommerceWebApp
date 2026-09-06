@@ -82,29 +82,29 @@ export default function PlatformSettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-24">
-      <div className="border-b border-slate-800 bg-slate-900/60 sticky top-16 z-30 backdrop-blur-md">
+    <div className="min-h-screen bg-slate-50 text-slate-900 pb-24">
+      <div className="border-b border-slate-200 bg-white sticky top-16 z-30 backdrop-blur-md">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link
               href="/admin"
-              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-700 text-slate-600 transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <div>
-              <h1 className="text-lg font-bold text-slate-100 flex items-center gap-2">
-                <Settings className="w-5 h-5 text-sky-400" />
+              <h1 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <Settings className="w-5 h-5 text-sky-600" />
                 Platform Operational Settings & Rules
               </h1>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Configure strike thresholds, delivery rules, and payment destination accounts
               </p>
             </div>
           </div>
 
           {saveSuccess && (
-            <span className="text-xs text-emerald-400 flex items-center gap-1 font-semibold bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-500/30">
+            <span className="text-xs text-emerald-600 flex items-center gap-1 font-semibold bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-200">
               <CheckCircle2 className="w-4 h-4" /> Settings Saved!
             </span>
           )}
@@ -114,12 +114,12 @@ export default function PlatformSettingsPage() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pt-8">
         <form onSubmit={handleSave} className="space-y-6">
           {/* Requirement 13: Configurable Problem Customer Cancellation Threshold */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-              <ShieldAlert className="w-5 h-5 text-red-400" />
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
+              <ShieldAlert className="w-5 h-5 text-red-600" />
               <div>
-                <h3 className="text-sm font-bold text-slate-100">Repeat Problem Customer Auto-Flag Rule</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-sm font-bold text-slate-900">Repeat Problem Customer Auto-Flag Rule</h3>
+                <p className="text-xs text-slate-500">
                   Number of cancellations or delivery refusals before the system flags the shop for manual review
                 </p>
               </div>
@@ -127,7 +127,7 @@ export default function PlatformSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+                <label className="block text-xs font-semibold text-slate-600 mb-1.5">
                   Cancellation / Refusal Strike Threshold (Default: 3)
                 </label>
                 <input
@@ -141,19 +141,19 @@ export default function PlatformSettingsPage() {
                       problemCustomerThreshold: parseInt(e.target.value, 10) || 3,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-sky-300 focus:outline-none focus:border-sky-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs font-mono text-sky-700 focus:outline-none focus:border-sky-500"
                 />
               </div>
             </div>
           </div>
 
           {/* Delivery & Logistics Defaults */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-              <Truck className="w-5 h-5 text-emerald-400" />
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
+              <Truck className="w-5 h-5 text-emerald-600" />
               <div>
-                <h3 className="text-sm font-bold text-slate-100">Delivery Rules & Default Thresholds</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-sm font-bold text-slate-900">Delivery Rules & Default Thresholds</h3>
+                <p className="text-xs text-slate-500">
                   Standard delivery parameters when not overridden in the customer's specific profile
                 </p>
               </div>
@@ -161,7 +161,7 @@ export default function PlatformSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">
+                <label className="block font-semibold text-slate-600 mb-1.5">
                   Standard Delivery Fee (BDT)
                 </label>
                 <input
@@ -173,11 +173,11 @@ export default function PlatformSettingsPage() {
                       defaultDeliveryFee: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-slate-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono text-slate-900"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">
+                <label className="block font-semibold text-slate-600 mb-1.5">
                   Default Free Delivery Order Value (BDT)
                 </label>
                 <input
@@ -189,19 +189,19 @@ export default function PlatformSettingsPage() {
                       defaultFreeDeliveryThreshold: parseFloat(e.target.value) || 0,
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-emerald-400"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono text-emerald-600"
                 />
               </div>
             </div>
           </div>
 
           {/* Bank & Payment Destination Details */}
-          <div className="glass-panel p-6 rounded-2xl border border-slate-800 bg-slate-900/60 space-y-4">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-800">
-              <Building2 className="w-5 h-5 text-sky-400" />
+          <div className="p-6 rounded-2xl border border-slate-200 bg-white space-y-4">
+            <div className="flex items-center gap-2 pb-3 border-b border-slate-200">
+              <Building2 className="w-5 h-5 text-sky-600" />
               <div>
-                <h3 className="text-sm font-bold text-slate-100">Payment Accounts & Merchant Numbers</h3>
-                <p className="text-xs text-slate-400">
+                <h3 className="text-sm font-bold text-slate-900">Payment Accounts & Merchant Numbers</h3>
+                <p className="text-xs text-slate-500">
                   Account details shown to Paikari customers choosing Bank Transfer or bKash
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function PlatformSettingsPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">Bank Name</label>
+                <label className="block font-semibold text-slate-600 mb-1.5">Bank Name</label>
                 <input
                   type="text"
                   value={settings.bankAccountDetails.bankName}
@@ -219,11 +219,11 @@ export default function PlatformSettingsPage() {
                       bankAccountDetails: { ...settings.bankAccountDetails, bankName: e.target.value },
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">Account Name</label>
+                <label className="block font-semibold text-slate-600 mb-1.5">Account Name</label>
                 <input
                   type="text"
                   value={settings.bankAccountDetails.accountName}
@@ -233,11 +233,11 @@ export default function PlatformSettingsPage() {
                       bankAccountDetails: { ...settings.bankAccountDetails, accountName: e.target.value },
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">Account Number</label>
+                <label className="block font-semibold text-slate-600 mb-1.5">Account Number</label>
                 <input
                   type="text"
                   value={settings.bankAccountDetails.accountNumber}
@@ -247,11 +247,11 @@ export default function PlatformSettingsPage() {
                       bankAccountDetails: { ...settings.bankAccountDetails, accountNumber: e.target.value },
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-sky-300"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 font-mono text-sky-700"
                 />
               </div>
               <div>
-                <label className="block font-semibold text-slate-300 mb-1.5">Branch & Routing</label>
+                <label className="block font-semibold text-slate-600 mb-1.5">Branch & Routing</label>
                 <input
                   type="text"
                   value={settings.bankAccountDetails.branchName}
@@ -261,7 +261,7 @@ export default function PlatformSettingsPage() {
                       bankAccountDetails: { ...settings.bankAccountDetails, branchName: e.target.value },
                     })
                   }
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-slate-100"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900"
                 />
               </div>
             </div>
@@ -270,7 +270,7 @@ export default function PlatformSettingsPage() {
           <button
             type="submit"
             disabled={isSaving}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-400 hover:to-indigo-500 text-white font-bold text-sm shadow-lg shadow-sky-500/20 flex items-center justify-center gap-2 transition-all"
+            className="w-full py-3.5 rounded-xl bg-[#0F5B78] hover:bg-[#0d4f69] text-white font-bold text-sm shadow-lg  flex items-center justify-center gap-2 transition-all"
           >
             {isSaving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
             Save Platform Settings
