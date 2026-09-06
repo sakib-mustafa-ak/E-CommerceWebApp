@@ -46,6 +46,7 @@ model User {
   gameOrders           GameTopUpOrder[]
   restaurant           Restaurant?
   foodOrders           FoodOrder[]
+  communityPosts       CommunityPost[]
   auditLogs            AuditLog[]
 }
 
@@ -1180,6 +1181,41 @@ model FoodOrderItem {
 
   @@index([foodOrderId])
   @@index([menuItemId])
+}
+
+model CommunityPost {
+  id              String    @id @default(uuid())
+  title           String
+  slug            String    @unique
+  content         String
+  category        String    // BUY_SELL, LOGISTICS_COURIER, HIRING_JOBS, EQUIPMENT, SERVICES, GENERAL_DISCUSSION
+  status          String    @default("PENDING_APPROVAL") // PENDING_APPROVAL, APPROVED, REJECTED, REMOVED
+  authorId        String
+  authorName      String
+  authorPhone     String?
+  authorEmail     String?
+  location        String?
+  priceBdt        Float?
+  tags            String?   // JSON array of strings e.g. ["courier", "urgent"]
+  linkedSector    String?   // PAIKARI, WHOLESALE, OFFER_PARA, MPO, PUBLIC, GAMING, FOOD
+  linkedEntityId  String?
+  linkedUrl       String?
+  reviewedById    String?
+  reviewedByName  String?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  removalReason   String?
+  viewCount       Int       @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  author          User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([status])
+  @@index([category])
+  @@index([authorId])
+  @@index([slug])
+  @@index([createdAt])
 }
 
 

@@ -160,6 +160,10 @@ export enum AuditAction {
   FOOD_ORDER_CREATED = 'FOOD_ORDER_CREATED',
   FOOD_ORDER_COOKING_STARTED = 'FOOD_ORDER_COOKING_STARTED',
   FOOD_ORDER_STATUS_CHANGED = 'FOOD_ORDER_STATUS_CHANGED',
+  COMMUNITY_POST_CREATED = 'COMMUNITY_POST_CREATED',
+  COMMUNITY_POST_APPROVED = 'COMMUNITY_POST_APPROVED',
+  COMMUNITY_POST_REJECTED = 'COMMUNITY_POST_REJECTED',
+  COMMUNITY_POST_REMOVED = 'COMMUNITY_POST_REMOVED',
 }
 
 export interface DynamicPermission {
@@ -1457,6 +1461,75 @@ export interface RestaurantLedgerResponse {
   netVendorPayoutBdt: number;
   recentOrders: FoodOrderResponse[];
 }
+
+// -----------------------------------------------------------------------------
+// Phase 10: Hub & Community (Classifieds & Discussions)
+// -----------------------------------------------------------------------------
+
+export enum CommunityPostCategory {
+  BUY_SELL = 'BUY_SELL',
+  LOGISTICS_COURIER = 'LOGISTICS_COURIER',
+  HIRING_JOBS = 'HIRING_JOBS',
+  EQUIPMENT = 'EQUIPMENT',
+  SERVICES = 'SERVICES',
+  GENERAL_DISCUSSION = 'GENERAL_DISCUSSION',
+}
+
+export enum CommunityPostStatus {
+  PENDING_APPROVAL = 'PENDING_APPROVAL',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  REMOVED = 'REMOVED',
+}
+
+export interface CommunityPostCreateDto {
+  title: string;
+  content: string;
+  category: CommunityPostCategory;
+  location?: string;
+  priceBdt?: number;
+  tags?: string[];
+  linkedSector?: string;
+  linkedEntityId?: string;
+  linkedUrl?: string;
+  authorPhone?: string;
+  authorEmail?: string;
+}
+
+export interface CommunityPostUpdateDto extends Partial<CommunityPostCreateDto> {}
+
+export interface CommunityPostModerationDto {
+  status: CommunityPostStatus.APPROVED | CommunityPostStatus.REJECTED;
+  rejectionReason?: string;
+}
+
+export interface CommunityPostResponse {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  category: CommunityPostCategory;
+  status: CommunityPostStatus;
+  authorId: string;
+  authorName: string;
+  authorPhone?: string | null;
+  authorEmail?: string | null;
+  location?: string | null;
+  priceBdt?: number | null;
+  tags: string[];
+  linkedSector?: string | null;
+  linkedEntityId?: string | null;
+  linkedUrl?: string | null;
+  reviewedById?: string | null;
+  reviewedByName?: string | null;
+  reviewedAt?: string | null;
+  rejectionReason?: string | null;
+  removalReason?: string | null;
+  viewCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 
 
 

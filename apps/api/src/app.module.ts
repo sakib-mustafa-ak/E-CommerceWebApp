@@ -21,6 +21,7 @@ import { PublicModule } from './modules/public/public.module';
 import { ResellerModule } from './modules/reseller/reseller.module';
 import { GamingModule } from './modules/gaming/gaming.module';
 import { FoodModule } from './modules/food/food.module';
+import { CommunityModule } from './modules/community/community.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { FoodModule } from './modules/food/food.module';
     ResellerModule,
     GamingModule,
     FoodModule,
+    CommunityModule,
   ],
   providers: [PrismaService],
   exports: [PrismaService],
